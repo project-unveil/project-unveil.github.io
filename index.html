@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InveRT — On the Surprising Inversion of Human to Humanoid Retargeting</title>
+  <meta name="description" content="InveRT: On the Surprising Inversion of Human to Humanoid Retargeting — biometric information leaks through humanoid robot teleoperation pipelines, enabling re-identification and attribute inference from robot skeleton data." />
+  <meta name="robots" content="noindex, nofollow" />
+
+  <link rel="icon" type="image/svg+xml" href="./assets/img/favicon.svg" />
+
+  <!-- Bootstrap 5 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="./assets/css/style.css" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     NAVBAR
+══════════════════════════════════════════════════ -->
+<nav id="main-nav" class="navbar navbar-expand-md fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="#hero">InveRT</a>
+    <button class="navbar-toggler border-0" type="button"
+            data-bs-toggle="collapse" data-bs-target="#navbarLinks"
+            aria-controls="navbarLinks" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarLinks">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#demo">Demo</a></li>
+        <li class="nav-item"><a class="nav-link" href="#abstract">Abstract</a></li>
+        <li class="nav-item"><a class="nav-link" href="#method">Method</a></li>
+        <li class="nav-item"><a class="nav-link" href="#results">Results</a></li>
+        <li class="nav-item"><a class="nav-link" href="#dataset">Dataset</a></li>
+        <li class="nav-item"><a class="nav-link" href="#bibtex">BibTeX</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════════ -->
+<section id="hero">
+  <div class="container text-center">
+    <h1 class="paper-title">
+      <span class="invert-keyword">InveRT</span>: On the Surprising Inversion of Human to Humanoid Retargeting
+    </h1>
+    <p class="authors-line mt-3">Anonymous Authors</p>
+    <p class="venue-line">NeurIPS 2026 Submission</p>
+
+    <div class="d-flex flex-wrap justify-content-center mt-3">
+      <a href="./assets/file/invert_code.zip" download
+         class="btn btn-outline-primary btn-pill btn-pill-enabled">
+        &#128187; Code
+      </a>
+      <a href="https://huggingface.co/datasets/bones-studio/seed"
+         target="_blank" rel="noopener noreferrer"
+         class="btn btn-outline-primary btn-pill btn-pill-enabled btn-pill-dataset">
+        <svg class="hf-icon" viewBox="0 0 95 88" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <!-- Hugging Face logo mark -->
+          <path d="M47.5 88C73.7 88 95 68.3 95 44C95 19.7 73.7 0 47.5 0C21.3 0 0 19.7 0 44C0 68.3 21.3 88 47.5 88Z" fill="#FFD21E"/>
+          <path d="M30 35C30 31.7 32.7 29 36 29C39.3 29 42 31.7 42 35C42 38.3 39.3 41 36 41C32.7 41 30 38.3 30 35Z" fill="#1C1C1C"/>
+          <path d="M53 35C53 31.7 55.7 29 59 29C62.3 29 65 31.7 65 35C65 38.3 62.3 41 59 41C55.7 41 53 38.3 53 35Z" fill="#1C1C1C"/>
+          <path d="M24 53C26.5 62 36 69 47.5 69C59 69 68.5 62 71 53" stroke="#1C1C1C" stroke-width="4" stroke-linecap="round"/>
+          <path d="M36 29C36 23 41 18 47.5 18C54 18 59 23 59 29" stroke="#1C1C1C" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        BONES-SEED Dataset
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     DEMO — 3-PANEL VIDEO COMPARISON
+══════════════════════════════════════════════════ -->
+<section id="demo">
+  <div class="demo-container">
+
+    <div class="demo-intro fade-in">
+      <h2 class="section-heading">Overview of <span class="invert-kw">InveRT</span></h2>
+    </div>
+
+    <!-- ── 2-row × 3-col grid: row 1 = headers, row 2 = equal video cards ── -->
+    <div class="demo-panels">
+
+      <!-- ══ ROW 1: column headers (outside the panel cards) ══ -->
+
+      <!-- Header 1 · Robot — centred in row -->
+      <div class="demo-col-header demo-col-header--robot fade-in" data-delay="0">
+        <div class="robot-traj-box">Robot Trajectory</div>
+      </div>
+
+      <!-- Header 2 · InveRT Prediction — single bordered box -->
+      <div class="demo-col-header fade-in" data-delay="150">
+        <div class="attr-panel attr-panel--pred">
+          <div class="attr-panel-title"><span class="invert-kw">InveRT</span> Prediction</div>
+          <div class="attr-row">
+            <div class="attr-chip" data-pred="168" data-gt="162" data-mae="4.4">
+              <span class="attr-chip-label">Height</span>
+              <span class="attr-chip-value">168 cm</span>
+            </div>
+            <div class="attr-chip" data-pred="68" data-gt="72" data-mae="8.9">
+              <span class="attr-chip-label">Weight</span>
+              <span class="attr-chip-value">68 kg</span>
+            </div>
+            <div class="attr-chip" data-pred="29" data-gt="28" data-mae="4.07">
+              <span class="attr-chip-label">Age</span>
+              <span class="attr-chip-value">29 yrs</span>
+            </div>
+            <div class="attr-chip" data-pred="1" data-gt="1" data-mae="1">
+              <span class="attr-chip-label">Gender</span>
+              <span class="attr-chip-value">Male</span>
+            </div>
+          </div>
+        </div>
+        <!-- Render arrow -->
+        <div class="render-arrow" aria-hidden="true">
+          <svg class="render-arrow-svg render-arrow-svg--pred" viewBox="0 0 40 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="5"  r="2.4" fill="currentColor" opacity="1"/>
+            <circle cx="20" cy="14" r="1.9" fill="currentColor" opacity="0.65"/>
+            <circle cx="20" cy="22" r="1.4" fill="currentColor" opacity="0.35"/>
+            <line x1="20" y1="26" x2="20" y2="39" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M9 37 L20 51 L31 37" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Header 3 · Ground Truth — single bordered box -->
+      <div class="demo-col-header fade-in" data-delay="300">
+        <div class="attr-panel attr-panel--gt">
+          <div class="attr-panel-title">Ground-Truth Attributes</div>
+          <div class="attr-row">
+            <div class="attr-chip attr-chip--gt">
+              <span class="attr-chip-label">Height</span>
+              <span class="attr-chip-value">162 cm</span>
+            </div>
+            <div class="attr-chip attr-chip--gt">
+              <span class="attr-chip-label">Weight</span>
+              <span class="attr-chip-value">72 kg</span>
+            </div>
+            <div class="attr-chip attr-chip--gt">
+              <span class="attr-chip-label">Age</span>
+              <span class="attr-chip-value">28 yrs</span>
+            </div>
+            <div class="attr-chip attr-chip--gt">
+              <span class="attr-chip-label">Gender</span>
+              <span class="attr-chip-value">Male</span>
+            </div>
+          </div>
+        </div>
+        <!-- Render arrow -->
+        <div class="render-arrow" aria-hidden="true">
+          <svg class="render-arrow-svg render-arrow-svg--gt" viewBox="0 0 40 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="5"  r="2.4" fill="currentColor" opacity="1"/>
+            <circle cx="20" cy="14" r="1.9" fill="currentColor" opacity="0.65"/>
+            <circle cx="20" cy="22" r="1.4" fill="currentColor" opacity="0.35"/>
+            <line x1="20" y1="26" x2="20" y2="39" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M9 37 L20 51 L31 37" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- ══ ROW 2: video panel cards (equal size) ══ -->
+
+      <div class="demo-panel fade-in" data-delay="0">
+        <div class="panel-video-wrap panel-iframe-wrap">
+          <iframe id="iframe-g1"
+            src="./g1_engine/viewer.html?embed=1"
+            class="g1-viewer-iframe"
+            title="Unitree G1 robot motion viewer"
+            loading="lazy" allowfullscreen></iframe>
+        </div>
+      </div>
+
+      <div class="demo-panel fade-in" data-delay="150">
+        <div class="panel-video-wrap panel-iframe-wrap">
+          <iframe id="iframe-predicted"
+            src="./smpl_engine/viewer.html?seq=predicted&embed=1"
+            class="g1-viewer-iframe"
+            title="SMPL body from InveRT predicted attributes"
+            loading="lazy" allowfullscreen></iframe>
+        </div>
+      </div>
+
+      <div class="demo-panel fade-in" data-delay="300">
+        <div class="panel-video-wrap panel-iframe-wrap">
+          <iframe id="iframe-groundtruth"
+            src="./smpl_engine/viewer.html?seq=groundtruth&embed=1"
+            class="g1-viewer-iframe"
+            title="SMPL body rendered from ground-truth attributes"
+            loading="lazy" allowfullscreen></iframe>
+        </div>
+      </div>
+
+    </div><!-- /.demo-panels -->
+
+    <!-- ── Master sync bar ── -->
+    <div id="sync-bar" class="sync-bar fade-in">
+      <button id="sync-play" class="sync-btn" title="Play / Pause">&#9654;</button>
+      <input  id="sync-progress" type="range" min="0" max="1" step="0.001" value="0" class="sync-progress"/>
+      <span   id="sync-time" class="sync-time">0.00 / 0.00s</span>
+      <select id="sync-speed" class="sync-speed">
+        <option value="0.25">0.25×</option>
+        <option value="0.5">0.5×</option>
+        <option value="1" selected>1×</option>
+        <option value="2">2×</option>
+      </select>
+      <span class="sync-hint">&#8596; All three panels synced</span>
+    </div>
+
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     TEASER PIPELINE
+══════════════════════════════════════════════════ -->
+<section id="teaser">
+  <div class="container">
+
+    <!-- Animated pipeline -->
+    <div class="teaser-pipeline">
+
+      <!-- Node 1: Human operator -->
+      <div class="pipeline-node">
+        <div class="node-icon human" aria-hidden="true">&#129489;&#8205;&#128187;</div>
+        <div class="node-label">Human Operator</div>
+        <div class="node-sublabel">Wearing motion-capture suit &amp; VR headset</div>
+      </div>
+
+      <!-- Arrow 1 -->
+      <div class="pipeline-arrow" aria-hidden="true">
+        <div class="arrow-label">Teleoperation</div>
+        <div class="arrow-line">
+          <div class="arrow-dash"></div>
+          <div class="arrow-head"></div>
+        </div>
+      </div>
+
+      <!-- Node 2: Robot -->
+      <div class="pipeline-node">
+        <div class="node-icon robot" aria-hidden="true">&#129302;</div>
+        <div class="node-label">Unitree G1 Robot</div>
+        <div class="node-sublabel">Robot action space (joint angles &amp; skeleton)</div>
+      </div>
+
+      <!-- Arrow 2 -->
+      <div class="pipeline-arrow" aria-hidden="true">
+        <div class="arrow-label">Privacy Attack (SGN)</div>
+        <div class="arrow-line">
+          <div class="arrow-dash"></div>
+          <div class="arrow-head"></div>
+        </div>
+      </div>
+
+      <!-- Node 3: Inferred attributes card -->
+      <div class="pipeline-node">
+        <div class="attr-card">
+          <div class="attr-title">&#128272; Inferred Attributes</div>
+          <div class="attr-row">
+            <span class="emoji">&#128275;</span>
+            <span>Re-ID: Operator&nbsp;
+              <span class="attr-value">#<span data-count-to="247" data-decimals="0">0</span></span>
+            </span>
+          </div>
+          <div class="attr-row">
+            <span class="emoji">&#9895;</span>
+            <span>Gender:&nbsp;
+              <span class="attr-value">Male (<span data-count-to="94.2" data-decimals="1" data-suffix="%">0%</span>)</span>
+            </span>
+          </div>
+          <div class="attr-row">
+            <span class="emoji">&#128207;</span>
+            <span>Height:&nbsp;
+              <span class="attr-value"><span data-count-to="175.3" data-decimals="1" data-suffix=" cm">0 cm</span></span>
+            </span>
+          </div>
+          <div class="attr-row">
+            <span class="emoji">&#9878;</span>
+            <span>Weight:&nbsp;
+              <span class="attr-value"><span data-count-to="72.1" data-decimals="1" data-suffix=" kg">0 kg</span></span>
+            </span>
+          </div>
+          <div class="attr-row">
+            <span class="emoji">&#127874;</span>
+            <span>Age:&nbsp;
+              <span class="attr-value"><span data-count-to="28.4" data-decimals="1" data-suffix=" yrs">0 yrs</span></span>
+            </span>
+          </div>
+        </div>
+        <div class="node-label mt-2">Attacker Output</div>
+        <div class="node-sublabel">From robot data alone</div>
+      </div>
+
+    </div><!-- /.teaser-pipeline -->
+
+    <p class="teaser-caption">
+      <strong>InveRT</strong> reveals that retargeted robot action data preserves enough biometric
+      signal to re-identify human operators and infer sensitive attributes — age, gender, height,
+      and weight — from the robot's joint angle sequences alone.
+    </p>
+
+    <!-- Teaser figure -->
+    <figure class="pdf-figure-wrap mt-4 fade-in">
+      <canvas data-pdf="./assets/img/vla-privacy-teaser.pdf"
+              class="pdf-canvas" aria-label="InveRT teaser figure"></canvas>
+      <noscript>
+        <a href="./assets/img/vla-privacy-teaser.pdf">View teaser figure (PDF)</a>
+      </noscript>
+    </figure>
+
+    <!-- VIDEO PLACEHOLDER: uncomment and replace once teaser.mp4 is ready -->
+    <!--
+    <video class="w-100 mt-4" controls preload="none" poster="./assets/img/vla-privacy-teaser.pdf">
+      <source src="./assets/video/teaser.mp4" type="video/mp4" />
+    </video>
+    -->
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     ABSTRACT
+══════════════════════════════════════════════════ -->
+<section id="abstract">
+  <div class="container">
+    <h2 class="section-heading fade-in">Abstract</h2>
+    <div class="abstract-text fade-in">
+      [ABSTRACT PLACEHOLDER — Will be replaced with the actual paper abstract before submission.
+      The abstract will describe how INVERT demonstrates that biometric information leaks through
+      humanoid robot teleoperation pipelines, enabling re-identification and attribute inference
+      from retargeted robot skeleton data alone.]
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     METHOD
+══════════════════════════════════════════════════ -->
+<section id="method">
+  <div class="container">
+    <h2 class="section-heading fade-in">How does it work?</h2>
+
+    <!-- Framework / method figure -->
+    <figure class="pdf-figure-wrap fade-in">
+      <canvas data-pdf="./assets/img/framework.pdf"
+              class="pdf-canvas" aria-label="InveRT framework diagram"></canvas>
+      <noscript>
+        <a href="./assets/img/framework.pdf">View framework figure (PDF)</a>
+      </noscript>
+    </figure>
+
+    <p class="fade-in" style="color:#555;">
+      [METHOD DESCRIPTION PLACEHOLDER — Will describe the INVERT pipeline:
+      (1)&nbsp;Motion capture of human operators,
+      (2)&nbsp;Retargeting to robot action space (Unitree G1),
+      (3)&nbsp;GCN-based biometric inference using SGN with attention pooling on the
+      robot's joint angle sequences.]
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     RESULTS
+══════════════════════════════════════════════════ -->
+<section id="results">
+  <div class="container">
+    <h2 class="section-heading fade-in">Key Results</h2>
+
+    <p class="fade-in text-muted mb-3">
+      Biometric inference from <strong>Unitree G1 robot action space</strong>
+      using actor-disjoint splits.
+    </p>
+
+    <div class="table-responsive fade-in">
+      <table class="table table-bordered align-middle">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Metric</th>
+            <th>Seen Val</th>
+            <th>Unseen Test</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Re-Identification</td>
+            <td>Top-1 Accuracy (%) &uarr;</td>
+            <td class="text-muted">—</td>
+            <td class="highlight-cell">92.2</td>
+          </tr>
+          <tr>
+            <td>Gender</td>
+            <td>Accuracy (%) &uarr;</td>
+            <td class="text-muted">—</td>
+            <td class="highlight-cell">89.7</td>
+          </tr>
+          <tr>
+            <td>Age</td>
+            <td>MAE (years) &darr;</td>
+            <td class="text-muted">—</td>
+            <td class="highlight-cell">4.07</td>
+          </tr>
+          <tr>
+            <td>Height</td>
+            <td>MAE (cm) &darr;</td>
+            <td class="text-muted">—</td>
+            <td class="highlight-cell">4.40</td>
+          </tr>
+          <tr>
+            <td>Weight</td>
+            <td>MAE (kg) &darr;</td>
+            <td class="text-muted">—</td>
+            <td class="highlight-cell">8.89</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="results-note fade-in">
+      Results on actor-disjoint test split (~98 unseen actors). Lower MAE is better for
+      regression tasks.
+    </p>
+
+    <!-- Space for additional table / figure -->
+    <div class="mt-4 fade-in" style="border: 2px dashed #dde; border-radius:8px; padding:2rem; text-align:center; color:#bbb; font-size:0.9rem;">
+      Additional results table or ablation figure will be placed here.
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     DATASET
+══════════════════════════════════════════════════ -->
+<section id="dataset">
+  <div class="container">
+    <h2 class="section-heading fade-in">BONES-SEED Dataset</h2>
+
+    <div class="row g-3 justify-content-center mt-1 fade-in">
+      <div class="col-6 col-sm-3">
+        <div class="stat-card">
+          <div class="stat-number">492</div>
+          <div class="stat-label">Actors</div>
+        </div>
+      </div>
+      <div class="col-6 col-sm-3">
+        <div class="stat-card">
+          <div class="stat-number">142K</div>
+          <div class="stat-label">Motion Clips</div>
+        </div>
+      </div>
+      <div class="col-6 col-sm-3">
+        <div class="stat-card">
+          <div class="stat-number">3</div>
+          <div class="stat-label">Data Formats</div>
+        </div>
+      </div>
+      <div class="col-6 col-sm-3">
+        <div class="stat-card">
+          <div class="stat-number">5</div>
+          <div class="stat-label">Biometric Tasks</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="mt-3 text-muted fade-in" style="font-size:0.9rem;">
+      Formats: SOMA Proportional BVH &nbsp;|&nbsp; SOMA Uniform BVH &nbsp;|&nbsp;
+      Unitree G1 CSV (retargeted)
+    </p>
+
+    <div class="dataset-placeholder fade-in">
+      Dataset visualization figure will be placed here.
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     BIBTEX
+══════════════════════════════════════════════════ -->
+<section id="bibtex">
+  <div class="container">
+    <h2 class="section-heading fade-in">BibTeX</h2>
+    <pre class="fade-in"><code>@inproceedings{anonymous2026invert,
+    title={InveRT: On the Surprising Inversion of Human to Humanoid Retargeting},
+    author={Anonymous},
+    booktitle={Advances in Neural Information Processing Systems (NeurIPS)},
+    year={2026},
+    note={Under review}
+}</code></pre>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════ -->
+<footer>
+  <div class="container">
+    <p class="mb-1">Anonymous Submission to NeurIPS 2026</p>
+    <p class="mb-0" style="font-size:0.8rem;">
+      Website template inspired by academic project pages.
+    </p>
+  </div>
+</footer>
+
+<!-- Bootstrap JS bundle (no Popper needed separately) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- PDF.js — renders PDF figures to canvas without browser PDF-reader UI -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<!-- Custom JS -->
+<script src="./assets/js/main.js"></script>
+
+</body>
+</html>

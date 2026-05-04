@@ -1,0 +1,15 @@
+{
+  "csvFile": "./data/csv/macarena_001__A545_M.csv",
+  "maxFrames": 600,
+  "playbackSpeed": 1.0,
+  "autoPlay": true,
+  "loop": true,
+  "cameraAzimuth": 31,
+  "cameraElevation": -15,
+  "cameraDistance": 3.5,
+  "showFloor": true,
+  "backgroundColor": "#7E8082",
+  "floorColor": "#CED0D6",
+  "gridColor": "#9FA3AA",
+  "enhancedMaterials": true
+}

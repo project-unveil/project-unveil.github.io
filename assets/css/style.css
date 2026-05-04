@@ -1,0 +1,821 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap');
+
+/* ── Reset & Base ─────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 1.05rem;
+  color: #333333;
+  background: #ffffff;
+  line-height: 1.75;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Noto Serif', serif;
+  color: #2c3e6b;
+}
+
+a {
+  color: #2c3e6b;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #e74c3c;
+  text-decoration: underline;
+}
+
+/* ── Layout ───────────────────────────────────────────────── */
+.container {
+  max-width: 900px;
+}
+
+section {
+  padding: 80px 0;
+}
+
+section:nth-of-type(even) {
+  background: #f8f9fa;
+}
+
+.section-heading {
+  font-size: 1.85rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #2c3e6b;
+  display: inline-block;
+}
+
+/* ══════════════════════════════════════════════════════════
+   DEMO — 3-PANEL VIDEO COMPARISON
+══════════════════════════════════════════════════════════ */
+#demo {
+  background: #f8f9fa;
+  padding: 70px 0 60px;
+}
+
+.demo-container {
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  box-sizing: border-box;
+}
+
+.demo-intro {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.invert-kw {
+  color: #2c3e6b;
+  font-style: normal;
+}
+
+/* ── 2-row × 3-col grid ──────────────────────────────────
+   Row 1 (auto): column headers — tallest drives row height
+   Row 2 (fr):   equal video cards, always start at same Y  */
+.demo-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto 1fr;
+  column-gap: 22px;
+  row-gap: 0;
+  align-items: end;     /* headers align to bottom → videos flush */
+}
+
+/* ── Column headers (row 1) ──────────────────────────────── */
+.demo-col-header {
+  padding-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Robot column: center itself in the row height */
+.demo-col-header--robot {
+  align-self: center;
+  padding-bottom: 0;
+}
+
+/* ── Robot trajectory labelled box ──────────────────────── */
+.robot-traj-box {
+  display: inline-block;
+  background: #eef2ff;
+  border: 1.5px solid #b8c8f0;
+  border-radius: 10px;
+  padding: 0.65rem 1.2rem;
+  font-family: 'Noto Serif', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #2c3e6b;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* ── Attr panel — the single box wrapping title + chips ──── */
+.attr-panel {
+  width: 100%;
+  border-radius: 12px;
+  padding: 0.85rem 0.75rem 0.8rem;
+  box-shadow: 0 2px 10px rgba(44,62,107,0.07);
+  margin-bottom: 0;
+}
+
+.attr-panel--pred {
+  background: #fafffe;
+  border: 1.5px solid #b8ddc6;
+}
+
+.attr-panel--gt {
+  background: #f7f8ff;
+  border: 1.5px solid #b8c6e8;
+}
+
+.attr-panel-title {
+  font-family: 'Noto Serif', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #2c3e6b;
+  margin-bottom: 0.65rem;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* ── Attribute chips ─────────────────────────────────────── */
+.attr-row {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+}
+
+.attr-chip {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #f2fbf5;
+  border: 1.5px solid #c0dfc9;
+  border-radius: 8px;
+  padding: 0.38rem 0.3rem;
+  transition: background 0.4s ease, border-color 0.4s ease;
+}
+
+.attr-chip--gt {
+  background: #f0f3fa;
+  border-color: #c4cde8;
+}
+
+.attr-chip-label {
+  font-size: 0.63rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #999;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.attr-chip-value {
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #27ae60;
+  line-height: 1.3;
+  white-space: nowrap;
+  transition: color 0.4s ease;
+}
+
+.attr-chip--gt .attr-chip-value { color: #2c3e6b; }
+
+/* ── Render arrow (dots + chevron SVG) ───────────────────── */
+.render-arrow {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.render-arrow-svg {
+  width: 36px;
+  height: 46px;
+}
+
+.render-arrow-svg--pred { color: #27ae60; }
+.render-arrow-svg--gt  { color: #2c3e6b; }
+
+/* ── Video panel cards (row 2, equal height) ─────────────── */
+.demo-panel {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #1a1a1a;
+  border: 1px solid #2e2e2e;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.demo-panel:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 32px rgba(0,0,0,0.28);
+}
+
+/* ── Video wrapper ───────────────────────────────────────── */
+.panel-video-wrap {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #1a1a1a;
+  line-height: 0;
+}
+
+.panel-video-wrap video {
+  width: 100%;
+  height: 560px;
+  object-fit: contain;
+  display: block;
+  background: #1a1a1a;
+}
+
+.panel-iframe-wrap { background: #1a1a1a; }
+
+.g1-viewer-iframe {
+  display: block;
+  width: 100%;
+  height: 560px;
+  border: none;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .demo-panels {
+    grid-template-columns: 1fr;
+    grid-template-rows: unset;
+    max-width: 520px;
+    margin: 0 auto;
+    row-gap: 12px;
+  }
+  .panel-video-wrap video,
+  .g1-viewer-iframe { height: 380px; }
+  .demo-col-header { padding-bottom: 4px; }
+}
+
+/* ── Master sync bar ────────────────────────────────────── */
+.sync-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid #e0e4ed;
+  border-radius: 10px;
+  padding: 0.65rem 1.1rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 1px 6px rgba(44,62,107,0.06);
+}
+
+.sync-btn {
+  flex-shrink: 0;
+  width: 30px; height: 30px;
+  border: none;
+  background: #2c3e6b;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.sync-btn:hover { background: #e74c3c; }
+
+.sync-progress {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 4px;
+  background: #e0e4ed;
+  border-radius: 99px;
+  outline: none;
+  cursor: pointer;
+}
+.sync-progress::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 13px; height: 13px;
+  border-radius: 50%;
+  background: #2c3e6b;
+  cursor: pointer;
+}
+
+.sync-time {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: #888;
+  min-width: 70px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.sync-speed {
+  flex-shrink: 0;
+  font-size: 11px;
+  padding: 3px 6px;
+  border: 1px solid #dde;
+  border-radius: 4px;
+  background: #fff;
+  color: #444;
+  cursor: pointer;
+}
+
+.sync-hint {
+  flex-shrink: 0;
+  font-size: 10px;
+  color: #aaa;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .demo-panels {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .panel-video-wrap video { height: 420px; }
+
+  .demo-panel--with-card {
+    flex-direction: column;
+  }
+
+  .bio-card--side {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #edf0f7;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: space-around;
+  }
+
+  .bio-card--side .bio-row { margin-bottom: 0; }
+}
+
+/* ── Navbar ───────────────────────────────────────────────── */
+#main-nav {
+  transition: background 0.3s, box-shadow 0.3s;
+  background: transparent;
+}
+
+#main-nav.scrolled {
+  background: #ffffff !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+#main-nav .navbar-brand {
+  font-family: 'Noto Serif', serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #2c3e6b;
+  letter-spacing: 0.04em;
+}
+
+#main-nav .nav-link {
+  font-weight: 600;
+  color: #2c3e6b;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+#main-nav .nav-link:hover {
+  color: #e74c3c;
+}
+
+/* ── Hero ─────────────────────────────────────────────────── */
+#hero {
+  padding: 140px 0 80px;
+  text-align: center;
+  background: #ffffff;
+}
+
+#hero h1.paper-title {
+  font-size: 2.1rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 1rem;
+  color: #2c3e6b;
+}
+
+#hero h1.paper-title .invert-keyword {
+  color: #e74c3c;
+}
+
+#hero .authors-line {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+}
+
+#hero .venue-line {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #2c3e6b;
+  margin-bottom: 2rem;
+}
+
+.btn-pill {
+  border-radius: 50px;
+  padding: 0.45rem 1.4rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0.3rem;
+  border-width: 2px;
+  cursor: default;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.btn-pill-enabled {
+  opacity: 1;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.btn-pill-dataset {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.hf-icon {
+  width: 20px;
+  height: 18px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+/* ── Teaser Pipeline ──────────────────────────────────────── */
+#teaser {
+  background: #f8f9fa;
+  padding: 70px 0 60px;
+}
+
+.teaser-pipeline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: nowrap;
+  padding: 2rem 0;
+}
+
+.pipeline-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  flex: 0 0 auto;
+}
+
+.pipeline-node.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.node-icon {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-bottom: 0.75rem;
+  font-size: 2.8rem;
+}
+
+.node-icon.human {
+  background: #eaf0ff;
+  border: 2px solid #2c3e6b;
+}
+
+.node-icon.robot {
+  background: #fff3f3;
+  border: 2px solid #e74c3c;
+}
+
+.node-icon.result {
+  background: #fff8e1;
+  border: 2px solid #f39c12;
+  width: auto;
+  height: auto;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  font-size: 1rem;
+  text-align: left;
+  min-width: 200px;
+}
+
+.node-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #2c3e6b;
+  margin-top: 0.25rem;
+}
+
+.node-sublabel {
+  font-size: 0.78rem;
+  color: #888;
+  max-width: 120px;
+}
+
+/* Pipeline arrows */
+.pipeline-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  opacity: 0;
+  transition: opacity 0.6s ease 0.3s;
+  flex: 0 0 auto;
+}
+
+.pipeline-arrow.visible {
+  opacity: 1;
+}
+
+.arrow-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #888;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+}
+
+.arrow-line {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.arrow-dash {
+  width: 60px;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    #aaa 0,
+    #aaa 6px,
+    transparent 6px,
+    transparent 12px
+  );
+  animation: dash-flow 1.2s linear infinite;
+}
+
+@keyframes dash-flow {
+  from { background-position: 0 0; }
+  to   { background-position: 24px 0; }
+}
+
+.arrow-head {
+  width: 0;
+  height: 0;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 10px solid #aaa;
+}
+
+/* Inferred attributes card */
+.attr-card {
+  background: #fff;
+  border: 2px solid #e74c3c;
+  border-radius: 12px;
+  padding: 1.1rem 1.4rem;
+  min-width: 200px;
+  box-shadow: 0 4px 18px rgba(231,76,60,0.12);
+}
+
+.attr-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #e74c3c;
+  margin-bottom: 0.7rem;
+  border-bottom: 1px solid #fde;
+  padding-bottom: 0.3rem;
+}
+
+.attr-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+  color: #333;
+}
+
+.attr-row .emoji {
+  font-size: 1rem;
+  width: 1.4rem;
+  text-align: center;
+}
+
+.attr-value {
+  font-weight: 700;
+  color: #2c3e6b;
+}
+
+.teaser-caption {
+  text-align: center;
+  font-style: italic;
+  color: #555;
+  font-size: 0.95rem;
+  max-width: 720px;
+  margin: 1.5rem auto 0;
+  line-height: 1.6;
+}
+
+/* Teaser video placeholder */
+.video-placeholder {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 2.5rem;
+  text-align: center;
+  color: #999;
+  font-size: 0.9rem;
+  margin-top: 2rem;
+}
+
+/* ── PDF figures rendered via PDF.js ──────────────────────── */
+.pdf-figure-wrap {
+  width: 100%;
+  margin: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.pdf-canvas {
+  display: block;
+  width: 100%;   /* CSS scales the canvas down; actual px set by JS */
+  height: auto;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.pdf-canvas.rendered {
+  opacity: 1;
+}
+
+/* ── Abstract ─────────────────────────────────────────────── */
+#abstract .abstract-text {
+  font-size: 1.02rem;
+  line-height: 1.85;
+  color: #444;
+  border-left: 4px solid #2c3e6b;
+  padding-left: 1.5rem;
+}
+
+/* ── Method ───────────────────────────────────────────────── */
+#method .method-placeholder {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  background: #f8f9fa;
+  height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Results Table ────────────────────────────────────────── */
+#results .table thead th {
+  background: #2c3e6b;
+  color: #fff;
+  font-weight: 600;
+  border-color: #2c3e6b;
+}
+
+#results .table td {
+  vertical-align: middle;
+}
+
+#results .highlight-cell {
+  color: #e74c3c;
+  font-weight: 700;
+}
+
+.results-note {
+  font-size: 0.88rem;
+  color: #666;
+  font-style: italic;
+  margin-top: 0.75rem;
+}
+
+/* ── Dataset Stat Cards ───────────────────────────────────── */
+#dataset .stat-card {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(44,62,107,0.09);
+  border-top: 4px solid #2c3e6b;
+}
+
+#dataset .stat-number {
+  font-family: 'Noto Serif', serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #2c3e6b;
+  line-height: 1.1;
+}
+
+#dataset .stat-label {
+  font-size: 0.88rem;
+  color: #666;
+  margin-top: 0.3rem;
+}
+
+#dataset .dataset-placeholder {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bbb;
+  font-size: 0.95rem;
+  margin-top: 2rem;
+}
+
+/* ── BibTeX ───────────────────────────────────────────────── */
+#bibtex pre {
+  background: #1e2433;
+  color: #cdd3e0;
+  border-radius: 8px;
+  padding: 1.5rem 1.75rem;
+  font-size: 0.88rem;
+  line-height: 1.7;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* ── Footer ───────────────────────────────────────────────── */
+footer {
+  background: #f0f2f7;
+  border-top: 1px solid #dde;
+  padding: 2.5rem 0;
+  text-align: center;
+  font-size: 0.88rem;
+  color: #888;
+}
+
+/* ── Fade-in animations (IntersectionObserver driven) ──────── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  #hero h1.paper-title {
+    font-size: 1.5rem;
+  }
+
+  .teaser-pipeline {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .pipeline-arrow {
+    transform: rotate(90deg);
+  }
+
+  .arrow-dash {
+    width: 40px;
+  }
+
+  section {
+    padding: 55px 0;
+  }
+
+  .section-heading {
+    font-size: 1.5rem;
+  }
+}
