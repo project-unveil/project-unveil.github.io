@@ -228,13 +228,14 @@ function buildMesh() {
   smplMesh = new THREE.Mesh(geo, mat);
   smplMesh.castShadow = true;
 
-  // Floor-align: scan all frames for the lowest Y vertex and offset the mesh
-  // so feet sit exactly on Y=0 regardless of SMPL origin conventions.
-  let minY = Infinity;
-  for (let i = 1; i < vertData.length; i += 3) {
-    if (vertData[i] < minY) minY = vertData[i];
+  // Floor-align: use frame 0 (standing pose) to find foot contact level.
+  // Using the global minimum risks aligning to a hand vertex during a low move.
+  let minY0 = Infinity;
+  const f0len = numVerts * 3;
+  for (let i = 1; i < f0len; i += 3) {
+    if (posAttr.array[i] < minY0) minY0 = posAttr.array[i];
   }
-  smplMesh.position.y = -minY;
+  smplMesh.position.y = -minY0;
 
   scene.add(smplMesh);
 }
