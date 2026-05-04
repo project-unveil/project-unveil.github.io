@@ -228,14 +228,22 @@ function buildMesh() {
   smplMesh = new THREE.Mesh(geo, mat);
   smplMesh.castShadow = true;
 
-  // Floor-align: use frame 0 (standing pose) to find foot contact level.
-  // Using the global minimum risks aligning to a hand vertex during a low move.
-  let minY0 = Infinity;
-  const f0len = numVerts * 3;
-  for (let i = 1; i < f0len; i += 3) {
-    if (posAttr.array[i] < minY0) minY0 = posAttr.array[i];
+  // Floor-align: compute per-frame minimum Y, take 10th percentile.
+  // Frame-0-only underfits (toe tip only); global min overfits (hand vertex).
+  // 10th percentile = "standing frames" level — feet planted, not floating.
+  const frameMin = new Float32Array(numFrames);
+  for (let fi = 0; fi < numFrames; fi++) {
+    const base = fi * numVerts * 3;
+    let mn = Infinity;
+    for (let j = 1; j < numVerts * 3; j += 3) {
+      const y = vertData[base + j];
+      if (y < mn) mn = y;
+    }
+    frameMin[fi] = mn;
   }
-  smplMesh.position.y = -minY0;
+  const sorted = Array.from(frameMin).sort((a, b) => a - b);
+  const p10    = sorted[Math.floor(numFrames * 0.10)];
+  smplMesh.position.y = -p10;
 
   scene.add(smplMesh);
 }
