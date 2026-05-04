@@ -1,6 +1,6 @@
-# InveRT — Project Page
+# UNVEIL — Project Page
 
-Project website for the InveRT framework.
+Project website for the UNVEIL framework.
 
 **Status:** Anonymous submission under review.
 

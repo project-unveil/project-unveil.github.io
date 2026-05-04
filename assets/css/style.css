@@ -72,7 +72,7 @@ section:nth-of-type(even) {
   margin-bottom: 2rem;
 }
 
-.invert-kw {
+.unveil-kw {
   color: #2c3e6b;
   font-style: normal;
 }
@@ -409,7 +409,7 @@ section:nth-of-type(even) {
   color: #2c3e6b;
 }
 
-#hero h1.paper-title .invert-keyword {
+#hero h1.paper-title .unveil-keyword {
   color: #e74c3c;
 }
 
