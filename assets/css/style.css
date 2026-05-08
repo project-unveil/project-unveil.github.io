@@ -851,8 +851,7 @@ section:nth-of-type(even) {
 }
 
 #results .highlight-cell {
-  color: #c0392b;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .results-note {
