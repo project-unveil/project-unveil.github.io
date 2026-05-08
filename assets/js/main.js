@@ -220,7 +220,6 @@ function animateCounters() {
     if (!demosConfig) return;
     const demo = demosConfig.demos.find(d => d.id === sel.value);
     if (!demo) return;
-    if (countEl) countEl.textContent = demo.count.toLocaleString() + ' clips';
     sendDemo(demo);
     // Update sync duration
     window._demoDuration = demo.numFrames / demo.fps;
