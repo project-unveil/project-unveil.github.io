@@ -726,14 +726,10 @@ section:nth-of-type(even) {
 
 .pdf-canvas {
   display: block;
-  width: 100%;   /* CSS scales the canvas down; actual px set by JS */
+  width: 100%;
   height: auto;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.pdf-canvas.rendered {
-  opacity: 1;
+  min-height: 200px;   /* visible while rendering */
+  background: #f8f9fa;
 }
 
 /* ── Abstract ─────────────────────────────────────────────── */
