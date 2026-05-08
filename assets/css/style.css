@@ -732,6 +732,16 @@ section:nth-of-type(even) {
   background: #f8f9fa;
 }
 
+/* PDF fallback link — hidden once canvas renders */
+.pdf-fallback {
+  text-align: center;
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  color: #888;
+  margin: 0;
+}
+.pdf-canvas.rendered + .pdf-fallback { display: none; }
+
 /* ── Abstract ─────────────────────────────────────────────── */
 #abstract .abstract-text {
   font-size: 1.02rem;
