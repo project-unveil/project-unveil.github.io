@@ -217,7 +217,7 @@ function animateCounters() {
   if (!btnPlay) return;
 
   const IFRAMES = ['iframe-g1', 'iframe-predicted', 'iframe-groundtruth'];
-  const SEQ_DURATION = 3303 / 120;  // 27.5s — macarena dance (G1: 3303 frames @ 120fps)
+  let   SEQ_DURATION = window._demoDuration || (3303 / 120);
   let   masterTime = 0;
   let   playing    = false;
   let   lastTS     = null;
