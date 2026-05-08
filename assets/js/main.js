@@ -256,6 +256,8 @@ function animateCounters() {
 
   function tick(ts) {
     requestAnimationFrame(tick);
+    // Sync duration may update when demo changes
+    if (window._demoDuration) { SEQ_DURATION = window._demoDuration; window._demoDuration = null; }
     if (playing) {
       if (lastTS === null) lastTS = ts;
       const dt = (ts - lastTS) * 0.001 * speed;
