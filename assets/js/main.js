@@ -207,6 +207,9 @@ function animateCounters() {
       const def = cfg.demos.find(d => d.id === cfg.defaultDemo);
       if (def && countEl) countEl.textContent = def.count.toLocaleString() + ' clips';
 
+      // Preload top demos silently after page settles
+      preloadDemosInBackground(cfg);
+
     } catch(e) {
       console.warn('demos_config not ready yet:', e.message);
       sel.innerHTML = '<option value="dancing">Dancing (default)</option>';
