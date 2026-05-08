@@ -352,6 +352,19 @@ window.addEventListener('message', e => {
     controls.update();
   }
 
+  if (msg.type === 'PRELOAD_DEMO' && msg.demo) {
+    const demo    = msg.demo;
+    const isGT    = SEQ === 'groundtruth';
+    const cacheKey = `${demo.id}_${isGT ? 'gt' : 'pred'}`;
+    if (!demoCache.has(cacheKey) && !loadingDemo) {
+      const binKey = isGT ? 'smplGtFile' : 'smplPredFile';
+      const binUrl = '../assets/demos/' + demo[binKey].replace('./','');
+      loadVertsBin(binUrl)
+        .then(vd => demoCache.set(cacheKey, vd))
+        .catch(() => {});  // silent — preload is best-effort
+    }
+  }
+
   if (msg.type === 'LOAD_DEMO' && msg.demo) {
     if (loadingDemo) return;
     loadingDemo = true;
