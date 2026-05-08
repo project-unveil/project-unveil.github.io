@@ -353,39 +353,60 @@ window.addEventListener('message', e => {
   }
 
   if (msg.type === 'LOAD_DEMO' && msg.demo) {
-    const demo   = msg.demo;
-    const isGT   = SEQ === 'groundtruth';
-    const binKey = isGT ? 'smplGtFile' : 'smplPredFile';
-    const binUrl = '../assets/demos/' + demo[binKey].replace('./','');
+    if (loadingDemo) return;
+    loadingDemo = true;
+    showSwitchOverlay();
+
+    const demo    = msg.demo;
+    const isGT    = SEQ === 'groundtruth';
+    const cacheKey = `${demo.id}_${isGT ? 'gt' : 'pred'}`;
+    const binKey  = isGT ? 'smplGtFile' : 'smplPredFile';
+    const binUrl  = '../assets/demos/' + demo[binKey].replace('./','');
     const facesUrl = '../assets/demos/' + demo.smplFacesFile.replace('./','');
 
-    // Reload vertex data
-    Promise.all([loadVertsBin(binUrl), loadFacesBin(facesUrl)])
-      .then(([vd, fd]) => {
-        numFrames = vd.numFrames;
-        numVerts  = vd.numVerts;
-        seqFps    = vd.fps;
-        vertData  = vd.verts;
-        facesData = fd;
-        masterTime = 0;
-        // Re-align floor
-        const frameMin = new Float32Array(numFrames);
-        for (let fi = 0; fi < numFrames; fi++) {
-          const base = fi * numVerts * 3;
-          let mn = Infinity;
-          for (let j = 1; j < numVerts * 3; j += 3) {
-            const y = vertData[base + j];
-            if (y < mn) mn = y;
-          }
-          frameMin[fi] = mn;
+    async function doLoad() {
+      // Faces shared — load once
+      if (!sharedFaces) {
+        sharedFaces = await loadFacesBin(facesUrl);
+      }
+
+      // Vertex data — use cache if available
+      let vd;
+      if (demoCache.has(cacheKey)) {
+        vd = demoCache.get(cacheKey);
+      } else {
+        vd = await loadVertsBin(binUrl);
+        demoCache.set(cacheKey, vd);
+      }
+
+      numFrames  = vd.numFrames;
+      numVerts   = vd.numVerts;
+      seqFps     = vd.fps;
+      vertData   = vd.verts;
+      facesData  = sharedFaces;
+      masterTime = 0;
+
+      // Re-align floor
+      const frameMin = new Float32Array(numFrames);
+      for (let fi = 0; fi < numFrames; fi++) {
+        const base = fi * numVerts * 3;
+        let mn = Infinity;
+        for (let j = 1; j < numVerts * 3; j += 3) {
+          const y = vertData[base + j];
+          if (y < mn) mn = y;
         }
-        const sorted = Array.from(frameMin).sort((a,b)=>a-b);
-        if (smplMesh) smplMesh.position.y = -sorted[Math.floor(numFrames*0.10)];
-        // Update face index if changed
-        smplMesh.geometry.setIndex(new THREE.BufferAttribute(facesData, 1));
-        applyFrame(0);
-      })
-      .catch(err => console.error('LOAD_DEMO SMPL error:', err));
+        frameMin[fi] = mn;
+      }
+      const sorted = Array.from(frameMin).sort((a, b) => a - b);
+      if (smplMesh) smplMesh.position.y = -sorted[Math.floor(numFrames * 0.10)];
+      smplMesh.geometry.setIndex(new THREE.BufferAttribute(facesData, 1));
+      applyFrame(0);
+      hideSwitchOverlay();
+    }
+
+    doLoad()
+      .catch(err => { console.error('LOAD_DEMO SMPL error:', err); hideSwitchOverlay(); })
+      .finally(() => { loadingDemo = false; });
   }
 });
 
