@@ -368,38 +368,47 @@ function animateCounters() {
 
 /* ── PDF.js: render PDF figures to canvas ──────────────────── */
 (function () {
-  const canvases = document.querySelectorAll('canvas[data-pdf]');
-  if (!canvases.length) return;
+  function renderPDFs() {
+    const canvases = document.querySelectorAll('canvas[data-pdf]');
+    if (!canvases.length) return;
 
-  const pdfjsLib = window['pdfjs-dist/build/pdf'];
-  if (!pdfjsLib) { console.warn('PDF.js not loaded'); return; }
+    const pdfjsLib = window['pdfjs-dist/build/pdf'];
+    if (!pdfjsLib) { console.warn('PDF.js not loaded'); return; }
 
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-  canvases.forEach(async (canvas) => {
-    try {
-      const pdf      = await pdfjsLib.getDocument(canvas.dataset.pdf).promise;
-      const page     = await pdf.getPage(1);
-      const dpr      = window.devicePixelRatio || 1;
-      const contW    = canvas.parentElement.offsetWidth || 900;
-      const baseVp   = page.getViewport({ scale: 1 });
-      const scale    = (contW / baseVp.width) * dpr;
-      const viewport = page.getViewport({ scale });
+    canvases.forEach(async (canvas) => {
+      try {
+        const pdf      = await pdfjsLib.getDocument(canvas.dataset.pdf).promise;
+        const page     = await pdf.getPage(1);
+        const dpr      = window.devicePixelRatio || 1;
+        const contW    = canvas.parentElement.offsetWidth || 900;
+        const baseVp   = page.getViewport({ scale: 1 });
+        const scale    = (contW / baseVp.width) * dpr;
+        const viewport = page.getViewport({ scale });
 
-      canvas.width  = viewport.width;
-      canvas.height = viewport.height;
+        canvas.width  = viewport.width;
+        canvas.height = viewport.height;
 
-      await page.render({
-        canvasContext: canvas.getContext('2d'),
-        viewport,
-      }).promise;
+        await page.render({
+          canvasContext: canvas.getContext('2d'),
+          viewport,
+        }).promise;
 
-      canvas.classList.add('rendered');
-    } catch (err) {
-      console.error('PDF render error:', canvas.dataset.pdf, err);
-    }
-  });
+        canvas.classList.add('rendered');
+      } catch (err) {
+        console.error('PDF render error:', canvas.dataset.pdf, err);
+      }
+    });
+  }
+
+  // Defer until after layout so offsetWidth is reliable
+  if (document.readyState === 'complete') {
+    renderPDFs();
+  } else {
+    window.addEventListener('load', renderPDFs);
+  }
 })();
 
 /* ── Smooth close of mobile nav on link click ──────────────── */
