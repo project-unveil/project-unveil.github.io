@@ -79,6 +79,135 @@ function animateCounters() {
   });
 }
 
+/* ── Activity demo selector ────────────────────────────────── */
+(function () {
+  const sel    = document.getElementById('activity-select');
+  const countEl= document.getElementById('activity-count');
+  if (!sel) return;
+
+  let demosConfig = null;
+
+  function getIframes() {
+    return ['iframe-g1','iframe-predicted','iframe-groundtruth']
+      .map(id => document.getElementById(id))
+      .filter(Boolean);
+  }
+
+  function sendDemo(demo) {
+    const iframes = getIframes();
+    iframes.forEach(ifr => ifr.closest('.demo-panel')?.classList.add('loading'));
+
+    // Update attribute chips
+    updateChips(demo);
+
+    // Update sync duration
+    if (typeof SEQ_DURATION !== 'undefined') {
+      // handled in sync controller below
+    }
+
+    // Dispatch to all viewers
+    iframes.forEach(ifr => {
+      ifr.contentWindow?.postMessage({ type: 'LOAD_DEMO', demo }, '*');
+    });
+
+    // Remove loading state after a short delay
+    setTimeout(() => {
+      iframes.forEach(ifr => ifr.closest('.demo-panel')?.classList.remove('loading'));
+    }, 3500);
+  }
+
+  function updateChips(demo) {
+    // Update predicted chips
+    const predChips = document.querySelectorAll('.attr-chip[data-pred]');
+    const p = demo.predicted, g = demo.groundTruth;
+    const fields = [
+      { label:'Height', predVal: p.height + ' cm', gtVal: g.height + ' cm',
+        pred: p.height, gt: g.height, mae: 4.4 },
+      { label:'Weight', predVal: p.weight + ' kg', gtVal: g.weight + ' kg',
+        pred: p.weight, gt: g.weight, mae: 8.9 },
+      { label:'Age',    predVal: p.age    + ' yrs', gtVal: g.age    + ' yrs',
+        pred: p.age,    gt: g.age,    mae: 4.07 },
+      { label:'Gender', predVal: p.gender.charAt(0).toUpperCase()+p.gender.slice(1),
+        gtVal: g.gender.charAt(0).toUpperCase()+g.gender.slice(1),
+        pred: 1, gt: 1, mae: 1 },
+    ];
+    predChips.forEach((chip, i) => {
+      if (!fields[i]) return;
+      const f = fields[i];
+      chip.dataset.pred = f.pred;
+      chip.dataset.gt   = f.gt;
+      chip.dataset.mae  = f.mae;
+      chip.querySelector('.attr-chip-value').textContent = f.predVal;
+    });
+
+    // Update GT chips
+    document.querySelectorAll('.attr-chip--gt').forEach((chip, i) => {
+      if (!fields[i]) return;
+      chip.querySelector('.attr-chip-value').textContent = fields[i].gtVal;
+    });
+
+    // Re-apply color coding
+    applyDemoColors(fields);
+  }
+
+  function applyDemoColors(fields) {
+    function errorChipColors(pred, gt, mae) {
+      const ratio = Math.abs(pred - gt) / mae;
+      const t     = Math.min(ratio / 2, 1);
+      const hue   = 130;
+      return {
+        bg:    `hsl(${hue}, ${Math.round(60-44*t)}%, ${Math.round(91+4*t)}%)`,
+        border:`hsl(${hue}, ${Math.round(52-36*t)}%, ${Math.round(62+14*t)}%)`,
+        color: `hsl(${hue}, ${Math.round(70-40*t)}%, ${Math.round(34+10*t)}%)`,
+      };
+    }
+    document.querySelectorAll('.attr-chip[data-pred]').forEach(chip => {
+      const c = errorChipColors(+chip.dataset.pred, +chip.dataset.gt, +chip.dataset.mae);
+      chip.style.background  = c.bg;
+      chip.style.borderColor = c.border;
+      const v = chip.querySelector('.attr-chip-value');
+      if (v) v.style.color = c.color;
+    });
+  }
+
+  async function init() {
+    try {
+      const cfg = await fetch('./assets/demos/demos_config.json').then(r => r.json());
+      demosConfig = cfg;
+
+      sel.innerHTML = '';
+      cfg.demos.forEach(demo => {
+        const opt = document.createElement('option');
+        opt.value = demo.id;
+        opt.textContent = demo.label;
+        if (demo.id === cfg.defaultDemo) opt.selected = true;
+        sel.appendChild(opt);
+      });
+
+      // Show count for default
+      const def = cfg.demos.find(d => d.id === cfg.defaultDemo);
+      if (def && countEl) countEl.textContent = def.count.toLocaleString() + ' clips';
+
+    } catch(e) {
+      console.warn('demos_config not ready yet:', e.message);
+      sel.innerHTML = '<option value="dancing">Dancing (default)</option>';
+    }
+  }
+
+  sel.addEventListener('change', () => {
+    if (!demosConfig) return;
+    const demo = demosConfig.demos.find(d => d.id === sel.value);
+    if (!demo) return;
+    if (countEl) countEl.textContent = demo.count.toLocaleString() + ' clips';
+    sendDemo(demo);
+    // Update sync duration
+    window._demoDuration = demo.numFrames / demo.fps;
+  });
+
+  init();
+  window.getDemosConfig = () => demosConfig;
+})();
+
 /* ── Master sync controller (drives all 3 viewer iframes) ──── */
 (function () {
   const btnPlay  = document.getElementById('sync-play');
