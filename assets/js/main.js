@@ -397,6 +397,9 @@ function animateCounters() {
         }).promise;
 
         canvas.classList.add('rendered');
+        // Hide fallback link once canvas is drawn
+        const fallback = canvas.nextElementSibling;
+        if (fallback?.classList.contains('pdf-fallback')) fallback.style.display = 'none';
       } catch (err) {
         console.error('PDF render error:', canvas.dataset.pdf, err);
       }
