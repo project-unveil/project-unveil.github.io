@@ -170,6 +170,25 @@ function animateCounters() {
     });
   }
 
+  // Preload top N demos silently after page is idle
+  function preloadDemosInBackground(cfg, topN = 4) {
+    const toPreload = cfg.demos.slice(0, topN);   // already sorted by count desc
+    const iframes   = getIframes();
+    let   idx       = 0;
+
+    function next() {
+      if (idx >= toPreload.length) return;
+      const demo = toPreload[idx++];
+      // Send a silent preload hint to each SMPL iframe
+      iframes.forEach(ifr => {
+        ifr.contentWindow?.postMessage({ type: 'PRELOAD_DEMO', demo }, '*');
+      });
+      // Stagger to avoid saturating bandwidth
+      setTimeout(next, 4000);
+    }
+    setTimeout(next, 5000);   // start 5s after page load
+  }
+
   async function init() {
     try {
       const cfg = await fetch('./assets/demos/demos_config.json').then(r => r.json());
