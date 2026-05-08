@@ -149,7 +149,7 @@ def run_smpl(bvh_path, height, weight, gender, max_frames, device):
 
 
 def main():
-    device = "cuda" if __import__("torch").cuda.is_available() else "cpu"
+    device = "cpu"   # SMPL model has buffers that don't transfer cleanly to CUDA
     print(f"Device: {device}\n")
 
     faces_saved = False
