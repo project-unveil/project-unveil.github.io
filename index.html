@@ -246,10 +246,11 @@
     <!-- Teaser figure -->
     <figure class="pdf-figure-wrap mt-4">
       <canvas data-pdf="./assets/img/vla-privacy-teaser.pdf"
-              class="pdf-canvas" aria-label="UNVEIL teaser figure"></canvas>
-      <noscript>
-        <a href="./assets/img/vla-privacy-teaser.pdf">View teaser figure (PDF)</a>
-      </noscript>
+              class="pdf-canvas" aria-label="UNVEIL teaser figure"
+              id="canvas-teaser"></canvas>
+      <p class="pdf-fallback" id="fallback-teaser">
+        <a href="./assets/img/vla-privacy-teaser.pdf" target="_blank">View teaser figure (PDF)</a>
+      </p>
     </figure>
     <p class="teaser-caption fade-in">
       <strong>Operator movement signatures survive the retargeting transform.</strong>
