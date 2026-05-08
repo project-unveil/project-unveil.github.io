@@ -124,8 +124,20 @@ if (EMBEDDED) document.body.classList.add('embedded');
 let cfg, vertData, facesData, numFrames, numVerts, seqFps;
 let renderer, scene, camera, controls, smplMesh, posAttr;
 let playing  = true;
-let masterTime = 0;   // seconds — driven by parent sync or own clock
+let masterTime = 0;
 let lastTS   = null;
+
+// ── Demo cache — keyed by "<id>_pred" or "<id>_gt" ───────────────────────
+const demoCache    = new Map();
+let   sharedFaces  = null;   // faces.bin loaded once, reused for all demos
+let   loadingDemo  = false;  // prevent concurrent loads
+
+function showSwitchOverlay() {
+  document.getElementById('switch-overlay')?.classList.add('visible');
+}
+function hideSwitchOverlay() {
+  document.getElementById('switch-overlay')?.classList.remove('visible');
+}
 
 function setStatus(msg) {
   const el = document.getElementById('load-status');
