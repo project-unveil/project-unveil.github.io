@@ -305,67 +305,108 @@
 ══════════════════════════════════════════════════ -->
 <section id="results">
   <div class="container">
-    <h2 class="section-heading fade-in">Key Results</h2>
+    <h2 class="section-heading fade-in">Results</h2>
 
-    <p class="fade-in text-muted mb-3">
-      Biometric inference from <strong>Unitree G1 robot action space</strong>
-      using actor-disjoint splits.
+    <!-- ── Main results table ── -->
+    <p class="results-caption fade-in">
+      <span class="unveil-kw">UNVEIL</span>&#8217;s performance across inference tasks and evaluation settings.
+      (&uarr;&nbsp;higher is better; &darr;&nbsp;lower is better.)
     </p>
 
     <div class="table-responsive fade-in">
-      <table class="table table-bordered align-middle">
+      <table class="table results-table align-middle">
         <thead>
-          <tr>
-            <th>Task</th>
-            <th>Metric</th>
-            <th>Seen Val</th>
-            <th>Unseen Test</th>
+          <tr class="results-thead-tasks">
+            <th class="results-corner">
+              <span class="corner-task">Task &rarr;</span><br>
+              <span class="corner-setting">Eval. Setting &darr;</span>
+            </th>
+            <th>Gender<br><small>Acc (%) &uarr;</small></th>
+            <th>Weight<br><small>MAE &darr;</small></th>
+            <th>Height<br><small>MAE &darr;</small></th>
+            <th>Age<br><small>MAE &darr;</small></th>
+            <th>Re-ID<br><small>Top-1 / Top-5 &uarr;</small></th>
+            <th>Linkage<br><small>Acc (%) &uarr;</small></th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Re-Identification</td>
-            <td>Top-1 Accuracy (%) &uarr;</td>
+            <td class="results-setting">Unseen operators</td>
+            <td class="highlight-cell">83.4</td>
+            <td>9.1 kg</td>
+            <td>5.7 cm</td>
+            <td>4.2 yr</td>
             <td class="text-muted">—</td>
-            <td class="highlight-cell">92.2</td>
+            <td class="text-muted">—</td>
           </tr>
           <tr>
-            <td>Gender</td>
-            <td>Accuracy (%) &uarr;</td>
-            <td class="text-muted">—</td>
-            <td class="highlight-cell">89.7</td>
+            <td class="results-setting">Unseen demos of seen operators</td>
+            <td class="highlight-cell">96.0</td>
+            <td>4.0 kg</td>
+            <td>3.6 cm</td>
+            <td>2.5 yr</td>
+            <td class="highlight-cell">97.2 / 98.8</td>
+            <td class="highlight-cell">92.4</td>
+          </tr>
+          <tr class="results-section-header">
+            <td colspan="7"><em>Performance range across 20 activity categories</em></td>
           </tr>
           <tr>
-            <td>Age</td>
-            <td>MAE (years) &darr;</td>
-            <td class="text-muted">—</td>
-            <td class="highlight-cell">4.07</td>
+            <td class="results-setting ps-4">Most leaking activity</td>
+            <td class="highlight-cell">100.0</td>
+            <td>4.7 kg</td>
+            <td>3.3 cm</td>
+            <td>0.4 yr</td>
+            <td class="highlight-cell">100.0 / 100.0</td>
+            <td class="highlight-cell">100.0</td>
           </tr>
           <tr>
-            <td>Height</td>
-            <td>MAE (cm) &darr;</td>
-            <td class="text-muted">—</td>
-            <td class="highlight-cell">4.40</td>
+            <td class="results-setting ps-4">2nd-most leaking</td>
+            <td>94.1</td>
+            <td>5.3 kg</td>
+            <td>3.9 cm</td>
+            <td>1.5 yr</td>
+            <td>98.0 / 99.0</td>
+            <td>99.0</td>
           </tr>
           <tr>
-            <td>Weight</td>
-            <td>MAE (kg) &darr;</td>
-            <td class="text-muted">—</td>
-            <td class="highlight-cell">8.89</td>
+            <td class="results-setting ps-4">2nd-least leaking</td>
+            <td>74.4</td>
+            <td>11.1 kg</td>
+            <td>7.4 cm</td>
+            <td>3.8 yr</td>
+            <td>70.1 / 89.5</td>
+            <td>74.9</td>
+          </tr>
+          <tr>
+            <td class="results-setting ps-4">Least leaking activity</td>
+            <td>72.9</td>
+            <td>14.8 kg</td>
+            <td>7.8 cm</td>
+            <td>3.9 yr</td>
+            <td>73.0 / 84.2</td>
+            <td>69.5</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <p class="results-note fade-in">
-      Results on actor-disjoint test split (~98 unseen actors). Lower MAE is better for
-      regression tasks.
+    <!-- ── Comparison figure ── -->
+    <figure class="pdf-figure-wrap mt-5">
+      <canvas data-pdf="./assets/img/improvement_combined_comparison.pdf"
+              class="pdf-canvas" aria-label="UNVEIL vs baselines comparison figure"></canvas>
+      <p class="pdf-fallback">
+        <a href="./assets/img/improvement_combined_comparison.pdf" target="_blank">View comparison figure (PDF)</a>
+      </p>
+    </figure>
+    <p class="teaser-caption mt-2 fade-in">
+      Comparison between <span class="unveil-kw">UNVEIL</span> and two well-tested action-recognition
+      architectures adapted with our framework&nbsp;—&nbsp;<a href="https://openaccess.thecvf.com/content_CVPR_2020/papers/Zhang_Semantics-Guided_Neural_Networks_for_Efficient_Skeleton-Based_Human_Action_Recognition_CVPR_2020_paper.pdf" target="_blank" rel="noopener">SGN</a>
+      and <a href="https://ojs.aaai.org/index.php/AAAI/article/view/28440" target="_blank" rel="noopener">DSGCN</a>.
+      We consistently improve over both adaptations across all tasks. Gray shows task-specific
+      chance performance for reference.
     </p>
 
-    <!-- Space for additional table / figure -->
-    <div class="mt-4 fade-in" style="border: 2px dashed #dde; border-radius:8px; padding:2rem; text-align:center; color:#bbb; font-size:0.9rem;">
-      Additional results table or ablation figure will be placed here.
-    </div>
   </div>
 </section>
 
