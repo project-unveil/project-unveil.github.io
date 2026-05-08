@@ -303,12 +303,47 @@ window.addEventListener('message', e => {
   }
 
   if (msg.type === 'CAMERA' && msg.source !== 'smpl') {
-    // Receive camera from G1 or sibling; mirror position offset
     const [px, py, pz] = msg.pos;
     const [tx, ty, tz] = msg.target;
     camera.position.set(px, py, pz);
     controls.target.set(tx, ty, tz);
     controls.update();
+  }
+
+  if (msg.type === 'LOAD_DEMO' && msg.demo) {
+    const demo   = msg.demo;
+    const isGT   = SEQ === 'groundtruth';
+    const binKey = isGT ? 'smplGtFile' : 'smplPredFile';
+    const binUrl = '../assets/demos/' + demo[binKey].replace('./','');
+    const facesUrl = '../assets/demos/' + demo.smplFacesFile.replace('./','');
+
+    // Reload vertex data
+    Promise.all([loadVertsBin(binUrl), loadFacesBin(facesUrl)])
+      .then(([vd, fd]) => {
+        numFrames = vd.numFrames;
+        numVerts  = vd.numVerts;
+        seqFps    = vd.fps;
+        vertData  = vd.verts;
+        facesData = fd;
+        masterTime = 0;
+        // Re-align floor
+        const frameMin = new Float32Array(numFrames);
+        for (let fi = 0; fi < numFrames; fi++) {
+          const base = fi * numVerts * 3;
+          let mn = Infinity;
+          for (let j = 1; j < numVerts * 3; j += 3) {
+            const y = vertData[base + j];
+            if (y < mn) mn = y;
+          }
+          frameMin[fi] = mn;
+        }
+        const sorted = Array.from(frameMin).sort((a,b)=>a-b);
+        if (smplMesh) smplMesh.position.y = -sorted[Math.floor(numFrames*0.10)];
+        // Update face index if changed
+        smplMesh.geometry.setIndex(new THREE.BufferAttribute(facesData, 1));
+        applyFrame(0);
+      })
+      .catch(err => console.error('LOAD_DEMO SMPL error:', err));
   }
 });
 
