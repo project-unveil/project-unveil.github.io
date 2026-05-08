@@ -231,6 +231,15 @@ window.addEventListener('message', e => {
     controls.target.set(...msg.target);
     controls.update();
   }
+  if (msg.type === 'LOAD_DEMO' && msg.demo?.g1CsvFile) {
+    const csvUrl = '../assets/demos/' + msg.demo.g1CsvFile.replace('./','');
+    loadCSV(csvUrl, cfg.maxFrames || 600).then(md => {
+      motionData = md;
+      frameIdx   = 0;
+      accumTime  = 0;
+      lastTime   = null;
+    }).catch(err => console.error('LOAD_DEMO G1 error:', err));
+  }
 });
 
 // ── Boot ──────────────────────────────────────────────────────────────────
