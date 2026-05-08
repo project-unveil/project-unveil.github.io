@@ -766,19 +766,92 @@ section:nth-of-type(even) {
 }
 
 /* ── Results Table ────────────────────────────────────────── */
-#results .table thead th {
+.results-caption {
+  font-size: 0.92rem;
+  color: #555;
+  margin-bottom: 0.75rem;
+}
+
+.results-table {
+  font-size: 0.88rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid #dde3f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.results-table thead th {
   background: #2c3e6b;
   color: #fff;
   font-weight: 600;
-  border-color: #2c3e6b;
+  font-size: 0.82rem;
+  text-align: center;
+  padding: 0.6rem 0.75rem;
+  border: none;
+  line-height: 1.35;
+  white-space: nowrap;
 }
 
-#results .table td {
+.results-table thead th small {
+  display: block;
+  font-weight: 400;
+  font-size: 0.72rem;
+  opacity: 0.82;
+  margin-top: 2px;
+}
+
+/* Corner cell with diagonal label split */
+.results-corner {
+  background: #1e2d52 !important;
+  padding: 0.55rem 0.8rem !important;
+  min-width: 200px;
+  line-height: 1.3;
+}
+
+.corner-task {
+  display: block;
+  text-align: right;
+  font-size: 0.78rem;
+  color: #a8c0ff;
+  font-weight: 600;
+}
+
+.corner-setting {
+  display: block;
+  text-align: left;
+  font-size: 0.78rem;
+  color: #7dcfa8;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.results-table tbody td {
   vertical-align: middle;
+  text-align: center;
+  padding: 0.55rem 0.75rem;
+  border-top: 1px solid #edf0f7;
+}
+
+.results-setting {
+  text-align: left !important;
+  font-weight: 500;
+  color: #1b5c3a;
+  white-space: nowrap;
+}
+
+.results-section-header td {
+  background: #f4f7f4;
+  text-align: center !important;
+  color: #555;
+  font-size: 0.82rem;
+  padding: 0.45rem 0.75rem;
+  border-top: 2px solid #d0e0d0 !important;
+  border-bottom: 1px solid #d0e0d0;
 }
 
 #results .highlight-cell {
-  color: #e74c3c;
+  color: #c0392b;
   font-weight: 700;
 }
 
