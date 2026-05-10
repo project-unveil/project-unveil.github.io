@@ -92,9 +92,13 @@ The URL param `?seq=predicted` vs `?seq=groundtruth` selects which `vertsFile` f
 
 **Demo switching**: `LOAD_DEMO` triggers `loadVertsBin` for the activity-specific file, caches by `<id>_<gt|pred>` key, recomputes the floor offset, and reattaches the index buffer. `PRELOAD_DEMO` is a best-effort warm-cache hint dispatched in the background a few seconds after page load for the top demos.
 
-### Master sync (in `assets/js/main.js`)
+### Per-block sync (in `assets/js/main.js`)
 
-Single requestAnimationFrame loop drives `masterTime`. Each tick broadcasts `{type:'SYNC', time, playing, speed}` to all three iframes. Duration comes from the active demo's `numFrames / fps` — and the FPS is **per-activity** (e.g., `walking` is 17.4 fps, `jogging` is 25.5 fps, `dancing` 25 fps). When `_demoDuration` is set on `window` the next tick picks it up.
+Each `.demo-block` has its own controller. On init, `init()` walks every block, populates its dropdown with all 15 activities (selecting the one named in `data-default-demo`), seeds `block._seqDuration` from that demo's `numFrames / fps`, applies initial chip color coding, wires the dropdown's `change` event to `sendDemoToBlock(block, demo)`, and calls `attachSync(block)`.
+
+`attachSync(block)` installs an independent rAF loop driving that block's `masterTime`, broadcasting `{type:'SYNC', time, playing, speed}` to its 3 iframes via `block.querySelectorAll('iframe').contentWindow.postMessage`. Each block has its own `playing` flag, scrub position, and speed select — they don't talk to each other. Auto-play kicks in per block when one of its iframes posts a `READY` message.
+
+Duration comes from the active demo's `numFrames / fps` — the FPS is **per-activity** (walking 17.4 fps, jogging 25.5 fps, dancing 10.9 fps, sitting 29 fps). When the dropdown changes, `block._seqDuration` is updated and the next tick picks it up.
 
 ## Sibling repo: `C:/Users/sihat/Downloads/bones-seed/`
 
