@@ -73,7 +73,7 @@
 </section>
 
 <!-- ══════════════════════════════════════════════
-     DEMO — 3-PANEL VIDEO COMPARISON
+     DEMO — 3 ROWS × 3-PANEL VIDEO COMPARISON
 ══════════════════════════════════════════════════ -->
 <section id="demo">
   <div class="demo-container">
@@ -82,144 +82,321 @@
       <h2 class="section-heading">Overview of <span class="unveil-kw">UNVEIL</span></h2>
     </div>
 
-    <!-- ── Activity selector ── -->
-    <div class="demo-selector fade-in">
-      <label class="demo-selector-label" for="activity-select">Activity</label>
-      <div class="demo-selector-wrap">
-        <select id="activity-select" class="demo-select">
-          <option value="">Loading…</option>
+    <!--
+      Three pre-loaded demo blocks. Each block is a self-contained instance of
+      the activity selector + 3-panel viewers + per-row sync bar. Defaults span
+      locomotion / dance / idle so the leakage finding is visible across motion
+      types without the visitor needing to interact with the dropdown.
+      Iframes are lazy-loaded via data-src; the first block loads immediately
+      because IntersectionObserver fires on visible blocks at load time.
+    -->
+
+    <!-- ══════════════════════ BLOCK 0: Walking ══════════════════════ -->
+    <div class="demo-block fade-in" data-block="0" data-default-demo="walking">
+
+      <div class="demo-selector">
+        <label class="demo-selector-label" for="activity-select-0">Activity</label>
+        <div class="demo-selector-wrap">
+          <select id="activity-select-0" class="demo-select activity-select" data-block="0">
+            <option value="">Loading…</option>
+          </select>
+          <span class="demo-select-arrow" aria-hidden="true">&#8964;</span>
+        </div>
+      </div>
+
+      <div class="demo-panels">
+        <div class="demo-col-header demo-col-header--robot">
+          <div class="robot-traj-box">Robot Trajectory</div>
+        </div>
+
+        <div class="demo-col-header">
+          <div class="attr-panel attr-panel--pred">
+            <div class="attr-panel-title"><span class="unveil-kw">UNVEIL</span> Prediction</div>
+            <div class="attr-row">
+              <div class="attr-chip" data-pred="175" data-gt="171" data-mae="4.4">
+                <span class="attr-chip-label">Height</span>
+                <span class="attr-chip-value">175 cm</span>
+              </div>
+              <div class="attr-chip" data-pred="57" data-gt="62" data-mae="8.9">
+                <span class="attr-chip-label">Weight</span>
+                <span class="attr-chip-value">57 kg</span>
+              </div>
+              <div class="attr-chip" data-pred="31" data-gt="29" data-mae="4.07">
+                <span class="attr-chip-label">Age</span>
+                <span class="attr-chip-value">31 yrs</span>
+              </div>
+              <div class="attr-chip" data-pred="1" data-gt="1" data-mae="1">
+                <span class="attr-chip-label">Gender</span>
+                <span class="attr-chip-value">Female</span>
+              </div>
+            </div>
+          </div>
+          <div class="render-arrow" aria-hidden="true">
+            <svg class="render-arrow-svg render-arrow-svg--pred" viewBox="0 0 40 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="20" cy="5"  r="2.4" fill="currentColor" opacity="1"/>
+              <circle cx="20" cy="14" r="1.9" fill="currentColor" opacity="0.65"/>
+              <circle cx="20" cy="22" r="1.4" fill="currentColor" opacity="0.35"/>
+              <line x1="20" y1="26" x2="20" y2="39" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M9 37 L20 51 L31 37" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="demo-col-header">
+          <div class="attr-panel attr-panel--gt">
+            <div class="attr-panel-title">Ground-Truth Attributes</div>
+            <div class="attr-row">
+              <div class="attr-chip attr-chip--gt"><span class="attr-chip-label">Height</span><span class="attr-chip-value">171 cm</span></div>
+              <div class="attr-chip attr-chip--gt"><span class="attr-chip-label">Weight</span><span class="attr-chip-value">62 kg</span></div>
+              <div class="attr-chip attr-chip--gt"><span class="attr-chip-label">Age</span><span class="attr-chip-value">29 yrs</span></div>
+              <div class="attr-chip attr-chip--gt"><span class="attr-chip-label">Gender</span><span class="attr-chip-value">Female</span></div>
+            </div>
+          </div>
+          <div class="render-arrow" aria-hidden="true">
+            <svg class="render-arrow-svg render-arrow-svg--gt" viewBox="0 0 40 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="20" cy="5"  r="2.4" fill="currentColor" opacity="1"/>
+              <circle cx="20" cy="14" r="1.9" fill="currentColor" opacity="0.65"/>
+              <circle cx="20" cy="22" r="1.4" fill="currentColor" opacity="0.35"/>
+              <line x1="20" y1="26" x2="20" y2="39" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M9 37 L20 51 L31 37" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="demo-panel">
+          <div class="panel-video-wrap panel-iframe-wrap">
+            <iframe data-src="./g1_engine/viewer.html?embed=1&amp;demo=walking"
+                    class="g1-viewer-iframe iframe-g1" title="Unitree G1 robot motion viewer" allowfullscreen></iframe>
+          </div>
+        </div>
+        <div class="demo-panel">
+          <div class="panel-video-wrap panel-iframe-wrap">
+            <iframe data-src="./smpl_engine/viewer.html?seq=predicted&amp;embed=1&amp;demo=walking"
+                    class="g1-viewer-iframe iframe-predicted" title="SMPL body from UNVEIL predicted attributes" allowfullscreen></iframe>
+          </div>
+        </div>
+        <div class="demo-panel">
+          <div class="panel-video-wrap panel-iframe-wrap">
+            <iframe data-src="./smpl_engine/viewer.html?seq=groundtruth&amp;embed=1&amp;demo=walking"
+                    class="g1-viewer-iframe iframe-groundtruth" title="SMPL body rendered from ground-truth attributes" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div><!-- /.demo-panels -->
+
+      <div class="sync-bar" data-block="0">
+        <button class="sync-btn sync-play" data-block="0" title="Play / Pause">&#9654;</button>
+        <input  class="sync-progress" data-block="0" type="range" min="0" max="1" step="0.001" value="0"/>
+        <span   class="sync-time" data-block="0">0.00 / 0.00s</span>
+        <select class="sync-speed" data-block="0">
+          <option value="0.25">0.25×</option>
+          <option value="0.5">0.5×</option>
+          <option value="1" selected>1×</option>
+          <option value="2">2×</option>
         </select>
-        <span class="demo-select-arrow" aria-hidden="true">&#8964;</span>
       </div>
-    </div>
+    </div><!-- /.demo-block 0 -->
 
-    <!-- ── 2-row × 3-col grid: row 1 = headers, row 2 = equal video cards ── -->
-    <div class="demo-panels">
+    <!-- ══════════════════════ BLOCK 1: Dancing ══════════════════════ -->
+    <div class="demo-block fade-in" data-block="1" data-default-demo="dancing">
 
-      <!-- ══ ROW 1: column headers (outside the panel cards) ══ -->
-
-      <!-- Header 1 · Robot — centred in row -->
-      <div class="demo-col-header demo-col-header--robot fade-in" data-delay="0">
-        <div class="robot-traj-box">Robot Trajectory</div>
+      <div class="demo-selector">
+        <label class="demo-selector-label" for="activity-select-1">Activity</label>
+        <div class="demo-selector-wrap">
+          <select id="activity-select-1" class="demo-select activity-select" data-block="1">
+            <option value="">Loading…</option>
+          </select>
+          <span class="demo-select-arrow" aria-hidden="true">&#8964;</span>
+        </div>
       </div>
 
-      <!-- Header 2 · UNVEIL Prediction — single bordered box -->
-      <div class="demo-col-header fade-in" data-delay="150">
-        <div class="attr-panel attr-panel--pred">
-          <div class="attr-panel-title"><span class="unveil-kw">UNVEIL</span> Prediction</div>
-          <div class="attr-row">
-            <div class="attr-chip" data-pred="168" data-gt="162" data-mae="4.4">
-              <span class="attr-chip-label">Height</span>
-              <span class="attr-chip-value">168 cm</span>
-            </div>
-            <div class="attr-chip" data-pred="68" data-gt="72" data-mae="8.9">
-              <span class="attr-chip-label">Weight</span>
-              <span class="attr-chip-value">68 kg</span>
-            </div>
-            <div class="attr-chip" data-pred="29" data-gt="28" data-mae="4.07">
-              <span class="attr-chip-label">Age</span>
-              <span class="attr-chip-value">29 yrs</span>
-            </div>
-            <div class="attr-chip" data-pred="1" data-gt="1" data-mae="1">
-              <span class="attr-chip-label">Gender</span>
-              <span class="attr-chip-value">Male</span>
+      <div class="demo-panels">
+        <div class="demo-col-header demo-col-header--robot">
+          <div class="robot-traj-box">Robot Trajectory</div>
+        </div>
+
+        <div class="demo-col-header">
+          <div class="attr-panel attr-panel--pred">
+            <div class="attr-panel-title"><span class="unveil-kw">UNVEIL</span> Prediction</div>
+            <div class="attr-row">
+              <div class="attr-chip" data-pred="168" data-gt="172" data-mae="4.4">
+                <span class="attr-chip-label">Height</span><span class="attr-chip-value">168 cm</span>
+              </div>
+              <div class="attr-chip" data-pred="68" data-gt="68" data-mae="8.9">
+                <span class="attr-chip-label">Weight</span><span class="attr-chip-value">68 kg</span>
+              </div>
+              <div class="attr-chip" data-pred="29" data-gt="28" data-mae="4.07">
+                <span class="attr-chip-label">Age</span><span class="attr-chip-value">29 yrs</span>
+              </div>
+              <div class="attr-chip" data-pred="1" data-gt="1" data-mae="1">
+                <span class="attr-chip-label">Gender</span><span class="attr-chip-value">Female</span>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- Render arrow -->
-        <div class="render-arrow" aria-hidden="true">
-          <svg class="render-arrow-svg render-arrow-svg--pred" viewBox="0 0 40 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="20" cy="5"  r="2.4" fill="currentColor" opacity="1"/>
-            <circle cx="20" cy="14" r="1.9" fill="currentColor" opacity="0.65"/>
-            <circle cx="20" cy="22" r="1.4" fill="currentColor" opacity="0.35"/>
-            <line x1="20" y1="26" x2="20" y2="39" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-            <path d="M9 37 L20 51 L31 37" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-      </div>
-
-      <!-- Header 3 · Ground Truth — single bordered box -->
-      <div class="demo-col-header fade-in" data-delay="300">
-        <div class="attr-panel attr-panel--gt">
-          <div class="attr-panel-title">Ground-Truth Attributes</div>
-          <div class="attr-row">
-            <div class="attr-chip attr-chip--gt">
-              <span class="attr-chip-label">Height</span>
-              <span class="attr-chip-value">162 cm</span>
-            </div>
-            <div class="attr-chip attr-chip--gt">
-              <span class="attr-chip-label">Weight</span>
-              <span class="attr-chip-value">72 kg</span>
-            </div>
-            <div class="attr-chip attr-chip--gt">
-              <span class="attr-chip-label">Age</span>
-              <span class="attr-chip-value">28 yrs</span>
-            </div>
-            <div class="attr-chip attr-chip--gt">
-              <span class="attr-chip-label">Gender</span>
-              <span class="attr-chip-value">Male</span>
-            </div>
+          <div class="render-arrow" aria-hidden="true">
+            <svg class="render-arrow-svg render-arrow-svg--pred" viewBox="0 0 40 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="20" cy="5"  r="2.4" fill="currentColor" opacity="1"/>
+              <circle cx="20" cy="14" r="1.9" fill="currentColor" opacity="0.65"/>
+              <circle cx="20" cy="22" r="1.4" fill="currentColor" opacity="0.35"/>
+              <line x1="20" y1="26" x2="20" y2="39" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M9 37 L20 51 L31 37" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </div>
         </div>
-        <!-- Render arrow -->
-        <div class="render-arrow" aria-hidden="true">
-          <svg class="render-arrow-svg render-arrow-svg--gt" viewBox="0 0 40 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="20" cy="5"  r="2.4" fill="currentColor" opacity="1"/>
-            <circle cx="20" cy="14" r="1.9" fill="currentColor" opacity="0.65"/>
-            <circle cx="20" cy="22" r="1.4" fill="currentColor" opacity="0.35"/>
-            <line x1="20" y1="26" x2="20" y2="39" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-            <path d="M9 37 L20 51 L31 37" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+
+        <div class="demo-col-header">
+          <div class="attr-panel attr-panel--gt">
+            <div class="attr-panel-title">Ground-Truth Attributes</div>
+            <div class="attr-row">
+              <div class="attr-chip attr-chip--gt"><span class="attr-chip-label">Height</span><span class="attr-chip-value">172 cm</span></div>
+              <div class="attr-chip attr-chip--gt"><span class="attr-chip-label">Weight</span><span class="attr-chip-value">68 kg</span></div>
+              <div class="attr-chip attr-chip--gt"><span class="attr-chip-label">Age</span><span class="attr-chip-value">28 yrs</span></div>
+              <div class="attr-chip attr-chip--gt"><span class="attr-chip-label">Gender</span><span class="attr-chip-value">Female</span></div>
+            </div>
+          </div>
+          <div class="render-arrow" aria-hidden="true">
+            <svg class="render-arrow-svg render-arrow-svg--gt" viewBox="0 0 40 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="20" cy="5"  r="2.4" fill="currentColor" opacity="1"/>
+              <circle cx="20" cy="14" r="1.9" fill="currentColor" opacity="0.65"/>
+              <circle cx="20" cy="22" r="1.4" fill="currentColor" opacity="0.35"/>
+              <line x1="20" y1="26" x2="20" y2="39" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M9 37 L20 51 L31 37" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="demo-panel">
+          <div class="panel-video-wrap panel-iframe-wrap">
+            <iframe data-src="./g1_engine/viewer.html?embed=1&amp;demo=dancing"
+                    class="g1-viewer-iframe iframe-g1" title="Unitree G1 robot motion viewer" allowfullscreen></iframe>
+          </div>
+        </div>
+        <div class="demo-panel">
+          <div class="panel-video-wrap panel-iframe-wrap">
+            <iframe data-src="./smpl_engine/viewer.html?seq=predicted&amp;embed=1&amp;demo=dancing"
+                    class="g1-viewer-iframe iframe-predicted" title="SMPL body from UNVEIL predicted attributes" allowfullscreen></iframe>
+          </div>
+        </div>
+        <div class="demo-panel">
+          <div class="panel-video-wrap panel-iframe-wrap">
+            <iframe data-src="./smpl_engine/viewer.html?seq=groundtruth&amp;embed=1&amp;demo=dancing"
+                    class="g1-viewer-iframe iframe-groundtruth" title="SMPL body rendered from ground-truth attributes" allowfullscreen></iframe>
+          </div>
         </div>
       </div>
 
-      <!-- ══ ROW 2: video panel cards (equal size) ══ -->
+      <div class="sync-bar" data-block="1">
+        <button class="sync-btn sync-play" data-block="1" title="Play / Pause">&#9654;</button>
+        <input  class="sync-progress" data-block="1" type="range" min="0" max="1" step="0.001" value="0"/>
+        <span   class="sync-time" data-block="1">0.00 / 0.00s</span>
+        <select class="sync-speed" data-block="1">
+          <option value="0.25">0.25×</option>
+          <option value="0.5">0.5×</option>
+          <option value="1" selected>1×</option>
+          <option value="2">2×</option>
+        </select>
+      </div>
+    </div><!-- /.demo-block 1 -->
 
-      <div class="demo-panel fade-in" data-delay="0">
-        <div class="panel-video-wrap panel-iframe-wrap">
-          <iframe id="iframe-g1"
-            src="./g1_engine/viewer.html?embed=1"
-            class="g1-viewer-iframe"
-            title="Unitree G1 robot motion viewer"
-            loading="lazy" allowfullscreen></iframe>
+    <!-- ══════════════════════ BLOCK 2: Sitting ══════════════════════ -->
+    <div class="demo-block fade-in" data-block="2" data-default-demo="sitting">
+
+      <div class="demo-selector">
+        <label class="demo-selector-label" for="activity-select-2">Activity</label>
+        <div class="demo-selector-wrap">
+          <select id="activity-select-2" class="demo-select activity-select" data-block="2">
+            <option value="">Loading…</option>
+          </select>
+          <span class="demo-select-arrow" aria-hidden="true">&#8964;</span>
         </div>
       </div>
 
-      <div class="demo-panel fade-in" data-delay="150">
-        <div class="panel-video-wrap panel-iframe-wrap">
-          <iframe id="iframe-predicted"
-            src="./smpl_engine/viewer.html?seq=predicted&embed=1"
-            class="g1-viewer-iframe"
-            title="SMPL body from UNVEIL predicted attributes"
-            loading="lazy" allowfullscreen></iframe>
+      <div class="demo-panels">
+        <div class="demo-col-header demo-col-header--robot">
+          <div class="robot-traj-box">Robot Trajectory</div>
+        </div>
+
+        <div class="demo-col-header">
+          <div class="attr-panel attr-panel--pred">
+            <div class="attr-panel-title"><span class="unveil-kw">UNVEIL</span> Prediction</div>
+            <div class="attr-row">
+              <div class="attr-chip" data-pred="174" data-gt="171" data-mae="4.4">
+                <span class="attr-chip-label">Height</span><span class="attr-chip-value">174 cm</span>
+              </div>
+              <div class="attr-chip" data-pred="66" data-gt="62" data-mae="8.9">
+                <span class="attr-chip-label">Weight</span><span class="attr-chip-value">66 kg</span>
+              </div>
+              <div class="attr-chip" data-pred="26" data-gt="29" data-mae="4.07">
+                <span class="attr-chip-label">Age</span><span class="attr-chip-value">26 yrs</span>
+              </div>
+              <div class="attr-chip" data-pred="1" data-gt="1" data-mae="1">
+                <span class="attr-chip-label">Gender</span><span class="attr-chip-value">Female</span>
+              </div>
+            </div>
+          </div>
+          <div class="render-arrow" aria-hidden="true">
+            <svg class="render-arrow-svg render-arrow-svg--pred" viewBox="0 0 40 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="20" cy="5"  r="2.4" fill="currentColor" opacity="1"/>
+              <circle cx="20" cy="14" r="1.9" fill="currentColor" opacity="0.65"/>
+              <circle cx="20" cy="22" r="1.4" fill="currentColor" opacity="0.35"/>
+              <line x1="20" y1="26" x2="20" y2="39" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M9 37 L20 51 L31 37" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="demo-col-header">
+          <div class="attr-panel attr-panel--gt">
+            <div class="attr-panel-title">Ground-Truth Attributes</div>
+            <div class="attr-row">
+              <div class="attr-chip attr-chip--gt"><span class="attr-chip-label">Height</span><span class="attr-chip-value">171 cm</span></div>
+              <div class="attr-chip attr-chip--gt"><span class="attr-chip-label">Weight</span><span class="attr-chip-value">62 kg</span></div>
+              <div class="attr-chip attr-chip--gt"><span class="attr-chip-label">Age</span><span class="attr-chip-value">29 yrs</span></div>
+              <div class="attr-chip attr-chip--gt"><span class="attr-chip-label">Gender</span><span class="attr-chip-value">Female</span></div>
+            </div>
+          </div>
+          <div class="render-arrow" aria-hidden="true">
+            <svg class="render-arrow-svg render-arrow-svg--gt" viewBox="0 0 40 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="20" cy="5"  r="2.4" fill="currentColor" opacity="1"/>
+              <circle cx="20" cy="14" r="1.9" fill="currentColor" opacity="0.65"/>
+              <circle cx="20" cy="22" r="1.4" fill="currentColor" opacity="0.35"/>
+              <line x1="20" y1="26" x2="20" y2="39" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M9 37 L20 51 L31 37" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="demo-panel">
+          <div class="panel-video-wrap panel-iframe-wrap">
+            <iframe data-src="./g1_engine/viewer.html?embed=1&amp;demo=sitting"
+                    class="g1-viewer-iframe iframe-g1" title="Unitree G1 robot motion viewer" allowfullscreen></iframe>
+          </div>
+        </div>
+        <div class="demo-panel">
+          <div class="panel-video-wrap panel-iframe-wrap">
+            <iframe data-src="./smpl_engine/viewer.html?seq=predicted&amp;embed=1&amp;demo=sitting"
+                    class="g1-viewer-iframe iframe-predicted" title="SMPL body from UNVEIL predicted attributes" allowfullscreen></iframe>
+          </div>
+        </div>
+        <div class="demo-panel">
+          <div class="panel-video-wrap panel-iframe-wrap">
+            <iframe data-src="./smpl_engine/viewer.html?seq=groundtruth&amp;embed=1&amp;demo=sitting"
+                    class="g1-viewer-iframe iframe-groundtruth" title="SMPL body rendered from ground-truth attributes" allowfullscreen></iframe>
+          </div>
         </div>
       </div>
 
-      <div class="demo-panel fade-in" data-delay="300">
-        <div class="panel-video-wrap panel-iframe-wrap">
-          <iframe id="iframe-groundtruth"
-            src="./smpl_engine/viewer.html?seq=groundtruth&embed=1"
-            class="g1-viewer-iframe"
-            title="SMPL body rendered from ground-truth attributes"
-            loading="lazy" allowfullscreen></iframe>
-        </div>
+      <div class="sync-bar" data-block="2">
+        <button class="sync-btn sync-play" data-block="2" title="Play / Pause">&#9654;</button>
+        <input  class="sync-progress" data-block="2" type="range" min="0" max="1" step="0.001" value="0"/>
+        <span   class="sync-time" data-block="2">0.00 / 0.00s</span>
+        <select class="sync-speed" data-block="2">
+          <option value="0.25">0.25×</option>
+          <option value="0.5">0.5×</option>
+          <option value="1" selected>1×</option>
+          <option value="2">2×</option>
+        </select>
       </div>
-
-    </div><!-- /.demo-panels -->
-
-    <!-- ── Master sync bar ── -->
-    <div id="sync-bar" class="sync-bar fade-in">
-      <button id="sync-play" class="sync-btn" title="Play / Pause">&#9654;</button>
-      <input  id="sync-progress" type="range" min="0" max="1" step="0.001" value="0" class="sync-progress"/>
-      <span   id="sync-time" class="sync-time">0.00 / 0.00s</span>
-      <select id="sync-speed" class="sync-speed">
-        <option value="0.25">0.25×</option>
-        <option value="0.5">0.5×</option>
-        <option value="1" selected>1×</option>
-        <option value="2">2×</option>
-      </select>
-    </div>
-
+    </div><!-- /.demo-block 2 -->
 
   </div>
 </section>
