@@ -79,229 +79,208 @@ function animateCounters() {
   });
 }
 
-/* ── Activity demo selector ────────────────────────────────── */
+/* ── Per-block demo controller (selector + sync) ────────────
+   Each .demo-block contains its own dropdown, 3 iframes, and sync bar.
+   The blocks are independent: each has its own master clock, its own
+   loaded activity, and its own attribute chips. Iframes are lazy-loaded
+   when the block scrolls within ~300px of the viewport.
+   ──────────────────────────────────────────────────────────── */
 (function () {
-  const sel    = document.getElementById('activity-select');
-  const countEl= document.getElementById('activity-count');
-  if (!sel) return;
-
   let demosConfig = null;
 
-  function getIframes() {
-    return ['iframe-g1','iframe-predicted','iframe-groundtruth']
-      .map(id => document.getElementById(id))
-      .filter(Boolean);
+  /* HSL color scale: 0=perfect (vivid green) → 2×MAE (muted sage) */
+  function errorChipColors(pred, gt, mae) {
+    const ratio = Math.abs(pred - gt) / mae;
+    const t     = Math.min(ratio / 2, 1);
+    const hue   = 130;
+    return {
+      bg:    `hsl(${hue}, ${Math.round(60-44*t)}%, ${Math.round(91+4*t)}%)`,
+      border:`hsl(${hue}, ${Math.round(52-36*t)}%, ${Math.round(62+14*t)}%)`,
+      color: `hsl(${hue}, ${Math.round(70-40*t)}%, ${Math.round(34+10*t)}%)`,
+    };
   }
 
-  function sendDemo(demo) {
-    const iframes = getIframes();
-    iframes.forEach(ifr => ifr.closest('.demo-panel')?.classList.add('loading'));
-
-    // Update attribute chips
-    updateChips(demo);
-
-    // Update sync duration
-    if (typeof SEQ_DURATION !== 'undefined') {
-      // handled in sync controller below
-    }
-
-    // Dispatch to all viewers
-    iframes.forEach(ifr => {
-      ifr.contentWindow?.postMessage({ type: 'LOAD_DEMO', demo }, '*');
-    });
-
-    // Remove loading state after a short delay
-    setTimeout(() => {
-      iframes.forEach(ifr => ifr.closest('.demo-panel')?.classList.remove('loading'));
-    }, 3500);
-  }
-
-  function updateChips(demo) {
-    // Update predicted chips
-    const predChips = document.querySelectorAll('.attr-chip[data-pred]');
-    const p = demo.predicted, g = demo.groundTruth;
-    const fields = [
-      { label:'Height', predVal: p.height + ' cm', gtVal: g.height + ' cm',
-        pred: p.height, gt: g.height, mae: 4.4 },
-      { label:'Weight', predVal: p.weight + ' kg', gtVal: g.weight + ' kg',
-        pred: p.weight, gt: g.weight, mae: 8.9 },
-      { label:'Age',    predVal: p.age    + ' yrs', gtVal: g.age    + ' yrs',
-        pred: p.age,    gt: g.age,    mae: 4.07 },
-      { label:'Gender', predVal: p.gender.charAt(0).toUpperCase()+p.gender.slice(1),
-        gtVal: g.gender.charAt(0).toUpperCase()+g.gender.slice(1),
-        pred: 1, gt: 1, mae: 1 },
-    ];
-    predChips.forEach((chip, i) => {
-      if (!fields[i]) return;
-      const f = fields[i];
-      chip.dataset.pred = f.pred;
-      chip.dataset.gt   = f.gt;
-      chip.dataset.mae  = f.mae;
-      chip.querySelector('.attr-chip-value').textContent = f.predVal;
-    });
-
-    // Update GT chips
-    document.querySelectorAll('.attr-chip--gt').forEach((chip, i) => {
-      if (!fields[i]) return;
-      chip.querySelector('.attr-chip-value').textContent = fields[i].gtVal;
-    });
-
-    // Re-apply color coding
-    applyDemoColors(fields);
-  }
-
-  function applyDemoColors(fields) {
-    function errorChipColors(pred, gt, mae) {
-      const ratio = Math.abs(pred - gt) / mae;
-      const t     = Math.min(ratio / 2, 1);
-      const hue   = 130;
-      return {
-        bg:    `hsl(${hue}, ${Math.round(60-44*t)}%, ${Math.round(91+4*t)}%)`,
-        border:`hsl(${hue}, ${Math.round(52-36*t)}%, ${Math.round(62+14*t)}%)`,
-        color: `hsl(${hue}, ${Math.round(70-40*t)}%, ${Math.round(34+10*t)}%)`,
-      };
-    }
-    document.querySelectorAll('.attr-chip[data-pred]').forEach(chip => {
+  function applyChipColors(scope) {
+    scope.querySelectorAll('.attr-chip[data-pred]').forEach(chip => {
       const c = errorChipColors(+chip.dataset.pred, +chip.dataset.gt, +chip.dataset.mae);
-      chip.style.background  = c.bg;
-      chip.style.borderColor = c.border;
+      chip.style.background   = c.bg;
+      chip.style.borderColor  = c.border;
       const v = chip.querySelector('.attr-chip-value');
       if (v) v.style.color = c.color;
     });
   }
 
-  // Preload top N demos silently after page is idle
-  function preloadDemosInBackground(cfg, topN = 4) {
-    const toPreload = cfg.demos.slice(0, topN);   // already sorted by count desc
-    const iframes   = getIframes();
-    let   idx       = 0;
-
-    function next() {
-      if (idx >= toPreload.length) return;
-      const demo = toPreload[idx++];
-      // Send a silent preload hint to each SMPL iframe
-      iframes.forEach(ifr => {
-        ifr.contentWindow?.postMessage({ type: 'PRELOAD_DEMO', demo }, '*');
-      });
-      // Stagger to avoid saturating bandwidth
-      setTimeout(next, 4000);
-    }
-    setTimeout(next, 5000);   // start 5s after page load
+  function updateBlockChips(block, demo) {
+    const p = demo.predicted, g = demo.groundTruth;
+    const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+    const fields = [
+      { predVal: p.height + ' cm', gtVal: g.height + ' cm', pred: p.height, gt: g.height, mae: 4.4  },
+      { predVal: p.weight + ' kg', gtVal: g.weight + ' kg', pred: p.weight, gt: g.weight, mae: 8.9  },
+      { predVal: p.age    + ' yrs',gtVal: g.age    + ' yrs',pred: p.age,    gt: g.age,    mae: 4.07 },
+      { predVal: cap(p.gender),    gtVal: cap(g.gender),    pred: 1,        gt: 1,        mae: 1    },
+    ];
+    block.querySelectorAll('.attr-chip[data-pred]').forEach((chip, i) => {
+      if (!fields[i]) return;
+      chip.dataset.pred = fields[i].pred;
+      chip.dataset.gt   = fields[i].gt;
+      chip.dataset.mae  = fields[i].mae;
+      chip.querySelector('.attr-chip-value').textContent = fields[i].predVal;
+    });
+    block.querySelectorAll('.attr-chip--gt').forEach((chip, i) => {
+      if (!fields[i]) return;
+      chip.querySelector('.attr-chip-value').textContent = fields[i].gtVal;
+    });
+    applyChipColors(block);
   }
 
+  function blockIframes(block) {
+    return Array.from(block.querySelectorAll('iframe'));
+  }
+
+  function sendDemoToBlock(block, demo) {
+    const iframes = blockIframes(block);
+    iframes.forEach(ifr => ifr.closest('.demo-panel')?.classList.add('loading'));
+    updateBlockChips(block, demo);
+    iframes.forEach(ifr => {
+      ifr.contentWindow?.postMessage({ type: 'LOAD_DEMO', demo }, '*');
+    });
+    block._seqDuration = demo.numFrames / demo.fps;
+    setTimeout(() => {
+      iframes.forEach(ifr => ifr.closest('.demo-panel')?.classList.remove('loading'));
+    }, 3500);
+  }
+
+  /* ── Lazy iframe loading: hydrate src= when the block enters the viewport ── */
+  const lazyObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.querySelectorAll('iframe[data-src]').forEach(ifr => {
+        ifr.src = ifr.dataset.src;
+        ifr.removeAttribute('data-src');
+      });
+      lazyObserver.unobserve(entry.target);
+    });
+  }, { rootMargin: '300px 0px' });
+
+  /* ── Per-block sync controller ─────────────────────────────── */
+  function attachSync(block) {
+    const btnPlay  = block.querySelector('.sync-play');
+    const progEl   = block.querySelector('.sync-progress');
+    const timeEl   = block.querySelector('.sync-time');
+    const speedSel = block.querySelector('.sync-speed');
+    if (!btnPlay) return;
+
+    let masterTime = 0;
+    let playing    = false;
+    let lastTS     = null;
+    let speed      = 1;
+
+    function iframes() {
+      return blockIframes(block).map(el => el.contentWindow).filter(Boolean);
+    }
+    function broadcast() {
+      const msg = { type: 'SYNC', time: masterTime, playing, speed };
+      iframes().forEach(w => w.postMessage(msg, '*'));
+    }
+    function setPlaying(val) {
+      playing = val;
+      btnPlay.innerHTML = playing ? '&#9646;&#9646;' : '&#9654;';
+      if (playing) lastTS = null;
+      broadcast();
+    }
+
+    btnPlay.addEventListener('click', () => setPlaying(!playing));
+    progEl.addEventListener('input', () => {
+      const dur = block._seqDuration || (3303 / 120);
+      masterTime = parseFloat(progEl.value) * dur;
+      broadcast();
+    });
+    speedSel.addEventListener('change', () => {
+      speed = parseFloat(speedSel.value);
+      broadcast();
+    });
+
+    function tick(ts) {
+      requestAnimationFrame(tick);
+      const dur = block._seqDuration || (3303 / 120);
+      if (playing) {
+        if (lastTS === null) lastTS = ts;
+        const dt = (ts - lastTS) * 0.001 * speed;
+        lastTS = ts;
+        masterTime += dt;
+        if (masterTime >= dur) masterTime %= dur;
+      } else {
+        lastTS = null;
+      }
+      broadcast();
+      progEl.value = masterTime / dur;
+      timeEl.textContent = masterTime.toFixed(2) + ' / ' + dur.toFixed(2) + 's';
+    }
+
+    /* Auto-play this block once one of its iframes posts READY */
+    window.addEventListener('message', e => {
+      if (!e.data || e.data.type !== 'READY' || playing) return;
+      const ifrs = blockIframes(block);
+      if (ifrs.some(ifr => ifr.contentWindow === e.source)) {
+        setPlaying(true);
+      }
+    });
+
+    requestAnimationFrame(tick);
+  }
+
+  /* ── Bootstrap each block ──────────────────────────────────── */
   async function init() {
+    const blocks = document.querySelectorAll('.demo-block');
+    if (!blocks.length) return;
+
+    let cfg;
     try {
-      const cfg = await fetch('./assets/demos/demos_config.json').then(r => r.json());
+      cfg = await fetch('./assets/demos/demos_config.json').then(r => r.json());
       demosConfig = cfg;
-
-      sel.innerHTML = '';
-      cfg.demos.forEach(demo => {
-        const opt = document.createElement('option');
-        opt.value = demo.id;
-        opt.textContent = demo.label;
-        if (demo.id === cfg.defaultDemo) opt.selected = true;
-        sel.appendChild(opt);
-      });
-
-      // Show count for default
-      const def = cfg.demos.find(d => d.id === cfg.defaultDemo);
-      if (def && countEl) countEl.textContent = def.count.toLocaleString() + ' clips';
-
-      // Preload top demos silently after page settles
-      preloadDemosInBackground(cfg);
-
-    } catch(e) {
+    } catch (e) {
       console.warn('demos_config not ready yet:', e.message);
-      sel.innerHTML = '<option value="dancing">Dancing (default)</option>';
+      cfg = { demos: [], defaultDemo: null };
     }
-  }
 
-  sel.addEventListener('change', () => {
-    if (!demosConfig) return;
-    const demo = demosConfig.demos.find(d => d.id === sel.value);
-    if (!demo) return;
-    sendDemo(demo);
-    // Update sync duration
-    window._demoDuration = demo.numFrames / demo.fps;
-  });
+    blocks.forEach(block => {
+      const sel        = block.querySelector('.activity-select');
+      const defaultId  = block.dataset.defaultDemo || cfg.defaultDemo;
+
+      /* Populate dropdown */
+      if (sel && cfg.demos.length) {
+        sel.innerHTML = '';
+        cfg.demos.forEach(demo => {
+          const opt = document.createElement('option');
+          opt.value = demo.id;
+          opt.textContent = demo.label;
+          if (demo.id === defaultId) opt.selected = true;
+          sel.appendChild(opt);
+        });
+      }
+
+      /* Seed seqDuration from default demo so the sync bar's initial scrub works */
+      const defaultDemo = cfg.demos.find(d => d.id === defaultId);
+      if (defaultDemo) block._seqDuration = defaultDemo.numFrames / defaultDemo.fps;
+
+      /* Apply initial chip color coding (chips are pre-populated in HTML) */
+      applyChipColors(block);
+
+      /* Wire dropdown change → load new demo into this block only */
+      if (sel) {
+        sel.addEventListener('change', () => {
+          const demo = cfg.demos.find(d => d.id === sel.value);
+          if (demo) sendDemoToBlock(block, demo);
+        });
+      }
+
+      attachSync(block);
+      lazyObserver.observe(block);
+    });
+  }
 
   init();
   window.getDemosConfig = () => demosConfig;
-})();
-
-/* ── Master sync controller (drives all 3 viewer iframes) ──── */
-(function () {
-  const btnPlay  = document.getElementById('sync-play');
-  const progEl   = document.getElementById('sync-progress');
-  const timeEl   = document.getElementById('sync-time');
-  const speedSel = document.getElementById('sync-speed');
-  if (!btnPlay) return;
-
-  const IFRAMES = ['iframe-g1', 'iframe-predicted', 'iframe-groundtruth'];
-  let   SEQ_DURATION = window._demoDuration || (3303 / 120);
-  let   masterTime = 0;
-  let   playing    = false;
-  let   lastTS     = null;
-  let   speed      = 1;
-
-  function getIframes() {
-    return IFRAMES.map(id => document.getElementById(id))
-                  .filter(Boolean)
-                  .map(el => el.contentWindow)
-                  .filter(Boolean);
-  }
-
-  function broadcast() {
-    const msg = { type: 'SYNC', time: masterTime, playing, speed };
-    getIframes().forEach(w => w.postMessage(msg, '*'));
-  }
-
-  function setPlaying(val) {
-    playing = val;
-    btnPlay.innerHTML = playing ? '&#9646;&#9646;' : '&#9654;';
-    if (playing) lastTS = null;
-    broadcast();
-  }
-
-  btnPlay.addEventListener('click', () => setPlaying(!playing));
-
-  progEl.addEventListener('input', () => {
-    masterTime = parseFloat(progEl.value) * SEQ_DURATION;
-    broadcast();
-  });
-
-  speedSel.addEventListener('change', () => {
-    speed = parseFloat(speedSel.value);
-    broadcast();
-  });
-
-  function tick(ts) {
-    requestAnimationFrame(tick);
-    // Sync duration may update when demo changes
-    if (window._demoDuration) { SEQ_DURATION = window._demoDuration; window._demoDuration = null; }
-    if (playing) {
-      if (lastTS === null) lastTS = ts;
-      const dt = (ts - lastTS) * 0.001 * speed;
-      lastTS = ts;
-      masterTime += dt;
-      if (masterTime >= SEQ_DURATION) masterTime %= SEQ_DURATION;
-    } else {
-      lastTS = null;
-    }
-
-    broadcast();
-
-    const frac = masterTime / SEQ_DURATION;
-    progEl.value = frac;
-    timeEl.textContent = masterTime.toFixed(2) + ' / ' + SEQ_DURATION.toFixed(2) + 's';
-  }
-
-  // Start paused; auto-play once at least one iframe loads
-  window.addEventListener('message', e => {
-    if (e.data && e.data.type === 'READY' && !playing) setPlaying(true);
-  });
-
-  requestAnimationFrame(tick);
 })();
 
 /* ── Demo panel fade-in with staggered delay ───────────────── */
