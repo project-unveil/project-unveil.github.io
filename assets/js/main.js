@@ -259,12 +259,14 @@ function animateCounters() {
         });
       }
 
-      /* Seed seqDuration from default demo so the sync bar's initial scrub works */
+      /* Seed seqDuration + sync chip values/colors from the block's default demo. */
       const defaultDemo = cfg.demos.find(d => d.id === defaultId);
-      if (defaultDemo) block._seqDuration = defaultDemo.numFrames / defaultDemo.fps;
-
-      /* Apply initial chip color coding (chips are pre-populated in HTML) */
-      applyChipColors(block);
+      if (defaultDemo) {
+        block._seqDuration = defaultDemo.numFrames / defaultDemo.fps;
+        updateBlockChips(block, defaultDemo);
+      } else {
+        applyChipColors(block);
+      }
 
       /* Wire dropdown change → load new demo into this block only */
       if (sel) {
