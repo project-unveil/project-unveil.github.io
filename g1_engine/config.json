@@ -8,7 +8,7 @@
     "position": [0.0, 1.1, 4.5],
     "target":   [0.0, 0.85, 0.0]
   },
-  "worldYawDeg": 45,
+  "worldYawDeg": 0,
   "showFloor": true,
   "backgroundColor": "#7E8082",
   "floorColor": "#CED0D6",
