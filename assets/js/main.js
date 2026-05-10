@@ -262,13 +262,11 @@ function animateCounters() {
         });
       }
 
-      /* Seed seqDuration + sync chip values/colors from the block's default demo. */
+      /* Seed seqDuration + sync comparison rows from the block's default demo. */
       const defaultDemo = cfg.demos.find(d => d.id === defaultId);
       if (defaultDemo) {
         block._seqDuration = defaultDemo.numFrames / defaultDemo.fps;
         updateBlockChips(block, defaultDemo);
-      } else {
-        applyChipColors(block);
       }
 
       /* Wire dropdown change → load new demo into this block only */
