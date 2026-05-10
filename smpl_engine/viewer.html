@@ -115,9 +115,10 @@ body.embedded #canvas-wrap { inset:0; }
 'use strict';
 
 // ── URL params ────────────────────────────────────────────────────────────
-const params  = new URLSearchParams(location.search);
-const SEQ     = params.get('seq') || 'predicted';   // 'predicted' | 'groundtruth'
-const EMBEDDED = params.has('embed');
+const params         = new URLSearchParams(location.search);
+const SEQ            = params.get('seq') || 'predicted';   // 'predicted' | 'groundtruth'
+const EMBEDDED       = params.has('embed');
+const DEMO_OVERRIDE  = params.get('demo');                 // e.g. ?demo=walking — picks ../assets/demos/smpl/<id>_<gt|predicted>.bin
 if (EMBEDDED) document.body.classList.add('embedded');
 
 // ── State ─────────────────────────────────────────────────────────────────
