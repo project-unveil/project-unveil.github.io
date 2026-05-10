@@ -110,14 +110,41 @@ function animateCounters() {
     });
   }
 
+  /* Numeric diff: "−4 cm", "+5 kg", "+1 yr", or "✓" for exact match.
+     Uses Unicode minus (U+2212) so it visually aligns with the plus sign. */
+  function fmtNumericDiff(pred, gt, unit) {
+    const d = pred - gt;
+    if (d === 0) return { text: '✓', match: true };
+    const sign = d > 0 ? '+' : '−';
+    const abs  = Math.abs(d);
+    const u    = unit === 'yr' ? (abs === 1 ? 'yr' : 'yrs') : unit;
+    return { text: `${sign}${abs} ${u}`, match: false };
+  }
+  function fmtGenderDiff(predStr, gtStr) {
+    const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+    return predStr === gtStr
+      ? { text: '✓',                       match: true  }   // ✓
+      : { text: `✗ ${cap(gtStr)}`,         match: false };  // ✗ Male
+  }
+
+  function ensureDiffSpan(chip) {
+    let el = chip.querySelector('.attr-chip-diff');
+    if (!el) {
+      el = document.createElement('span');
+      el.className = 'attr-chip-diff';
+      chip.appendChild(el);
+    }
+    return el;
+  }
+
   function updateBlockChips(block, demo) {
     const p = demo.predicted, g = demo.groundTruth;
     const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
     const fields = [
-      { predVal: p.height + ' cm', gtVal: g.height + ' cm', pred: p.height, gt: g.height, mae: 4.4  },
-      { predVal: p.weight + ' kg', gtVal: g.weight + ' kg', pred: p.weight, gt: g.weight, mae: 8.9  },
-      { predVal: p.age    + ' yrs',gtVal: g.age    + ' yrs',pred: p.age,    gt: g.age,    mae: 4.07 },
-      { predVal: cap(p.gender),    gtVal: cap(g.gender),    pred: 1,        gt: 1,        mae: 1    },
+      { predVal: p.height + ' cm', gtVal: g.height + ' cm', pred: p.height, gt: g.height, mae: 4.4,  diff: fmtNumericDiff(p.height, g.height, 'cm') },
+      { predVal: p.weight + ' kg', gtVal: g.weight + ' kg', pred: p.weight, gt: g.weight, mae: 8.9,  diff: fmtNumericDiff(p.weight, g.weight, 'kg') },
+      { predVal: p.age    + ' yrs',gtVal: g.age    + ' yrs',pred: p.age,    gt: g.age,    mae: 4.07, diff: fmtNumericDiff(p.age,    g.age,    'yr') },
+      { predVal: cap(p.gender),    gtVal: cap(g.gender),    pred: 1,        gt: 1,        mae: 1,    diff: fmtGenderDiff(p.gender, g.gender) },
     ];
     block.querySelectorAll('.attr-chip[data-pred]').forEach((chip, i) => {
       if (!fields[i]) return;
@@ -125,6 +152,9 @@ function animateCounters() {
       chip.dataset.gt   = fields[i].gt;
       chip.dataset.mae  = fields[i].mae;
       chip.querySelector('.attr-chip-value').textContent = fields[i].predVal;
+      const diffEl = ensureDiffSpan(chip);
+      diffEl.textContent = fields[i].diff.text;
+      diffEl.classList.toggle('match', fields[i].diff.match);
     });
     block.querySelectorAll('.attr-chip--gt').forEach((chip, i) => {
       if (!fields[i]) return;
