@@ -367,19 +367,28 @@ function setupThree() {
 
   // Camera
   camera = new THREE.PerspectiveCamera(42, wrap.clientWidth / wrap.clientHeight, 0.01, 30);
-  const az = ((cfg.cameraAzimuth || 135) * DEG2RAD);
-  const el = ((cfg.cameraElevation || -20) * DEG2RAD);
-  const dist = cfg.cameraDistance || 3.2;
-  camera.position.set(
-    dist * Math.cos(el) * Math.sin(az),
-    dist * Math.sin(-el),
-    dist * Math.cos(el) * Math.cos(az)
-  );
-  camera.lookAt(0, 0.9, 0);
+  // Prefer absolute position+target (mirrors smpl_engine config); fall back to az/el/dist.
+  let camPos, camTarget;
+  if (cfg.camera && Array.isArray(cfg.camera.position) && Array.isArray(cfg.camera.target)) {
+    camPos = cfg.camera.position;
+    camTarget = cfg.camera.target;
+  } else {
+    const az = ((cfg.cameraAzimuth || 135) * DEG2RAD);
+    const el = ((cfg.cameraElevation || -20) * DEG2RAD);
+    const dist = cfg.cameraDistance || 3.2;
+    camPos = [
+      dist * Math.cos(el) * Math.sin(az),
+      dist * Math.sin(-el),
+      dist * Math.cos(el) * Math.cos(az),
+    ];
+    camTarget = [0, 0.9, 0];
+  }
+  camera.position.set(...camPos);
+  camera.lookAt(...camTarget);
 
   // Orbit controls
   controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.target.set(0, 0.9, 0);
+  controls.target.set(...camTarget);
   controls.enableDamping = true;
   controls.dampingFactor = 0.06;
   controls.minDistance = 0.5;
