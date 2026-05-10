@@ -256,7 +256,10 @@ async function boot() {
   modelData = await fetchJSON('./model/g1_model.json');
 
   setStatus('Loading motion…');
-  motionData = await loadCSV(cfg.csvFile, cfg.maxFrames || 600);
+  const csvUrl = DEMO_OVERRIDE
+    ? `../assets/demos/g1_csv/${DEMO_OVERRIDE}.csv`
+    : cfg.csvFile;
+  motionData = await loadCSV(csvUrl, cfg.maxFrames || 600);
 
   setStatus('Building scene…');
   setupThree();
