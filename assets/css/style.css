@@ -72,6 +72,18 @@ section:nth-of-type(even) {
   margin-bottom: 2rem;
 }
 
+/* ── Multi-row demo blocks ───────────────────────────────── */
+.demo-block {
+  margin-bottom: 3rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid #e5e9f2;
+}
+.demo-block:last-of-type {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
 .unveil-kw {
   color: #2c3e6b;
   font-style: normal;
