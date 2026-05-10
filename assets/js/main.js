@@ -301,50 +301,6 @@ function animateCounters() {
   panels.forEach(p => observer.observe(p));
 })();
 
-/* ── Predicted attribute color-coding (error → green…red) ─── */
-(function () {
-  // Green color scale: 0=perfect (vivid) → 2×MAE (muted sage)
-  function errorChipColors(pred, gt, mae) {
-    const ratio = Math.abs(pred - gt) / mae;
-    const t     = Math.min(ratio / 2, 1);   // 0=perfect, 1=2×MAE
-    const hue   = 130;
-    // Box background: bright green → pale sage
-    const bgSat = Math.round(60 - 44 * t);
-    const bgLig = Math.round(91 +  4 * t);
-    // Box border: visible but not loud
-    const bdSat = Math.round(52 - 36 * t);
-    const bdLig = Math.round(62 + 14 * t);
-    // Value text: rich green → muted
-    const txSat = Math.round(70 - 40 * t);
-    const txLig = Math.round(34 + 10 * t);
-    return {
-      bg:     `hsl(${hue}, ${bgSat}%, ${bgLig}%)`,
-      border: `hsl(${hue}, ${bdSat}%, ${bdLig}%)`,
-      color:  `hsl(${hue}, ${txSat}%, ${txLig}%)`,
-    };
-  }
-
-  function applyColors() {
-    document.querySelectorAll('.attr-chip[data-pred]').forEach(chip => {
-      const pred  = parseFloat(chip.dataset.pred);
-      const gt    = parseFloat(chip.dataset.gt);
-      const mae   = parseFloat(chip.dataset.mae);
-      const c     = errorChipColors(pred, gt, mae);
-      chip.style.background   = c.bg;
-      chip.style.borderColor  = c.border;
-      const valEl = chip.querySelector('.attr-chip-value');
-      if (valEl) valEl.style.color = c.color;
-    });
-  }
-
-  // Run once DOM is ready, and again on scroll (fade-in may delay visibility)
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', applyColors);
-  } else {
-    applyColors();
-  }
-})();
-
 /* ── PDF.js: render PDF figures to canvas ──────────────────── */
 (function () {
   function renderPDFs() {
