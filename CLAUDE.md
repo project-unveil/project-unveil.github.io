@@ -32,7 +32,9 @@ invert/
 └── watch.ps1               # File watcher: auto-commits + pushes to origin/main on save
 ```
 
-The site has six sections (in order): hero → 3-panel demo (the synced viewers) → abstract → teaser figure → method → results table → BibTeX → footer. The activity selector is the centerpiece: picking an activity reloads all three iframes and updates the predicted-vs-GT attribute chips above them, which are color-coded by error magnitude (green vivid → muted sage as |pred−gt|/MAE goes 0 → 2).
+The site has six sections (in order): hero → demo blocks (the synced viewers) → abstract → teaser figure → method → results table → BibTeX → footer. The demo section now contains **three independent blocks** — each is a self-contained `[Activity dropdown] + [3-panel grid: G1 | predicted | GT] + [per-block sync bar]`. Default activities are walking / dancing / sitting (locomotion / dance / idle) so the leakage finding is visible across motion types without any interaction. Each block has its own master clock, its own predicted-vs-GT attribute chips (color-coded by error magnitude — green vivid → muted sage as |pred−gt|/MAE goes 0 → 2), and its own dropdown for switching that row's activity.
+
+Iframes are lazy-loaded: each iframe carries `data-src` instead of `src`, and an `IntersectionObserver` (rootMargin 300px) hydrates the URL only when the block scrolls within range. Block 0 loads on page open; blocks 1–2 wait until the user scrolls. Each iframe's URL carries a `?demo=<id>` parameter so the engine loads the right activity from the start (no "default → swap" flash).
 
 ## How the viewers work
 
