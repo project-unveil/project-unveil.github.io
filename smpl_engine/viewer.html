@@ -455,9 +455,16 @@ async function boot() {
   const bg = seqCfg.bgColor || cfg.backgroundColor || '#f8f9fa';
   document.body.style.background = bg;
 
+  const vertsUrl = DEMO_OVERRIDE
+    ? `../assets/demos/smpl/${DEMO_OVERRIDE}_${SEQ === 'groundtruth' ? 'gt' : 'predicted'}.bin`
+    : seqCfg.vertsFile;
+  const facesUrl = DEMO_OVERRIDE
+    ? '../assets/demos/smpl/faces.bin'
+    : cfg.facesFile;
+
   const [vd, fd] = await Promise.all([
-    loadVertsBin(seqCfg.vertsFile),
-    loadFacesBin(cfg.facesFile),
+    loadVertsBin(vertsUrl),
+    loadFacesBin(facesUrl),
   ]);
 
   numFrames = vd.numFrames;
