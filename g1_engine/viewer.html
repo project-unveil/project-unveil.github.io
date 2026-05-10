@@ -472,10 +472,17 @@ function setupThree() {
 
 // ── Robot kinematic tree ──────────────────────────────────────────────────
 async function buildRobot(bodies) {
+  // worldYaw: rotates the entire robot around Three.js +Y so its facing
+  // direction can be aligned with the camera regardless of the trajectory's
+  // recorded heading.
+  const yawGroup = new THREE.Group();
+  yawGroup.rotation.y = (cfg.worldYawDeg || 0) * DEG2RAD;
+  scene.add(yawGroup);
+
   // robotWorld: MuJoCo Z-up → Three.js Y-up
   const robotWorld = new THREE.Group();
   robotWorld.rotation.x = -Math.PI / 2;
-  scene.add(robotWorld);
+  yawGroup.add(robotWorld);
 
   // Index bodies by name and find parents
   const bodyMap = {};
