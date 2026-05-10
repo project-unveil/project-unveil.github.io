@@ -88,28 +88,6 @@ function animateCounters() {
 (function () {
   let demosConfig = null;
 
-  /* HSL color scale: 0=perfect (vivid green) → 2×MAE (muted sage) */
-  function errorChipColors(pred, gt, mae) {
-    const ratio = Math.abs(pred - gt) / mae;
-    const t     = Math.min(ratio / 2, 1);
-    const hue   = 130;
-    return {
-      bg:    `hsl(${hue}, ${Math.round(60-44*t)}%, ${Math.round(91+4*t)}%)`,
-      border:`hsl(${hue}, ${Math.round(52-36*t)}%, ${Math.round(62+14*t)}%)`,
-      color: `hsl(${hue}, ${Math.round(70-40*t)}%, ${Math.round(34+10*t)}%)`,
-    };
-  }
-
-  function applyChipColors(scope) {
-    scope.querySelectorAll('.attr-chip[data-pred]').forEach(chip => {
-      const c = errorChipColors(+chip.dataset.pred, +chip.dataset.gt, +chip.dataset.mae);
-      chip.style.background   = c.bg;
-      chip.style.borderColor  = c.border;
-      const v = chip.querySelector('.attr-chip-value');
-      if (v) v.style.color = c.color;
-    });
-  }
-
   /* Build a signed numeric delta string: "−4 cm", "+5 kg", "+1 yr", or "✓" for zero.
      Uses Unicode minus (U+2212) so + and − columns line up in the badge. */
   function numericDelta(pred, gt, unit) {
