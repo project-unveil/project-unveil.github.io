@@ -206,6 +206,33 @@ section:nth-of-type(even) {
 
 .attr-chip--gt .attr-chip-value { color: #2c3e6b; }
 
+/* ── Diff-to-GT under each predicted value ──────────────────
+   Subtle secondary line. Neutral gray-blue by default; vivid green
+   when the prediction exactly matches the GT (rendered as "✓"). */
+.attr-chip-diff {
+  font-size: 0.7rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #8a8f9c;
+  line-height: 1.2;
+  margin-top: 2px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  transition: color 0.4s ease;
+}
+.attr-chip-diff.match {
+  color: #27ae60;
+  font-size: 0.85rem;
+  line-height: 1;
+}
+/* Reserve the same vertical space inside GT chips so both cards line up. */
+.attr-chip--gt::after {
+  content: "";
+  display: block;
+  height: 0.84rem;
+  margin-top: 2px;
+}
+
 /* ── Render arrow (dots + chevron SVG) ───────────────────── */
 .render-arrow {
   display: flex;
