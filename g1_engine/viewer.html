@@ -211,7 +211,9 @@ let lastTime  = null;
 let accumTime = 0;
 
 // ── Sync protocol ─────────────────────────────────────────────────────────
-const EMBEDDED_G1 = new URLSearchParams(location.search).has('embed');
+const URL_PARAMS    = new URLSearchParams(location.search);
+const EMBEDDED_G1   = URL_PARAMS.has('embed');
+const DEMO_OVERRIDE = URL_PARAMS.get('demo');   // e.g. ?demo=walking — picks ../assets/demos/g1_csv/<id>.csv
 if (EMBEDDED_G1) document.body.classList.add('embedded');
 
 window.addEventListener('message', e => {
