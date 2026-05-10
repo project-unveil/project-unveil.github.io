@@ -291,9 +291,9 @@ section:nth-of-type(even) {
 
 .comparison-delta {
   position: absolute;
-  top: 0;
+  top: 27%;        /* Align center of badge with arch horizontal segment */
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   display: inline-flex;
   align-items: center;
   gap: 3px;
