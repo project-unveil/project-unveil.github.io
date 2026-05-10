@@ -42,6 +42,10 @@ Both viewers are vanilla Three.js (r128, CDN-loaded), each with its own `viewer.
 
 **One-time setup (offline)**: `generate_model.py` parses `model/g1_29dof.xml` → `model/g1_model.json` — a flat list of 30 bodies, each with `{name, parent, pos, quat, joint:{name,type,axis}, meshes:[{name,rgba,pos,quat}]}`. There are 60 STL meshes total under `meshes/` (head, pelvis, torso, limbs, fingers, hands).
 
+**Camera & orientation config** (matches SMPL viewer's schema):
+- `camera.position` / `camera.target` — absolute camera setup, mirrors `smpl_engine/config.json`. Falls back to legacy `cameraAzimuth` / `cameraElevation` / `cameraDistance` if absent.
+- `worldYawDeg` — Y-axis rotation applied to a parent group wrapping `robotWorld`, lets you spin the whole robot to align its facing direction with the SMPL human (which uses BVH conventions). For the default `dancing` demo (macarena) the correct value is **`0`** — robot's frame-0 forward already lands on +Z. Other demos may need a different yaw; iterate by pausing at frame 0 and adjusting in increments of 15° / 45°.
+
 **Boot sequence**:
 1. Fetch `config.json` (camera, background, `enhancedMaterials` flag toggling PBR vs Phong).
 2. Fetch `model/g1_model.json`.
