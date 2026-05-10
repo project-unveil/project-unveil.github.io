@@ -217,53 +217,60 @@
           <div class="robot-traj-box">Robot Trajectory</div>
         </div>
 
-        <div class="demo-col-header">
-          <div class="attr-panel attr-panel--pred">
-            <div class="attr-panel-title"><span class="unveil-kw">UNVEIL</span> Prediction</div>
-            <div class="attr-row">
-              <div class="attr-chip" data-pred="168" data-gt="172" data-mae="4.4">
-                <span class="attr-chip-label">Height</span><span class="attr-chip-value">168 cm</span>
+        <div class="attr-comparison-wrap" style="grid-column: 2 / 4;">
+          <div class="attr-comparison">
+            <div class="comparison-row" data-attr="height">
+              <div class="comparison-label">Height</div>
+              <div class="comparison-pred">163 cm</div>
+              <div class="comparison-connector">
+                <svg viewBox="0 0 100 44" preserveAspectRatio="none" aria-hidden="true">
+                  <path class="connector-path" d="M 5 40 Q 5 12, 25 12 L 75 12 Q 95 12, 95 40"/>
+                </svg>
+                <div class="comparison-delta">
+                  <span class="delta-icon">&Delta;</span><span class="delta-text">&minus;4 cm</span>
+                </div>
               </div>
-              <div class="attr-chip" data-pred="68" data-gt="68" data-mae="8.9">
-                <span class="attr-chip-label">Weight</span><span class="attr-chip-value">68 kg</span>
-              </div>
-              <div class="attr-chip" data-pred="29" data-gt="28" data-mae="4.07">
-                <span class="attr-chip-label">Age</span><span class="attr-chip-value">29 yrs</span>
-              </div>
-              <div class="attr-chip" data-pred="1" data-gt="1" data-mae="1">
-                <span class="attr-chip-label">Gender</span><span class="attr-chip-value">Female</span>
-              </div>
+              <div class="comparison-gt">167 cm</div>
             </div>
-          </div>
-          <div class="render-arrow" aria-hidden="true">
-            <svg class="render-arrow-svg render-arrow-svg--pred" viewBox="0 0 40 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="20" cy="5"  r="2.4" fill="currentColor" opacity="1"/>
-              <circle cx="20" cy="14" r="1.9" fill="currentColor" opacity="0.65"/>
-              <circle cx="20" cy="22" r="1.4" fill="currentColor" opacity="0.35"/>
-              <line x1="20" y1="26" x2="20" y2="39" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M9 37 L20 51 L31 37" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-        </div>
-
-        <div class="demo-col-header">
-          <div class="attr-panel attr-panel--gt">
-            <div class="attr-panel-title">Ground-Truth Attributes</div>
-            <div class="attr-row">
-              <div class="attr-chip attr-chip--gt"><span class="attr-chip-label">Height</span><span class="attr-chip-value">172 cm</span></div>
-              <div class="attr-chip attr-chip--gt"><span class="attr-chip-label">Weight</span><span class="attr-chip-value">68 kg</span></div>
-              <div class="attr-chip attr-chip--gt"><span class="attr-chip-label">Age</span><span class="attr-chip-value">28 yrs</span></div>
-              <div class="attr-chip attr-chip--gt"><span class="attr-chip-label">Gender</span><span class="attr-chip-value">Female</span></div>
+            <div class="comparison-row" data-attr="weight">
+              <div class="comparison-label">Weight</div>
+              <div class="comparison-pred">57 kg</div>
+              <div class="comparison-connector">
+                <svg viewBox="0 0 100 44" preserveAspectRatio="none" aria-hidden="true">
+                  <path class="connector-path" d="M 5 40 Q 5 12, 25 12 L 75 12 Q 95 12, 95 40"/>
+                </svg>
+                <div class="comparison-delta">
+                  <span class="delta-icon">&Delta;</span><span class="delta-text">+5 kg</span>
+                </div>
+              </div>
+              <div class="comparison-gt">52 kg</div>
             </div>
-          </div>
-          <div class="render-arrow" aria-hidden="true">
-            <svg class="render-arrow-svg render-arrow-svg--gt" viewBox="0 0 40 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="20" cy="5"  r="2.4" fill="currentColor" opacity="1"/>
-              <circle cx="20" cy="14" r="1.9" fill="currentColor" opacity="0.65"/>
-              <circle cx="20" cy="22" r="1.4" fill="currentColor" opacity="0.35"/>
-              <line x1="20" y1="26" x2="20" y2="39" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M9 37 L20 51 L31 37" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <div class="comparison-row" data-attr="age">
+              <div class="comparison-label">Age</div>
+              <div class="comparison-pred">26 yrs</div>
+              <div class="comparison-connector">
+                <svg viewBox="0 0 100 44" preserveAspectRatio="none" aria-hidden="true">
+                  <path class="connector-path" d="M 5 40 Q 5 12, 25 12 L 75 12 Q 95 12, 95 40"/>
+                </svg>
+                <div class="comparison-delta">
+                  <span class="delta-icon">&Delta;</span><span class="delta-text">&minus;3 yrs</span>
+                </div>
+              </div>
+              <div class="comparison-gt">29 yrs</div>
+            </div>
+            <div class="comparison-row match" data-attr="gender">
+              <div class="comparison-label">Gender</div>
+              <div class="comparison-pred">Female</div>
+              <div class="comparison-connector">
+                <svg viewBox="0 0 100 44" preserveAspectRatio="none" aria-hidden="true">
+                  <path class="connector-path" d="M 5 40 Q 5 12, 25 12 L 75 12 Q 95 12, 95 40"/>
+                </svg>
+                <div class="comparison-delta">
+                  <span class="delta-icon">&Delta;</span><span class="delta-text">&check;</span>
+                </div>
+              </div>
+              <div class="comparison-gt">Female</div>
+            </div>
           </div>
         </div>
 
