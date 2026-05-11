@@ -90,6 +90,37 @@ canvas { display: block; width: 100% !important; height: 100% !important; }
 body.embedded #controls { display:none; }
 body.embedded #canvas-wrap { inset:0; }
 
+/* ── Zoom controls (bottom-right corner of canvas) ── */
+#zoom-controls {
+  position: absolute;
+  right: 10px;
+  bottom: 62px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 5;
+}
+body.embedded #zoom-controls { bottom: 10px; }
+.zoom-btn {
+  width: 30px; height: 30px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(20,25,40,0.55);
+  color: #fff;
+  border-radius: 6px;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, transform 0.1s;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  user-select: none;
+}
+.zoom-btn:hover  { background: rgba(231,76,60,0.85); }
+.zoom-btn:active { transform: scale(0.94); }
+
 /* ── Loading overlay ───────────────────────────── */
 #loading {
   position: absolute;
