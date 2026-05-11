@@ -427,14 +427,27 @@ function setupThree() {
   camera.position.set(...camPos);
   camera.lookAt(...camTarget);
 
-  // Orbit controls
+  // Orbit controls — rotate only; zoom is driven by the explicit +/- buttons
+  // so that holding the mouse button (or pinching) no longer dollies the camera.
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.target.set(...camTarget);
   controls.enableDamping = true;
   controls.dampingFactor = 0.06;
   controls.minDistance = 0.5;
   controls.maxDistance = 12;
+  controls.enableZoom = false;
   controls.update();
+
+  // Programmatic zoom via on-screen buttons
+  function zoomCamera(scale) {
+    const offset = new THREE.Vector3().subVectors(camera.position, controls.target);
+    const newLen = THREE.MathUtils.clamp(offset.length() * scale, controls.minDistance, controls.maxDistance);
+    offset.setLength(newLen);
+    camera.position.copy(controls.target).add(offset);
+    controls.update();
+  }
+  document.getElementById('zoom-in') ?.addEventListener('click', () => zoomCamera(0.85));
+  document.getElementById('zoom-out')?.addEventListener('click', () => zoomCamera(1.18));
 
   // Lighting
   const hemi = new THREE.HemisphereLight(0x606060, 0x202020, 0.9);
