@@ -59,13 +59,13 @@
       "fps": 20.111732482910156,
       "predicted": {
         "height": 176,
-        "weight": 82,
+        "weight": 62,
         "age": 22,
         "gender": "male"
       },
       "groundTruth": {
         "height": 179,
-        "weight": 77,
+        "weight": 67,
         "age": 25,
         "gender": "male"
       }
@@ -106,13 +106,13 @@
       "predicted": {
         "height": 168,
         "weight": 68,
-        "age": 29,
+        "age": 39,
         "gender": "female"
       },
       "groundTruth": {
         "height": 172,
         "weight": 68,
-        "age": 28,
+        "age": 38,
         "gender": "female"
       }
     },
@@ -128,13 +128,13 @@
       "fps": 9.682624816894531,
       "predicted": {
         "height": 183,
-        "weight": 71,
+        "weight": 57,
         "age": 28,
         "gender": "male"
       },
       "groundTruth": {
         "height": 179,
-        "weight": 77,
+        "weight": 51,
         "age": 25,
         "gender": "male"
       }
@@ -151,14 +151,14 @@
       "fps": 29.079160690307617,
       "predicted": {
         "height": 174,
-        "weight": 66,
-        "age": 26,
+        "weight": 56,
+        "age": 30,
         "gender": "female"
       },
       "groundTruth": {
         "height": 171,
-        "weight": 62,
-        "age": 29,
+        "weight": 60,
+        "age": 27,
         "gender": "female"
       }
     },
@@ -197,13 +197,13 @@
       "fps": 38.46154022216797,
       "predicted": {
         "height": 175,
-        "weight": 84,
+        "weight": 74,
         "age": 29,
         "gender": "male"
       },
       "groundTruth": {
         "height": 179,
-        "weight": 77,
+        "weight": 70,
         "age": 25,
         "gender": "male"
       }
@@ -220,13 +220,13 @@
       "fps": 15.971606254577637,
       "predicted": {
         "height": 187,
-        "weight": 76,
+        "weight": 56,
         "age": 24,
         "gender": "male"
       },
       "groundTruth": {
         "height": 183,
-        "weight": 71,
+        "weight": 52,
         "age": 27,
         "gender": "male"
       }
@@ -266,14 +266,14 @@
       "fps": 11.152416229248047,
       "predicted": {
         "height": 177,
-        "weight": 79,
-        "age": 21,
+        "weight": 75,
+        "age": 31,
         "gender": "male"
       },
       "groundTruth": {
         "height": 181,
         "weight": 73,
-        "age": 25,
+        "age": 28,
         "gender": "male"
       }
     },
