@@ -705,14 +705,15 @@ section:nth-of-type(even) {
 
 .btn-pill {
   border-radius: 50px;
-  padding: 0.45rem 1.4rem;
-  font-size: 0.9rem;
+  padding: 0.2rem 1.05rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  margin: 0.3rem;
-  border-width: 2px;
+  margin: 0.2rem;
+  border-width: 1.5px;
   cursor: default;
   opacity: 0.55;
   pointer-events: none;
+  line-height: 1.4;
 }
 
 .btn-pill-enabled {
