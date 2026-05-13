@@ -359,8 +359,8 @@ section:nth-of-type(even) {
     padding: 0.35rem 0.4rem;
   }
   .comparison-connector {
-    height: 36px;
-    min-width: 80px;
+    height: 26px;
+    min-width: 70px;
   }
   .comparison-delta {
     font-size: 0.74rem;
