@@ -30,15 +30,24 @@ def width_at_height(verts, y_frac, band=0.02):
 
 
 def main():
-    for name in ["exercising_predicted.bin", "exercising_gt.bin"]:
+    refs = [
+        ("exercising_predicted.bin", "should be MALE (h=163,w=57)"),
+        ("exercising_gt.bin",        "should be MALE (h=167,w=52)"),
+        ("gesture_predicted.bin",    "known MALE (h=176,w=62)"),
+        ("gesture_gt.bin",           "known MALE (h=179,w=67)"),
+        ("walking_predicted.bin",    "known FEMALE (h=175,w=57)"),
+        ("walking_gt.bin",           "known FEMALE (h=171,w=62)"),
+        ("sitting_predicted.bin",    "known FEMALE (h=174,w=56)"),
+        ("kneeling_predicted.bin",   "known MALE (h=173,w=83)"),
+    ]
+    for name, note in refs:
         path = os.path.join(HERE, "smpl", name)
         v, nf, fps = load_first_frame(path)
-        # Shoulder band ~ 80% of body height, hip band ~ 50%
         w_shoulder = width_at_height(v, 0.80)
         w_hip      = width_at_height(v, 0.50)
         ratio = w_shoulder / max(w_hip, 1e-6)
-        print(f"{name}: frames={nf}, shoulder_w={w_shoulder:.3f}m, "
-              f"hip_w={w_hip:.3f}m, shoulder/hip={ratio:.3f}")
+        print(f"{name:36s} sh={w_shoulder:.3f}m hip={w_hip:.3f}m  "
+              f"ratio={ratio:.3f}   [{note}]")
     print()
     print("Interpretation: male SMPL templates typically have shoulder/hip > 1.0")
     print("                female SMPL templates typically have shoulder/hip < 1.0")
