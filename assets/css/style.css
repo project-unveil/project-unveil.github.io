@@ -436,6 +436,16 @@ section:nth-of-type(even) {
   .panel-video-wrap video,
   .g1-viewer-iframe { height: 380px; }
   .demo-col-header { padding-bottom: 4px; }
+  .demo-selector {
+    grid-column: 1;
+    grid-row: auto;
+    align-self: stretch;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .demo-selector-label { text-align: left; }
+  .attr-comparison-wrap { grid-column: 1 / -1 !important; }
 }
 
 /* ── Activity selector dropdown (sidebar in 4-col grid) ─── */
