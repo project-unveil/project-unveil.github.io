@@ -10,8 +10,8 @@
   },
   "worldYawDeg": 0,
   "showFloor": true,
-  "backgroundColor": "#0c0c0c",
-  "floorColor": "#1a1f28",
-  "gridColor": "#2a3140",
+  "backgroundColor": "#7E8082",
+  "floorColor": "#CED0D6",
+  "gridColor": "#9FA3AA",
   "enhancedMaterials": true
 }
