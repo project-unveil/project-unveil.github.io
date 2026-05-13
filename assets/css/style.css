@@ -699,6 +699,16 @@ section:nth-of-type(even) {
   opacity: 1;
   pointer-events: auto;
   cursor: pointer;
+  background: #111 !important;
+  color: #fff !important;
+  border-color: #111 !important;
+}
+
+.btn-pill-enabled:hover,
+.btn-pill-enabled:focus {
+  background: #2c3e6b !important;
+  color: #fff !important;
+  border-color: #2c3e6b !important;
 }
 
 .btn-pill-dataset {
