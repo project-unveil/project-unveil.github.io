@@ -67,14 +67,22 @@ section:nth-of-type(even) {
   box-sizing: border-box;
 }
 
-.demo-intro {
-  text-align: center;
-  margin-bottom: 0.6rem;
+.demo-tldr {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: #444;
+  margin: 0 auto 1rem;
+  max-width: 100%;
+  text-align: left;
 }
 
-.demo-intro .section-heading {
-  margin-bottom: 0;
-  padding-bottom: 0.25rem;
+.demo-tldr-tag {
+  display: inline-block;
+  font-family: 'Noto Serif', serif;
+  font-weight: 700;
+  color: #e74c3c;
+  letter-spacing: 0.04em;
+  margin-right: 0.5rem;
 }
 
 /* ── Multi-row demo blocks ───────────────────────────────── */
