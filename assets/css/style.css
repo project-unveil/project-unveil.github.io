@@ -631,17 +631,20 @@ section:nth-of-type(even) {
 
 /* ── Hero ─────────────────────────────────────────────────── */
 #hero {
-  padding: 140px 0 80px;
+  padding: 95px 0 35px;
   text-align: center;
   background: #ffffff;
 }
 
+#hero .container { max-width: 1280px; }
+
 #hero h1.paper-title {
-  font-size: 2.1rem;
+  font-size: 1.7rem;
   font-weight: 700;
-  line-height: 1.3;
-  margin-bottom: 1rem;
+  line-height: 1.25;
+  margin-bottom: 0.55rem;
   color: #2c3e6b;
+  white-space: nowrap;
 }
 
 #hero h1.paper-title .unveil-keyword {
@@ -649,17 +652,20 @@ section:nth-of-type(even) {
 }
 
 #hero .authors-line {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #666;
-  margin-bottom: 0.25rem;
+  margin-top: 0.4rem !important;
+  margin-bottom: 0.15rem;
 }
 
 #hero .venue-line {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: #2c3e6b;
-  margin-bottom: 2rem;
+  margin-bottom: 0.85rem;
 }
+
+#hero .d-flex { margin-top: 0.5rem !important; }
 
 .btn-pill {
   border-radius: 50px;
