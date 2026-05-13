@@ -156,6 +156,11 @@ const EMBEDDED       = params.has('embed');
 const DEMO_OVERRIDE  = params.get('demo');                 // e.g. ?demo=walking — picks ../assets/demos/smpl/<id>_<gt|predicted>.bin
 if (EMBEDDED) document.body.classList.add('embedded');
 
+// Bump this string whenever .bin files change so browsers refetch instead of
+// serving the old mesh from disk cache.
+const BIN_VERSION    = '2026-05-13';
+const withV          = (u) => u + (u.includes('?') ? '&' : '?') + 'v=' + BIN_VERSION;
+
 // ── State ─────────────────────────────────────────────────────────────────
 let cfg, vertData, facesData, numFrames, numVerts, seqFps;
 let renderer, scene, camera, controls, smplMesh, posAttr;
