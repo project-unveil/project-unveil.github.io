@@ -438,27 +438,32 @@ section:nth-of-type(even) {
   .demo-col-header { padding-bottom: 4px; }
 }
 
-/* ── Activity selector dropdown ─────────────────────────── */
+/* ── Activity selector dropdown (sidebar in 4-col grid) ─── */
 .demo-selector {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  align-self: center;
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.4rem;
+  margin-bottom: 0;
 }
 
 .demo-selector-label {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #888;
-  white-space: nowrap;
+  text-align: center;
 }
 
 .demo-selector-wrap {
   position: relative;
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  width: 100%;
 }
 
 .demo-select {
@@ -467,14 +472,15 @@ section:nth-of-type(even) {
   background: #fff;
   border: 1.5px solid #d0d8f0;
   border-radius: 8px;
-  padding: 0.45rem 2.2rem 0.45rem 0.9rem;
+  padding: 0.45rem 2rem 0.45rem 0.7rem;
   font-family: 'Noto Serif', serif;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: #2c3e6b;
   cursor: pointer;
   outline: none;
-  min-width: 180px;
+  width: 100%;
+  min-width: 0;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
