@@ -509,9 +509,9 @@ async function boot() {
   const bg = seqCfg.bgColor || cfg.backgroundColor || '#f8f9fa';
   document.body.style.background = bg;
 
-  const vertsUrl = DEMO_OVERRIDE
+  const vertsUrl = withV(DEMO_OVERRIDE
     ? `../assets/demos/smpl/${DEMO_OVERRIDE}_${SEQ === 'groundtruth' ? 'gt' : 'predicted'}.bin`
-    : seqCfg.vertsFile;
+    : seqCfg.vertsFile);
   const facesUrl = DEMO_OVERRIDE
     ? '../assets/demos/smpl/faces.bin'
     : cfg.facesFile;
