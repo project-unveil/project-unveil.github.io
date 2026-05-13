@@ -735,12 +735,12 @@ section:nth-of-type(even) {
 .btn-pill-icon {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.35rem;
 }
 
 .pill-icon {
-  width: 18px;
-  height: 18px;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
   vertical-align: middle;
 }
