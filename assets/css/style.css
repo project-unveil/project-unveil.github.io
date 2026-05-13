@@ -94,9 +94,9 @@ section:nth-of-type(even) {
    Row 2 (fr):   equal video cards, always start at same Y  */
 .demo-panels {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: minmax(130px, 0.45fr) 1fr 1fr 1fr;
   grid-template-rows: auto 1fr;
-  column-gap: 22px;
+  column-gap: 18px;
   row-gap: 0;
   align-items: end;     /* headers align to bottom → videos flush */
 }
