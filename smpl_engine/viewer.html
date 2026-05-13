@@ -413,7 +413,7 @@ window.addEventListener('message', e => {
     const cacheKey = `${demo.id}_${isGT ? 'gt' : 'pred'}`;
     if (!demoCache.has(cacheKey) && !loadingDemo) {
       const binKey = isGT ? 'smplGtFile' : 'smplPredFile';
-      const binUrl = '../assets/demos/' + demo[binKey].replace('./','');
+      const binUrl = withV('../assets/demos/' + demo[binKey].replace('./',''));
       loadVertsBin(binUrl)
         .then(vd => demoCache.set(cacheKey, vd))
         .catch(() => {});  // silent — preload is best-effort
