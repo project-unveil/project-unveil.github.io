@@ -264,6 +264,12 @@ section:nth-of-type(even) {
   column-gap: 0.3rem;
 }
 
+/* Display order: age, gender, height, weight (headers stay first at order: 0) */
+.comparison-row[data-attr="age"]    { order: 1; }
+.comparison-row[data-attr="gender"] { order: 2; }
+.comparison-row[data-attr="height"] { order: 3; }
+.comparison-row[data-attr="weight"] { order: 4; }
+
 .comparison-label {
   font-size: 0.68rem;
   font-weight: 700;
