@@ -429,7 +429,7 @@ window.addEventListener('message', e => {
     const isGT    = SEQ === 'groundtruth';
     const cacheKey = `${demo.id}_${isGT ? 'gt' : 'pred'}`;
     const binKey  = isGT ? 'smplGtFile' : 'smplPredFile';
-    const binUrl  = '../assets/demos/' + demo[binKey].replace('./','');
+    const binUrl  = withV('../assets/demos/' + demo[binKey].replace('./',''));
     const facesUrl = '../assets/demos/' + demo.smplFacesFile.replace('./','');
 
     async function doLoad() {
