@@ -285,11 +285,11 @@ section:nth-of-type(even) {
   color: #2c3e6b;
 }
 
-/* ── Connector cell: SVG arch + floating Δ badge ───────────── */
+/* ── Connector cell: straight SVG line + floating Δ badge ──── */
 .comparison-connector {
   position: relative;
-  height: 44px;
-  min-width: 110px;
+  height: 28px;
+  min-width: 90px;
 }
 
 .comparison-connector svg {
@@ -313,7 +313,7 @@ section:nth-of-type(even) {
 
 .comparison-delta {
   position: absolute;
-  top: 27%;        /* Align center of badge with arch horizontal segment */
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   display: inline-flex;
