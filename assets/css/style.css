@@ -246,16 +246,16 @@ section:nth-of-type(even) {
 
 .comparison-row {
   display: grid;
-  grid-template-columns: 72px minmax(0, 1fr) minmax(110px, 1.4fr) minmax(0, 1fr);
+  grid-template-columns: 56px minmax(0, 1fr) minmax(90px, 1.2fr) minmax(0, 1fr);
   align-items: center;
-  column-gap: 0.5rem;
+  column-gap: 0.3rem;
 }
 
 .comparison-label {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   color: #8a8f9c;
   white-space: nowrap;
 }
@@ -263,9 +263,9 @@ section:nth-of-type(even) {
 .comparison-pred,
 .comparison-gt {
   text-align: center;
-  padding: 0.45rem 0.6rem;
-  border-radius: 10px;
-  font-size: 0.95rem;
+  padding: 0.3rem 0.45rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
