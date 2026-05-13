@@ -215,8 +215,8 @@ section:nth-of-type(even) {
 .attr-comparison {
   display: grid;
   grid-template-rows: auto repeat(4, auto);
-  row-gap: 0.45rem;
-  padding: 0.4rem 0.5rem 0.5rem;
+  row-gap: 0.18rem;
+  padding: 0.3rem 0.4rem 0.35rem;
   background: rgba(255,255,255,0.4);
   border-radius: 14px;
   border: 1px solid #e5e9f2;
@@ -225,11 +225,11 @@ section:nth-of-type(even) {
 /* Column headers above the predicted/ground-truth pills */
 .comparison-headers {
   display: grid;
-  grid-template-columns: 72px minmax(0, 1fr) minmax(110px, 1.4fr) minmax(0, 1fr);
-  column-gap: 0.5rem;
-  padding-bottom: 0.25rem;
+  grid-template-columns: 56px minmax(0, 1fr) minmax(90px, 1.2fr) minmax(0, 1fr);
+  column-gap: 0.3rem;
+  padding-bottom: 0.15rem;
   border-bottom: 1px solid #edf0f7;
-  margin-bottom: 0.1rem;
+  margin-bottom: 0.05rem;
 }
 
 .comparison-header {
