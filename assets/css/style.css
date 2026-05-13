@@ -69,7 +69,12 @@ section:nth-of-type(even) {
 
 .demo-intro {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 0.6rem;
+}
+
+.demo-intro .section-heading {
+  margin-bottom: 0;
+  padding-bottom: 0.25rem;
 }
 
 /* ── Multi-row demo blocks ───────────────────────────────── */
