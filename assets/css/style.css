@@ -731,14 +731,14 @@ section:nth-of-type(even) {
   border-color: #2c3e6b !important;
 }
 
-.btn-pill-dataset {
+.btn-pill-icon {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
 }
 
-.hf-icon {
-  width: 20px;
+.pill-icon {
+  width: 18px;
   height: 18px;
   flex-shrink: 0;
   vertical-align: middle;
