@@ -115,6 +115,10 @@ The training code, dataset, and paper PDF live there, not here. Important paths:
 
 For deeper detail on the dataset layout and the paper's architecture/results, see `memory/bones_seed_dataset.md` and `memory/unveil_paper.md`.
 
+## Workflow
+
+- **Push automatically after every change** — the user has authorized pushing without asking. `watch.ps1` (when running) auto-commits and pushes on save with a 2-second debounce, so most edits ship without explicit action. If the watcher is stopped, stage and push the change yourself after editing, no need to confirm first.
+
 ## Conventions and gotchas
 
 - **G1 CSV units are cm + degrees** (not m + rad). Translation gets ×0.01; rotations get ×π/180.
