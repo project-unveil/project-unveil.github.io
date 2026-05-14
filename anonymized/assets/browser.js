@@ -1,9 +1,7 @@
 /* ════════════════════════════════════════════════════════════
    UNVEIL Anonymized-Trajectories Browser
-   - Lazy tree fetched from the Hugging Face Hub API:
-       https://huggingface.co/api/datasets/<repo>/tree/<rev>/<path>
-   - File content fetched from:
-       https://huggingface.co/datasets/<repo>/resolve/<rev>/<path>
+   - Lazy tree fetched from a remote dataset host.
+   - File content fetched from the same host on demand.
    - Routing via location.hash:  #file=path  or  #dir=path
 ═══════════════════════════════════════════════════════════════ */
 
@@ -11,12 +9,12 @@
   'use strict';
 
   // ── Configuration ──────────────────────────────────────────
-  const HF_REPO = 'sihatafnan/dummy_g1';
-  const HF_REPO_TYPE = 'datasets';   // path segment, always plural
-  const HF_REVISION = 'main';
-  const TREE_API_BASE = `https://huggingface.co/api/${HF_REPO_TYPE}/${HF_REPO}/tree/${HF_REVISION}`;
-  const RESOLVE_BASE  = `https://huggingface.co/${HF_REPO_TYPE}/${HF_REPO}/resolve/${HF_REVISION}`;
-  const HF_DATASET_URL = `https://huggingface.co/${HF_REPO_TYPE}/${HF_REPO}`;
+  const REPO = 'sihatafnan/dummy_g1';
+  const REPO_TYPE = 'datasets';
+  const REVISION = 'main';
+  const HOST = 'https://huggingface.co';
+  const TREE_API_BASE = `${HOST}/api/${REPO_TYPE}/${REPO}/tree/${REVISION}`;
+  const RESOLVE_BASE  = `${HOST}/${REPO_TYPE}/${REPO}/resolve/${REVISION}`;
 
   const PAGE_LIMIT = 1000;              // HF API max per page
   const ROOT_PATH = '';                 // sentinel for repo root
