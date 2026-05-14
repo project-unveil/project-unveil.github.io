@@ -246,7 +246,7 @@ The split is **actor-level**: every actor's motion sequences land entirely in on
 | Group | Actors | Description |
 |---|---|---|
 | `pure_train` | 294 | Appear only in training |
-| `seen_val` | 99 | Same actor appears in both train and val; their demos are split row-wise |
+| `seen_val` | 99 | Same actor appears in both train and val: 80 % of their demos → train, 20 % → val |
 | `unseen_test` | 99 | Held out entirely; used only for the final test |
 
 ### Split parameters
