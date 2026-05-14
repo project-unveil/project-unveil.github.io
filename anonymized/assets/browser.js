@@ -252,7 +252,7 @@
   };
 
   const renderRootTree = async () => {
-    $tree.innerHTML = '<div class="cb-tree-loading">Loading file tree from Hugging Face…</div>';
+    $tree.innerHTML = '<div class="cb-tree-loading">Loading file tree…</div>';
     try {
       const entries = await fetchTreeEntries(ROOT_PATH);
       $tree.innerHTML = '';
