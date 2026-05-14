@@ -476,7 +476,7 @@
       $tree.innerHTML = `<div class="cb-tree-loading">Failed to load manifest: ${escapeHtml(err.message)}</div>`;
       return;
     }
-    indexFiles(state.manifest.tree);
+    indexEntries(state.manifest.tree);
     renderTree();
     wireCopyButton();
     wireCollapseAll();
