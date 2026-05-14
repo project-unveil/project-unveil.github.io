@@ -397,7 +397,7 @@
       hideAllViews();
       $codeWrap.hidden = false;
       $code.className = '';
-      $code.textContent = `File is ${formatSize(sizeHint)} — too large to render inline.\nOpen the Raw link to download from Hugging Face.`;
+      $code.textContent = `File is ${formatSize(sizeHint)} — too large to render inline.\nUse the Raw button to download it.`;
       $lineNumbers.textContent = '1\n2';
       $fileName.textContent = path;
       $langBadge.textContent = 'too large';
