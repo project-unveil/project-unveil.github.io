@@ -254,29 +254,6 @@
         "gender": "male"
       }
     },
-    // {
-    //   "id": "crawling",
-    //   "label": "Crawling",
-    //   "count": 1384,
-    //   "g1CsvFile": "./g1_csv/crawling.csv",
-    //   "smplPredFile": "./smpl/crawling_predicted.bin",
-    //   "smplGtFile": "./smpl/crawling_gt.bin",
-    //   "smplFacesFile": "./smpl/faces.bin",
-    //   "numFrames": 150,
-    //   "fps": 11.152416229248047,
-    //   "predicted": {
-    //     "height": 177,
-    //     "weight": 75,
-    //     "age": 31,
-    //     "gender": "male"
-    //   },
-    //   "groundTruth": {
-    //     "height": 181,
-    //     "weight": 73,
-    //     "age": 28,
-    //     "gender": "male"
-    //   }
-    // },
     {
       "id": "exercising",
       "label": "Exercising",
