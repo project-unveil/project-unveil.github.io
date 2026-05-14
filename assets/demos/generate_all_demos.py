@@ -2,8 +2,12 @@
 generate_all_demos.py
 =====================
 Generates SMPL vertex binaries and copies G1 CSVs for all 15 demo categories.
-Run with the animation conda env (has CUDA torch + smplx):
-    C:/Users/sihat/miniconda3/envs/animation/python.exe generate_all_demos.py
+Run with a Python env that has CUDA torch + smplx installed:
+    python generate_all_demos.py
+
+Requires two environment variables pointing to local resources:
+    BONES_SEED_DIR  — root of the bones-seed dataset checkout
+    BVH2SMPL_SRC    — path to the BVH2SMPL library src/
 
 Output:
   assets/demos/g1_csv/<category>.csv
@@ -16,7 +20,8 @@ import os, sys, shutil, json, struct
 import numpy as np
 
 HERE         = os.path.dirname(os.path.abspath(__file__))
-BVH2SMPL_SRC = r"C:\Users\sihat\Downloads\BVH2SMPL\src"
+BONES_SEED   = os.environ.get("BONES_SEED_DIR", "<path-to-bones-seed>")
+BVH2SMPL_SRC = os.environ.get("BVH2SMPL_SRC",   "<path-to-BVH2SMPL>/src")
 SMPL_DIR     = os.path.join(BVH2SMPL_SRC, "rendering_utils", "smpl")
 SMPL_MODELS  = {
     "male":   os.path.join(SMPL_DIR, "basicmodel_m_lbs_10_207_0_v1.0.0.pkl"),
