@@ -413,6 +413,93 @@ a:hover { text-decoration: underline; }
   padding: 0 !important;
 }
 
+/* ── Directory listing view ──────────────────────────────── */
+.cb-dir-view {
+  padding: 1.25rem 1.5rem 2rem;
+}
+.cb-dir-list {
+  border: 1px solid var(--cb-border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--cb-bg);
+  max-width: 900px;
+  margin: 0 auto;
+}
+.cb-dir-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 1rem;
+  border-bottom: 1px solid var(--cb-border-soft);
+  cursor: pointer;
+  background: var(--cb-bg);
+  transition: background 0.1s;
+  color: var(--cb-text);
+  text-decoration: none;
+  font-size: 0.94rem;
+}
+.cb-dir-row:last-child {
+  border-bottom: none;
+}
+.cb-dir-row:hover {
+  background: var(--cb-hover);
+}
+.cb-dir-row:hover .cb-dir-row-name {
+  color: var(--cb-link);
+  text-decoration: underline;
+}
+.cb-dir-row-icon {
+  flex: 0 0 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cb-text-faint);
+}
+.cb-dir-row-icon.cb-dir-icon-folder {
+  color: #54aeff;
+}
+.cb-dir-row-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+.cb-dir-row.cb-dir-row-folder .cb-dir-row-name {
+  font-weight: 600;
+}
+.cb-dir-row-size {
+  flex: 0 0 auto;
+  font-family: var(--cb-mono);
+  font-size: 0.78rem;
+  color: var(--cb-text-faint);
+}
+.cb-dir-row-up {
+  background: var(--cb-bg-alt);
+}
+.cb-dir-empty {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--cb-text-faint);
+  font-style: italic;
+}
+
+/* Sidebar — selected directory (matches selected file styling) */
+.cb-node.cb-dir.cb-selected {
+  background: var(--cb-selected);
+  border-left-color: var(--cb-selected-border);
+}
+
+/* Clickable breadcrumb segments */
+.cb-breadcrumb .cb-crumb.cb-crumb-link {
+  cursor: pointer;
+}
+.cb-breadcrumb .cb-crumb.cb-crumb-link:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
 /* ── Markdown rendering ──────────────────────────────────── */
 .cb-markdown {
   max-width: 900px;
