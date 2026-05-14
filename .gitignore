@@ -1,6 +1,10 @@
 # Claude Code local config (contains local paths — keep off GitHub)
 .claude/
 
+# Project-private instructions for Claude — contains author identifying info,
+# must not be served via GitHub Pages while submission is anonymous.
+CLAUDE.md
+
 # Python
 __pycache__/
 *.pyc
