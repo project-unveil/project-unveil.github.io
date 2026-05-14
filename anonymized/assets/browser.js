@@ -112,15 +112,12 @@
         const res = await fetch(url);
         if (!res.ok) {
           if (res.status === 401 || res.status === 403) {
-            throw new Error(
-              `Hugging Face returned ${res.status} for ${dirPath || '(root)'}. ` +
-              `The dataset is likely still private — it must be set to public for browser access.`,
-            );
+            throw new Error(`Access denied (${res.status}) for ${dirPath || '(root)'}.`);
           }
           if (res.status === 404) {
-            throw new Error(`Path not found on Hugging Face: ${dirPath || '(root)'}`);
+            throw new Error(`Path not found: ${dirPath || '(root)'}`);
           }
-          throw new Error(`HF tree API HTTP ${res.status} for ${dirPath || '(root)'}`);
+          throw new Error(`HTTP ${res.status} for ${dirPath || '(root)'}`);
         }
         const page = await res.json();
         for (const e of page) {
