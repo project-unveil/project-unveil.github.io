@@ -179,20 +179,20 @@
 
   // ── Breadcrumb ───────────────────────────────────────────
   const updateBreadcrumb = (path) => {
-    const parts = path ? path.split('/') : [];
-    let html = '<span class="cb-crumb cb-crumb-root">UNVEIL</span>' +
-               '<span class="cb-crumb-sep">/</span>' +
-               '<span class="cb-crumb">Submission</span>';
+    $breadcrumb.innerHTML = '';
+    if (!path) return;
+    const parts = path.split('/');
     for (let i = 0; i < parts.length; i++) {
-      const isLast = i === parts.length - 1;
-      html += '<span class="cb-crumb-sep">/</span>' +
-              `<span class="cb-crumb${isLast ? ' cb-crumb-active' : ''}"></span>`;
-    }
-    $breadcrumb.innerHTML = html;
-    // Fill crumb text via textContent to avoid HTML injection.
-    const crumbs = $breadcrumb.querySelectorAll('.cb-crumb');
-    for (let i = 0; i < parts.length; i++) {
-      crumbs[i + 2].textContent = parts[i];
+      if (i > 0) {
+        const sep = document.createElement('span');
+        sep.className = 'cb-crumb-sep';
+        sep.textContent = '/';
+        $breadcrumb.appendChild(sep);
+      }
+      const crumb = document.createElement('span');
+      crumb.className = 'cb-crumb' + (i === parts.length - 1 ? ' cb-crumb-active' : '');
+      crumb.textContent = parts[i];
+      $breadcrumb.appendChild(crumb);
     }
   };
 
