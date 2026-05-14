@@ -244,8 +244,7 @@
   };
 
   const showCode = (text, entry) => {
-    $emptyState.hidden = true;
-    $markdown.hidden = true;
+    hideAllViews();
     $codeWrap.hidden = false;
 
     $code.className = '';
