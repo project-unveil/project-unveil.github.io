@@ -415,15 +415,14 @@ a:hover { text-decoration: underline; }
 
 /* ── Directory listing view ──────────────────────────────── */
 .cb-dir-view {
-  padding: 1.25rem 1.5rem 2rem;
+  padding: 0;
 }
 .cb-dir-list {
-  border: 1px solid var(--cb-border);
-  border-radius: 8px;
+  border: none;
+  border-radius: 0;
   overflow: hidden;
   background: var(--cb-bg);
-  max-width: 900px;
-  margin: 0 auto;
+  width: 100%;
 }
 .cb-dir-row {
   display: flex;
