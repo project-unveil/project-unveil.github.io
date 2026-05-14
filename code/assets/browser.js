@@ -125,7 +125,11 @@
           state.openFolders.delete(entry.path);
         }
         saveOpenFolders();
-        navigateTo('dir', entry.path);
+        // Only navigate when expanding — collapsing should just collapse the
+        // sidebar entry without re-routing (and without applyHash re-opening it).
+        if (willOpen) {
+          navigateTo('dir', entry.path);
+        }
       });
 
       wrapper.appendChild(node);
