@@ -428,9 +428,9 @@
         text = $code.textContent || '';
       } else if (!$markdown.hidden) {
         // Copy raw markdown by re-fetching (cheap; already cached).
-        if (state.currentPath) {
+        if (state.current && state.current.type === 'file') {
           try {
-            const r = await fetch(SRC_PREFIX + encodePath(state.currentPath));
+            const r = await fetch(SRC_PREFIX + encodePath(state.current.path));
             text = await r.text();
           } catch (e) { /* ignore */ }
         }
