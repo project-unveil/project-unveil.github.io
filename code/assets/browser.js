@@ -197,9 +197,14 @@
         sep.textContent = '/';
         $breadcrumb.appendChild(sep);
       }
+      const isLast = i === parts.length - 1;
       const crumb = document.createElement('span');
-      crumb.className = 'cb-crumb' + (i === parts.length - 1 ? ' cb-crumb-active' : '');
+      crumb.className = 'cb-crumb' + (isLast ? ' cb-crumb-active' : ' cb-crumb-link');
       crumb.textContent = parts[i];
+      if (!isLast) {
+        const ancestorPath = parts.slice(0, i + 1).join('/');
+        crumb.addEventListener('click', () => navigateTo('dir', ancestorPath));
+      }
       $breadcrumb.appendChild(crumb);
     }
   };
