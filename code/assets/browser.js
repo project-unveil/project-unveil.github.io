@@ -155,12 +155,15 @@
     $tree.appendChild(frag);
   };
 
-  const updateTreeSelection = (path) => {
-    $tree.querySelectorAll('.cb-node.cb-file.cb-selected').forEach(n => {
+  const updateTreeSelection = (type, path) => {
+    $tree.querySelectorAll('.cb-node.cb-selected').forEach(n => {
       n.classList.remove('cb-selected');
     });
     if (!path) return;
-    const node = $tree.querySelector(`.cb-node.cb-file[data-path="${CSS.escape(path)}"]`);
+    const selector = type === 'dir'
+      ? `.cb-node.cb-dir[data-path="${CSS.escape(path)}"]`
+      : `.cb-node.cb-file[data-path="${CSS.escape(path)}"]`;
+    const node = $tree.querySelector(selector);
     if (node) {
       node.classList.add('cb-selected');
       node.scrollIntoView({ block: 'nearest' });
