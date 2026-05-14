@@ -1,25 +1,42 @@
 """
-Extract assets/file/Submission.zip into code/src/ and emit code/manifest.json.
+Build the live submission artefacts.
 
-Skips __pycache__/ directories and *.pyc files. Strips the leading "Submission/"
-prefix from paths so code/src/ holds the contents of the submission directly.
+Reads the source tree at SOURCE_DIR, then in a single pass:
+  1. (re)builds  assets/file/Submission.zip       — the downloadable bundle
+  2. (re)writes  code/src/                        — the file-browser source tree
+  3. (re)writes  code/manifest.json               — the file-browser manifest
 
-Re-runnable: wipes code/src/ and code/manifest.json before regenerating.
+`code/src/` and `Submission.zip` are derived artefacts of SOURCE_DIR; do not edit
+them by hand — edit the live source and re-run this script.
+
+Skips __pycache__/ directories and *.pyc files.
 
 Run from the repo root or from code/:
     python code/extract_submission.py
+    python code/extract_submission.py --source D:/path/to/Submission
 """
 
+from __future__ import annotations
+
+import argparse
 import json
+import os
 import shutil
+import sys
 import zipfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parent
+
+# Live source tree (the canonical copy on the author's machine).
+DEFAULT_SOURCE = Path("C:/Users/sihat/Downloads/bones-seed/Submission")
+
 ZIP_PATH = REPO_ROOT / "assets" / "file" / "Submission.zip"
 SRC_DIR = HERE / "src"
 MANIFEST_PATH = HERE / "manifest.json"
+
+SKIP_DIR = "__pycache__"
 
 LANG_BY_EXT = {
     ".py": "python",
@@ -35,58 +52,60 @@ LANG_BY_EXT = {
 }
 
 
-def should_skip(member_name: str) -> bool:
-    parts = member_name.split("/")
-    if any(p == "__pycache__" for p in parts):
+def should_skip(rel_posix: str) -> bool:
+    if SKIP_DIR in rel_posix.split("/"):
         return True
-    if member_name.endswith(".pyc"):
+    if rel_posix.endswith(".pyc"):
         return True
     return False
-
-
-def strip_root(member_name: str) -> str:
-    # Drop the leading "Submission/" so SRC_DIR holds the contents directly.
-    prefix = "Submission/"
-    if member_name.startswith(prefix):
-        return member_name[len(prefix):]
-    return member_name
 
 
 def infer_lang(path: Path) -> str:
     return LANG_BY_EXT.get(path.suffix.lower(), "plaintext")
 
 
-def wipe_src():
-    if SRC_DIR.exists():
-        shutil.rmtree(SRC_DIR)
+def wipe(path: Path) -> None:
+    if path.exists():
+        if path.is_dir():
+            shutil.rmtree(path)
+        else:
+            path.unlink()
+
+
+def iter_source_files(source: Path):
+    """Yield (full_path, posix_rel_path) for every non-skipped file under
+    SOURCE."""
+    for dirpath, dirnames, filenames in os.walk(source):
+        dirnames[:] = [d for d in dirnames if d != SKIP_DIR]
+        for fn in filenames:
+            full = Path(dirpath) / fn
+            rel = full.relative_to(source).as_posix()
+            if should_skip(rel):
+                continue
+            yield full, rel
+
+
+def build_artefacts(source: Path) -> int:
+    """Copy live source → code/src/ and write Submission.zip in one pass."""
+    wipe(SRC_DIR)
     SRC_DIR.mkdir(parents=True, exist_ok=True)
+    ZIP_PATH.parent.mkdir(parents=True, exist_ok=True)
 
-
-def extract():
-    if not ZIP_PATH.exists():
-        raise SystemExit(f"Submission zip not found at {ZIP_PATH}")
-
-    wipe_src()
-    extracted_files = 0
-    with zipfile.ZipFile(ZIP_PATH) as z:
-        for info in z.infolist():
-            if info.is_dir():
-                continue
-            if should_skip(info.filename):
-                continue
-            rel = strip_root(info.filename)
-            if not rel:
-                continue
-            out_path = SRC_DIR / rel
-            out_path.parent.mkdir(parents=True, exist_ok=True)
-            with z.open(info) as src, open(out_path, "wb") as dst:
-                shutil.copyfileobj(src, dst)
-            extracted_files += 1
-    return extracted_files
+    count = 0
+    with zipfile.ZipFile(ZIP_PATH, "w", zipfile.ZIP_DEFLATED) as zf:
+        for full, rel in iter_source_files(source):
+            # Mirror under code/src/ (paths relative to the submission root).
+            dst = SRC_DIR / rel
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(full, dst)
+            # And inside the zip with the conventional "Submission/" prefix.
+            zf.write(full, "Submission/" + rel)
+            count += 1
+    return count
 
 
 def build_tree(root: Path):
-    """Build a nested dict/list manifest from the extracted src/ tree."""
+    """Recursively build the nested dict/list manifest from code/src/."""
     entries = []
     for child in sorted(root.iterdir(), key=lambda p: (p.is_file(), p.name.lower())):
         rel = child.relative_to(SRC_DIR).as_posix()
@@ -108,7 +127,7 @@ def build_tree(root: Path):
     return entries
 
 
-def write_manifest():
+def write_manifest() -> dict:
     manifest = {
         "root": "Submission",
         "default_file": "README.md",
@@ -121,15 +140,34 @@ def write_manifest():
     return manifest
 
 
-def main():
-    n = extract()
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    p = argparse.ArgumentParser(description=__doc__.strip().splitlines()[0])
+    p.add_argument("--source", type=Path, default=DEFAULT_SOURCE,
+                   help=f"Live submission source directory (default: {DEFAULT_SOURCE})")
+    return p.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
+    source: Path = args.source
+
+    if not source.is_dir():
+        print(f"ERROR: source directory not found: {source}", file=sys.stderr)
+        print("       pass --source <path> if the live tree lives elsewhere.",
+              file=sys.stderr)
+        return 1
+
+    count = build_artefacts(source)
     manifest = write_manifest()
-    file_count = sum(1 for _ in SRC_DIR.rglob("*") if _.is_file())
-    print(f"Extracted {n} entries from {ZIP_PATH.name}")
-    print(f"Wrote {file_count} files into {SRC_DIR.relative_to(REPO_ROOT)}")
-    print(f"Wrote manifest to {MANIFEST_PATH.relative_to(REPO_ROOT)}")
-    print(f"Top-level entries: {len(manifest['tree'])}")
+    zip_size = ZIP_PATH.stat().st_size
+
+    print(f"Source     : {source}")
+    print(f"Zip        : {ZIP_PATH.relative_to(REPO_ROOT)}  ({zip_size:,} bytes)")
+    print(f"Src tree   : {SRC_DIR.relative_to(REPO_ROOT)}  ({count} files)")
+    print(f"Manifest   : {MANIFEST_PATH.relative_to(REPO_ROOT)}  "
+          f"({len(manifest['tree'])} top-level entries)")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
