@@ -65,7 +65,7 @@ a:hover { text-decoration: underline; }
   gap: 1rem;
   height: var(--cb-header-h);
   padding: 0 1rem;
-  background: var(--cb-primary);
+  background: #000;
   color: #fff;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
