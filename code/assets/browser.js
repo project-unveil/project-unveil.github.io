@@ -62,12 +62,13 @@
     return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
   };
 
-  const indexFiles = (entries) => {
+  const indexEntries = (entries) => {
     for (const e of entries) {
       if (e.type === 'file') {
         state.fileIndex.set(e.path, e);
       } else if (e.type === 'dir') {
-        indexFiles(e.children);
+        state.dirIndex.set(e.path, e);
+        indexEntries(e.children);
       }
     }
   };
