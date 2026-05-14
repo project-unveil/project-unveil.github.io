@@ -1,23 +1,3 @@
-#!/usr/bin/env python3
-"""
-UNVEIL: Universal Non-intrusive Evaluation via Invariant Latent representations
-================================================================================
-
-Three backbone variants for privacy modeling on the BONES-SEED motion capture dataset.
-Tasks: re-identification, gender classification, age/height/weight regression.
-
-Variants:
-  stream-attn : a streamed-input attention-pooled graph encoder; independent
-                per-stream embeddings fused via a learned joint adjacency matrix
-                and attention pooling over temporal segments.
-  dyn-graph   : a dynamic-adjacency multi-stage spatiotemporal network with
-                multi-scale dilated temporal convolutions and global average pooling.
-  proto-mem   : a memory-augmented spatiotemporal network with a learned latent
-                prototype module for class-conditional contrastive regularization.
-
-External dependencies are imported under neutral aliases for anonymization.
-"""
-
 from __future__ import annotations
 
 import argparse
