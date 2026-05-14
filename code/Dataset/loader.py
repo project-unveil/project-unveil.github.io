@@ -2,8 +2,7 @@
 loader.py — Download, extract, and verify the BONES-SEED dataset.
 
 BONES-SEED (522 operators, 142K G1-retargeted humanoid motion sequences) is
-the dataset used in the UNVEIL paper. It is hosted on Hugging Face at
-https://huggingface.co/datasets/bones-studio/seed.
+the dataset used in the UNVEIL paper.
 
 Usage
 -----
