@@ -364,6 +364,14 @@ a:hover { text-decoration: underline; }
   text-align: center;
   font-size: 0.95rem;
 }
+.cb-empty-state .cb-empty-sub {
+  margin-top: 0.6rem;
+  font-size: 0.82rem;
+  color: var(--cb-text-faint);
+}
+.cb-empty-state .cb-empty-sub a {
+  color: var(--cb-link);
+}
 
 /* ── Code viewer with line numbers ───────────────────────── */
 .cb-code-wrap {
