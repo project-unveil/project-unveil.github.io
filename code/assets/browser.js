@@ -390,16 +390,9 @@
         updateTreeSelection(null, null);
         return;
       }
-      expandAncestors(parsed.path + '/_');  // expand all parents of the dir itself
-      state.openFolders.add(parsed.path);    // and the dir itself
-      saveOpenFolders();
-      const dirNode = $tree.querySelector(`.cb-node.cb-dir[data-path="${CSS.escape(parsed.path)}"]`);
-      if (dirNode) {
-        dirNode.classList.add('cb-open');
-        dirNode.setAttribute('aria-expanded', 'true');
-        const children = dirNode.parentElement.querySelector(':scope > .cb-children');
-        if (children) children.classList.add('cb-open');
-      }
+      // expandAncestors walks parents of the given path; append "/_" so the
+      // dir itself is treated as a parent and gets opened too.
+      expandAncestors(parsed.path + '/_');
       updateTreeSelection('dir', parsed.path);
       updateBreadcrumb(parsed.path);
       loadDir(entry);
