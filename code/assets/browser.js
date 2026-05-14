@@ -16,7 +16,8 @@
   const state = {
     manifest: null,
     fileIndex: new Map(),   // path → file entry
-    currentPath: null,
+    dirIndex: new Map(),    // path → dir entry
+    current: null,          // {type: 'file'|'dir', path}
     openFolders: new Set(),
   };
 
