@@ -210,18 +210,23 @@
   };
 
   // ── File loading & rendering ─────────────────────────────
-  const showEmpty = () => {
-    $emptyState.hidden = false;
+  const hideAllViews = () => {
+    $emptyState.hidden = true;
     $markdown.hidden = true;
     $codeWrap.hidden = true;
+    $dirView.hidden = true;
+  };
+
+  const showEmpty = () => {
+    hideAllViews();
+    $emptyState.hidden = false;
     $fileName.textContent = '—';
     $langBadge.textContent = '';
     $fileSize.textContent = '';
   };
 
   const showMarkdown = (text, entry) => {
-    $emptyState.hidden = true;
-    $codeWrap.hidden = true;
+    hideAllViews();
     $markdown.hidden = false;
     const rendered = window.marked
       ? window.marked.parse(text, { mangle: false, headerIds: false })
