@@ -361,12 +361,16 @@
   const parseHash = () => {
     const h = location.hash.replace(/^#/, '');
     if (!h) return null;
-    const m = h.match(/(?:^|&)file=([^&]+)/);
-    return m ? decodeURIComponent(m[1]) : null;
+    let m = h.match(/(?:^|&)file=([^&]+)/);
+    if (m) return { type: 'file', path: decodeURIComponent(m[1]) };
+    m = h.match(/(?:^|&)dir=([^&]+)/);
+    if (m) return { type: 'dir', path: decodeURIComponent(m[1]) };
+    return null;
   };
 
-  const navigateTo = (path) => {
-    const target = `#file=${encodeURIComponent(path).replace(/%2F/g, '/')}`;
+  const navigateTo = (type, path) => {
+    const key = type === 'dir' ? 'dir' : 'file';
+    const target = `#${key}=${encodeURIComponent(path).replace(/%2F/g, '/')}`;
     if (location.hash !== target) {
       location.hash = target;
     } else {
@@ -375,19 +379,44 @@
   };
 
   const applyHash = () => {
-    const path = parseHash() || state.manifest.default_file;
-    const entry = state.fileIndex.get(path);
+    const parsed = parseHash() || { type: 'file', path: state.manifest.default_file };
+    state.current = parsed;
+
+    if (parsed.type === 'dir') {
+      const entry = state.dirIndex.get(parsed.path);
+      if (!entry) {
+        showEmpty();
+        updateBreadcrumb('');
+        updateTreeSelection(null, null);
+        return;
+      }
+      expandAncestors(parsed.path + '/_');  // expand all parents of the dir itself
+      state.openFolders.add(parsed.path);    // and the dir itself
+      saveOpenFolders();
+      const dirNode = $tree.querySelector(`.cb-node.cb-dir[data-path="${CSS.escape(parsed.path)}"]`);
+      if (dirNode) {
+        dirNode.classList.add('cb-open');
+        dirNode.setAttribute('aria-expanded', 'true');
+        const children = dirNode.parentElement.querySelector(':scope > .cb-children');
+        if (children) children.classList.add('cb-open');
+      }
+      updateTreeSelection('dir', parsed.path);
+      updateBreadcrumb(parsed.path);
+      loadDir(entry);
+      return;
+    }
+
+    // file
+    const entry = state.fileIndex.get(parsed.path);
     if (!entry) {
       showEmpty();
       updateBreadcrumb('');
-      updateTreeSelection(null);
-      state.currentPath = null;
+      updateTreeSelection(null, null);
       return;
     }
-    state.currentPath = path;
-    expandAncestors(path);
-    updateTreeSelection(path);
-    updateBreadcrumb(path);
+    expandAncestors(parsed.path);
+    updateTreeSelection('file', parsed.path);
+    updateBreadcrumb(parsed.path);
     loadFile(entry);
   };
 
