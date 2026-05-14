@@ -413,7 +413,7 @@
       hideAllViews();
       $codeWrap.hidden = false;
       $code.className = '';
-      $code.textContent = `Failed to load ${path}\n\n${err.message}\n\nThe file may not yet have been uploaded (upload still in progress) or the dataset may be private.`;
+      $code.textContent = `Failed to load ${path}\n\n${err.message}\n\nThe file may not yet be available — try again later.`;
       $lineNumbers.textContent = '1\n2\n3\n4\n5';
       $fileName.textContent = path;
       $langBadge.textContent = 'error';
