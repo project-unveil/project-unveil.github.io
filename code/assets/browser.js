@@ -286,13 +286,75 @@
         showCode(text, entry);
       }
     } catch (err) {
-      $emptyState.hidden = true;
-      $markdown.hidden = true;
+      hideAllViews();
       $codeWrap.hidden = false;
       $code.className = '';
       $code.textContent = `Failed to load ${entry.path}\n\n${err.message}`;
       $lineNumbers.textContent = '1\n2\n3';
     }
+  };
+
+  // ── Directory view ───────────────────────────────────────
+  const svgFolderLarge = `<svg viewBox="0 0 16 16" fill="currentColor" width="16" height="16" aria-hidden="true"><path d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25v-8.5A1.75 1.75 0 0 0 14.25 3h-6.5a.25.25 0 0 1-.2-.1L6.06 1.4A1.75 1.75 0 0 0 4.66 1z"/></svg>`;
+  const svgFileLarge = `<svg viewBox="0 0 16 16" fill="currentColor" width="16" height="16" aria-hidden="true"><path d="M2 1.75C2 .784 2.784 0 3.75 0h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 12.25 16h-8.5A1.75 1.75 0 0 1 2 14.25zm10.5 5.379V14.25a.25.25 0 0 1-.25.25h-8.5a.25.25 0 0 1-.25-.25V1.75a.25.25 0 0 1 .25-.25H8V4.75c0 .967.784 1.75 1.75 1.75z"/></svg>`;
+  const svgUp = `<svg viewBox="0 0 16 16" fill="currentColor" width="16" height="16" aria-hidden="true"><path d="M8.53 1.22a.75.75 0 0 0-1.06 0L3.22 5.47a.75.75 0 0 0 1.06 1.06l2.97-2.97v9.69a.75.75 0 0 0 1.5 0V3.56l2.97 2.97a.75.75 0 1 0 1.06-1.06z"/></svg>`;
+
+  const loadDir = (entry) => {
+    hideAllViews();
+    $dirView.hidden = false;
+    $fileName.textContent = entry.path + '/';
+    $langBadge.textContent = 'directory';
+    $fileSize.textContent = `${entry.children.length} item${entry.children.length === 1 ? '' : 's'}`;
+
+    $dirList.innerHTML = '';
+
+    // Parent "up" row, except at top-level paths
+    const parentPath = entry.path.includes('/')
+      ? entry.path.split('/').slice(0, -1).join('/')
+      : null;
+    if (parentPath !== null) {
+      const upRow = document.createElement('div');
+      upRow.className = 'cb-dir-row cb-dir-row-up';
+      upRow.setAttribute('role', 'listitem');
+      upRow.innerHTML =
+        `<span class="cb-dir-row-icon">${svgUp}</span>` +
+        `<span class="cb-dir-row-name">..</span>`;
+      upRow.addEventListener('click', () => navigateTo('dir', parentPath));
+      $dirList.appendChild(upRow);
+    }
+
+    // Folders first, then files — alphabetised within each group
+    const sorted = [...entry.children].sort((a, b) => {
+      if (a.type !== b.type) return a.type === 'dir' ? -1 : 1;
+      return a.name.localeCompare(b.name);
+    });
+
+    if (sorted.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'cb-dir-empty';
+      empty.textContent = 'This folder is empty.';
+      $dirList.appendChild(empty);
+      return;
+    }
+
+    for (const child of sorted) {
+      const row = document.createElement('div');
+      row.className = 'cb-dir-row ' + (child.type === 'dir' ? 'cb-dir-row-folder' : 'cb-dir-row-file');
+      row.setAttribute('role', 'listitem');
+      const iconClass = child.type === 'dir' ? 'cb-dir-row-icon cb-dir-icon-folder' : 'cb-dir-row-icon';
+      const icon = child.type === 'dir' ? svgFolderLarge : svgFileLarge;
+      const sizeStr = child.type === 'file' ? formatSize(child.size) : '';
+      row.innerHTML =
+        `<span class="${iconClass}">${icon}</span>` +
+        `<span class="cb-dir-row-name"></span>` +
+        `<span class="cb-dir-row-size">${sizeStr}</span>`;
+      row.querySelector('.cb-dir-row-name').textContent = child.name;
+      row.addEventListener('click', () => navigateTo(child.type, child.path));
+      $dirList.appendChild(row);
+    }
+
+    // Reset viewer-body scroll
+    document.getElementById('cb-viewer-body').scrollTop = 0;
   };
 
   // ── Routing ──────────────────────────────────────────────
