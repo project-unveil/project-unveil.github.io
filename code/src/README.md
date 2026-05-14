@@ -225,6 +225,76 @@ artifacts/models/unveil/<variant>/actor_holdout_split_<format>/<task>/
 
 ---
 
+## Train / val / test split
+
+The split is **actor-level**: every actor's motion sequences land entirely in one of `pure_train`, `seen_val`, or `unseen_test`, so reported test metrics are operator-disjoint from training. Split artifacts are written to `artifacts/splits/`.
+
+### Files
+
+| File | Rows (excl. header) | Description |
+|---|---|---|
+| `train_manifest.csv` | 111,857 | Training rows (originals + mirrors) |
+| `val_manifest.csv` | 15,233 | Held-out demos of *seen* actors (validation signal during training) |
+| `test_manifest.csv` | 15,002 | All demos of completely *unseen* actors (final reported result) |
+| `split_summary.json` | — | Config, integrity checks, and per-actor row counts |
+| `top20_action_types_per_category.csv` | 368 | Per-category action whitelist used for category-level analyses |
+
+### Actor partition
+
+492 of the 522 raw actors are eligible (30 are skipped for having fewer than 20 motions). The eligible actors are partitioned as:
+
+| Group | Actors | Description |
+|---|---|---|
+| `pure_train` | 294 | Appear only in training |
+| `seen_val` | 99 | Same actor appears in both train and val; their demos are split row-wise |
+| `unseen_test` | 99 | Held out entirely; used only for the final test |
+
+### Split parameters
+
+From `split_summary.json → config`:
+
+| Parameter | Value | Meaning |
+|---|---|---|
+| `random_state` | 42 | RNG seed (deterministic) |
+| `unseen_test_frac` | 0.20 | Fraction of eligible actors held out as unseen test |
+| `seen_val_frac` | 0.25 | Fraction of the remaining (training-pool) actors that become seen-val sources |
+| `min_motions_per_actor` | 20 | Actors below this threshold are dropped |
+| `test_originals_only` | true | Val and test contain originals only — no left/right mirror augmentations |
+| `train_val_includes_mirrors` | true | Mirror sequences are allowed in train only |
+
+### Row counts
+
+| Partition | Rows | Originals | Mirrors |
+|---|---|---|---|
+| Train | 111,857 | 55,945 | 55,912 |
+| Val | 15,233 | 15,233 | 0 |
+| Test | 15,002 | 15,002 | 0 |
+| **Dataset total** | **142,220** | **71,132** | **71,088** |
+
+### Integrity guarantees
+
+Asserted at split-build time (`split_summary.json → integrity`):
+
+- **Zero actor overlap** between train and val (`train_val_actor_overlap = 0`).
+- **Zero canonical-motion overlap** between train/test or val/test — a motion and its mirror share a `canonical_motion_key`, so a motion never appears in two partitions even via its mirror.
+- **No mirrors in val or test** (`no_mirrors_in_test = true`) — every reported metric is measured on original motions only, so mirror-augmentation leakage cannot inflate scores.
+
+### Manifest schema
+
+Each row in the manifest CSVs has these 18 columns:
+
+```
+split, actor_uid, actor_gender, actor_age_yr, actor_height_cm, actor_weight_kg,
+move_name, canonical_motion_key, is_mirror, package, category,
+content_type_of_movement, content_body_position, content_uniform_style,
+move_duration_frames, move_soma_proportional_path, move_soma_uniform_path,
+move_g1_mujoco_path
+```
+
+`actor_uid` is the operator identifier; the biometric columns (`actor_gender`, `actor_age_yr`, `actor_height_cm`, `actor_weight_kg`) are the regression / classification targets. The three `move_*_path` columns point to the soma_proportional BVH, soma_uniform BVH, and G1 MuJoCo CSV for that sequence.
+
+---
+
 ## Evaluation split structure
 
 All variants use a three-way evaluation split:
