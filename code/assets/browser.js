@@ -1,9 +1,10 @@
 /* ════════════════════════════════════════════════════════════
    UNVEIL Code Browser — UI logic
    - Fetches manifest.json, renders the file tree.
-   - Routes file selection via location.hash (#file=path/to/file).
+   - Routes selection via location.hash: #file=path or #dir=path.
    - Loads file content from ./src/<urlencoded path>, renders as
      either highlight.js code or marked markdown.
+   - For dir routes, renders a GitHub-style listing of children.
 ═══════════════════════════════════════════════════════════════ */
 
 (() => {
