@@ -124,6 +124,7 @@
           state.openFolders.delete(entry.path);
         }
         saveOpenFolders();
+        navigateTo('dir', entry.path);
       });
 
       wrapper.appendChild(node);
