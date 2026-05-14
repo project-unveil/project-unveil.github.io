@@ -142,7 +142,7 @@
       `<span class="cb-node-icon">${svgFile}</span>` +
       `<span class="cb-node-name"></span>`;
     node.querySelector('.cb-node-name').textContent = entry.name;
-    node.addEventListener('click', () => navigateTo(entry.path));
+    node.addEventListener('click', () => navigateTo('file', entry.path));
     return node;
   };
 
