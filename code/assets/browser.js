@@ -38,6 +38,7 @@
   const $copyBtn = document.getElementById('cb-copy-btn');
   const $rawBtn = document.getElementById('cb-raw-btn');
   const $collapseAll = document.getElementById('cb-collapse-all');
+  const $downloadBtn = document.getElementById('cb-download-btn');
 
   // ── Persistence for folder expansion state ───────────────
   const loadOpenFolders = () => {
