@@ -51,7 +51,7 @@ def run_smpl(bvh_path, height, weight, gender):
 def main():
     print("Fitting PREDICTED (male)...")
     vp, fps = run_smpl(BVH, PRED["height"], PRED["weight"], PRED["gender"])
-    save_verts(vp, fps, os.path.join(SMPL_OUT, "turning_predicted.bin"))
+    save_verts(vp, fps, os.path.join(SMPL_OUT, f"{NAME}_predicted.bin"))
 
     print("Fitting GT (male)...")
     vg, fps2 = run_smpl(BVH, GT["height"], GT["weight"], GT["gender"])
