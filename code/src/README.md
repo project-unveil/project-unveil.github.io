@@ -10,7 +10,7 @@
 pip install -r requirements.txt
 ```
 
-Required: `torch >= 2.0`, `numpy`, `pandas`, `scikit-learn`. The `proto-mem` spatial backbone additionally needs `mmcv`. `torch.compile` (enabled by default) needs `triton`; pass `--no-compile` to skip it if `triton` is unavailable.
+Required: `torch >= 2.0`, `numpy`, `pandas`, `scikit-learn`. Passing `--spatial-backbone proto-mem` additionally needs `mmcv`. `torch.compile` (enabled by default) needs `triton`; pass `--no-compile` to skip it if `triton` is unavailable.
 
 ---
 
