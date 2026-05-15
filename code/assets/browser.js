@@ -449,6 +449,66 @@
     });
   };
 
+  // ── On-demand zip download ───────────────────────────────
+  // The zip is built in the browser from the live ./src/ files so it always
+  // matches what the visitor sees. No static Submission.zip on disk.
+  const collectFiles = (entries, acc) => {
+    for (const e of entries) {
+      if (e.type === 'file') acc.push(e);
+      else if (e.type === 'dir') collectFiles(e.children, acc);
+    }
+    return acc;
+  };
+
+  const wireDownloadButton = () => {
+    $downloadBtn.addEventListener('click', async () => {
+      if (!window.JSZip) {
+        alert('JSZip failed to load — cannot build the archive.');
+        return;
+      }
+      const label = $downloadBtn.querySelector('span');
+      const original = label ? label.textContent : '';
+      $downloadBtn.disabled = true;
+      if (label) label.textContent = 'Building zip…';
+
+      try {
+        const files = collectFiles(state.manifest.tree, []);
+        const zip = new JSZip();
+        // Match the conventional "Submission/<path>" layout reviewers expect.
+        const root = (state.manifest.root || 'Submission') + '/';
+
+        // Fetch every file in parallel, then add to the zip.
+        const fetched = await Promise.all(files.map(async (f) => {
+          const res = await fetch(SRC_PREFIX + encodePath(f.path));
+          if (!res.ok) throw new Error(`${f.path}: HTTP ${res.status}`);
+          return { path: f.path, blob: await res.blob() };
+        }));
+        for (const { path, blob } of fetched) {
+          zip.file(root + path, blob);
+        }
+
+        const archive = await zip.generateAsync({
+          type: 'blob',
+          compression: 'DEFLATE',
+          compressionOptions: { level: 6 },
+        });
+        const url = URL.createObjectURL(archive);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = (state.manifest.root || 'Submission') + '.zip';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+      } catch (err) {
+        alert(`Could not build the zip: ${err.message}`);
+      } finally {
+        $downloadBtn.disabled = false;
+        if (label) label.textContent = original;
+      }
+    });
+  };
+
   // ── Collapse-all ────────────────────────────────────────
   const wireCollapseAll = () => {
     $collapseAll.addEventListener('click', () => {
