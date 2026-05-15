@@ -495,7 +495,7 @@
         const url = URL.createObjectURL(archive);
         const a = document.createElement('a');
         a.href = url;
-        a.download = (state.manifest.root || 'Submission') + '.zip';
+        a.download = 'UNVEIL-codes.zip';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
