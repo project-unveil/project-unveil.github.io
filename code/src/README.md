@@ -168,26 +168,6 @@ Joints with fewer than 3 DoFs are zero-padded to a uniform 3-channel feature. To
 | `--dropout` | dyn-graph, proto-mem, unveil-vanilla | 0.5 | Dropout rate |
 | `--variance-percentile` | all (BVH) | variant-specific | BVH channel variance filtering (0 = keep all) |
 
-### Evaluation arguments
-
-| Argument | Default | Description |
-|---|---|---|
-| `--reid-eval` | variant-specific | `centroid` (stream-attn default) or `closed-set` (other variants default) |
-| `--split-mode` | `user` | `user` = Phase 2 manifests; `user_task` = regenerate from metadata |
-| `--deconfound` | `residual` | Embedding deconfounding: `none` or `residual` |
-| `--deconfound-key` | `package` | Metadata column for task deconfounding |
-
-### I/O arguments
-
-| Argument | Default | Description |
-|---|---|---|
-| `--checkpoint-dir` | auto | Checkpoint base directory |
-| `--save-every` | 10 | Save periodic checkpoint every N epochs |
-| `--max-train` | 0 | Limit training samples (0 = all) |
-| `--max-test` | 0 | Limit test samples (0 = all) |
-| `--num-workers` | 0 | DataLoader workers |
-| `--no-compile` | off | Disable `torch.compile` |
-
 ---
 
 ## Variant-specific defaults
@@ -248,69 +228,3 @@ The split is **actor-level**: every actor's motion sequences land entirely in on
 | `pure_train` | 294 | Appear only in training |
 | `seen_val` | 99 | Same actor appears in both train and val: 80 % of their demos → train, 20 % → val |
 | `unseen_test` | 99 | Held out entirely; used only for the final test |
-
-### Split parameters
-
-From `split_summary.json → config`:
-
-| Parameter | Value | Meaning |
-|---|---|---|
-| `random_state` | 42 | RNG seed (deterministic) |
-| `unseen_test_frac` | 0.20 | Fraction of eligible actors held out as unseen test |
-| `seen_val_frac` | 0.25 | Fraction of the remaining (training-pool) actors that become seen-val sources |
-| `min_motions_per_actor` | 20 | Actors below this threshold are dropped |
-| `test_originals_only` | true | Val and test contain originals only — no left/right mirror augmentations |
-| `train_val_includes_mirrors` | true | Mirror sequences are allowed in train only |
-
-### Row counts
-
-| Partition | Rows | Originals | Mirrors |
-|---|---|---|---|
-| Train | 111,857 | 55,945 | 55,912 |
-| Val | 15,233 | 15,233 | 0 |
-| Test | 15,002 | 15,002 | 0 |
-| **Dataset total** | **142,220** | **71,132** | **71,088** |
-
-### Integrity guarantees
-
-Asserted at split-build time (`split_summary.json → integrity`):
-
-- **Zero actor overlap** between train and val (`train_val_actor_overlap = 0`).
-- **Zero canonical-motion overlap** between train/test or val/test — a motion and its mirror share a `canonical_motion_key`, so a motion never appears in two partitions even via its mirror.
-- **No mirrors in val or test** (`no_mirrors_in_test = true`) — every reported metric is measured on original motions only, so mirror-augmentation leakage cannot inflate scores.
-
-### Manifest schema
-
-Each row in the manifest CSVs has these 18 columns:
-
-```
-split, actor_uid, actor_gender, actor_age_yr, actor_height_cm, actor_weight_kg,
-move_name, canonical_motion_key, is_mirror, package, category,
-content_type_of_movement, content_body_position, content_uniform_style,
-move_duration_frames, move_soma_proportional_path, move_soma_uniform_path,
-move_g1_mujoco_path
-```
-
-`actor_uid` is the operator identifier; the biometric columns (`actor_gender`, `actor_age_yr`, `actor_height_cm`, `actor_weight_kg`) are the regression / classification targets. The three `move_*_path` columns point to the soma_proportional BVH, soma_uniform BVH, and G1 MuJoCo CSV for that sequence.
-
----
-
-## Evaluation split structure
-
-All variants use a three-way evaluation split:
-
-1. **sa_seen** (seen-actors-seen-demos): 80 % of the `seen_val` actors' demos — used in training; reported for reference
-2. **sa_unseen** (seen-actors-unseen-demos): held-out 20 % of `seen_val` actors' demos — used as the primary validation signal during training
-3. **unseen** (unseen-actors): the `test_manifest` actors, completely held out — final reported result
-
-The `pure_train` actors from `train_manifest.csv` are combined with the 80 % portion of `seen_val` to form the full training set.
-
----
-
-## Notes
-
-- **`stream-attn`** processes data as `(B, 3, C, T)` with three-stream (position / velocity / acceleration) input fused internally via learned adjacency. No external model library is required.
-- **`dyn-graph`** and **`proto-mem`** reshape input to `(B, 1, T, V, C_in)`: for G1, `V=35, C_in=3`; for BVH, `V=24, C_in=9` (3 rotation channels × 3 streams per joint). These variants require all 72 BVH channels (`--variance-percentile 0.0` is enforced automatically).
-- **`unveil-vanilla`** uses **only the position stream** (the velocity / acceleration streams from the dataset are discarded). Input is reshaped to `(B, J, 3, T)` with `J=15` for G1 (semantic joint grouping) and `J=24` for BVH (one joint per body joint). The kinematic encoder learns motion dynamics from position alone. Like `dyn-graph`/`proto-mem`, all 72 BVH channels are required (`--variance-percentile 0.0` is enforced automatically). No external model library is needed.
-- The **BONES-SEED skeleton layouts** (`bones_seed_g1`, `bones_seed_bvh`) are already registered in `DS-GCN/pyskl/utils/graph.py`; no patching is required for `dyn-graph`. For `proto-mem`, the graph utility is patched at module load time. `unveil-vanilla` builds its own hierarchical adjacency matrices internally and does not depend on either external library.
-- All four variants return `(logits, z, aux)` from `UNVEIL.forward`; `aux` is `None` for `stream-attn`, `dyn-graph`, and `unveil-vanilla`, and contains the reconstructed graph tensor for `proto-mem`.
