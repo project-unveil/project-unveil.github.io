@@ -50,6 +50,10 @@
   const $rawBtn       = document.getElementById('cb-raw-btn');
   const $collapseAll  = document.getElementById('cb-collapse-all');
   const $viewerBody   = document.getElementById('cb-viewer-body');
+  const $search       = document.getElementById('cb-search');
+  const $searchClear  = document.getElementById('cb-search-clear');
+  const $searchStatus = document.getElementById('cb-search-status');
+  const $searchResults = document.getElementById('cb-search-results');
 
   // ── Persistence ────────────────────────────────────────────
   const loadOpenFolders = () => {
