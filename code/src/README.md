@@ -122,13 +122,13 @@ Joints with fewer than 3 DoFs are zero-padded to a uniform 3-channel feature. To
 | Argument | Default | Description |
 |---|---|---|
 | `--epochs` | 100 | Number of training epochs |
-| `--lr` | spatial-backbone-specific | Learning rate |
-| `--batch-size` | spatial-backbone-specific | Batch size |
+| `--lr` | varies by `--spatial-backbone` | Learning rate |
+| `--batch-size` | varies by `--spatial-backbone` | Batch size |
 | `--weight-decay` | 1e-4 | AdamW weight decay |
 | `--label-smoothing` | 0.05 | Cross-entropy label smoothing |
 | `--lambda-supcon` | 0.1 | SupCon loss weight (0 = CE only) |
 | `--lambda-proto` | 0.1 | Memory contrastive loss weight (proto-mem only) |
-| `--supcon-warmup` | spatial-backbone-specific | Epoch to start contrastive losses |
+| `--supcon-warmup` | varies by `--spatial-backbone` | Epoch to start contrastive losses |
 | `--supcon-temp` | 0.07 | SupCon temperature |
 | `--early-stop` | 40 | Early stopping patience (eval cycles) |
 | `--eval-every` | 1 | Evaluate every N epochs |
@@ -145,7 +145,7 @@ Joints with fewer than 3 DoFs are zero-padded to a uniform 3-channel feature. To
 | `--num-stages` | dyn-graph, proto-mem | 10 | Number of spatiotemporal blocks |
 | `--num-prototype` | proto-mem | 100 | Number of latent prototypes |
 | `--dropout` | dyn-graph, proto-mem, unveil-vanilla | 0.5 | Dropout rate |
-| `--variance-percentile` | all (BVH) | spatial-backbone-specific | BVH channel variance filtering (0 = keep all) |
+| `--variance-percentile` | all (BVH) | varies by `--spatial-backbone` | BVH channel variance filtering (0 = keep all) |
 
 ---
 
