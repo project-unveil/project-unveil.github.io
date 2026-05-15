@@ -687,7 +687,7 @@
       $searchStatus.textContent = `No matches for “${query}”`;
       return;
     }
-    const tokens = query.toLowerCase().trim().split(/[\s_]+/).filter(Boolean);
+    const tokens = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
     const cap = results.length >= SEARCH_MAX_RESULTS;
     $searchStatus.textContent = cap
       ? `Showing first ${SEARCH_MAX_RESULTS} matches — refine your search to narrow.`
