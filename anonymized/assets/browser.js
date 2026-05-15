@@ -356,6 +356,7 @@
     $emptyState.hidden = true;
     $codeWrap.hidden = true;
     $dirView.hidden = true;
+    if ($markdown) $markdown.hidden = true;
   };
 
   const showEmpty = (msg) => {
