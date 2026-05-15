@@ -23,10 +23,10 @@ python unveil.py --spatial-backbone unveil-vanilla --task reid --max-train 200 -
 # Vanilla UNVEIL on the full dataset, gender classification
 python unveil.py --spatial-backbone unveil-vanilla --format g1 --task gender
 
-# Same spatial backbone, all privacy tasks at once
+# Same setup, all privacy tasks at once
 python unveil.py --spatial-backbone unveil-vanilla --format g1 --task all
 
-# Other spatial backbones — same flags, just swap --spatial-backbone
+# Other options — same flags, just swap --spatial-backbone
 python unveil.py --spatial-backbone stream-attn --format g1 --task reid
 python unveil.py --spatial-backbone dyn-graph --format uniform --task gender
 python unveil.py --spatial-backbone proto-mem --format proportional --task age
