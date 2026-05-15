@@ -17,8 +17,8 @@ Datasets evaluated:
 Results saved to: Defense/non_adaptive_eval_results.json
 
 Usage:
-  cd <bones-seed-root>
-  python Defense/non_adaptive_eval.py
+  cd C:\\Users\\sihat\\Downloads\\bones-seed
+  python Defense\\non_adaptive_eval.py
 """
 
 from __future__ import annotations
