@@ -437,6 +437,10 @@
 ══════════════════════════════════════════════════ -->
 <section id="abstract">
   <div class="container">
+    <div class="viz-method-card fade-in">
+      <span class="viz-method-label">How it's rendered</span>
+      Each panel above is a Three.js iframe sharing one master clock. The <span class="unveil-kw">G1</span> robot replays the retargeted joint-angle CSV directly; the <span class="unveil-kw">SMPL</span> meshes are pre-baked by IK-fitting SMPL pose to the source BVH motion in world joint-position space, with per-operator height, weight, and gender driving the shape betas.
+    </div>
     <h2 class="section-heading fade-in">Abstract</h2>
     <div class="abstract-text fade-in">
       Human-to-humanoid motion retargeting is the central operation in teleoperation data collection: it projects operator demonstrations onto a shared robot skeleton, discarding body shape, to produce training data for whole-body controllers and foundation models. We report a surprising property of this transform: retargeting normalizes body proportions but preserves operator movement dynamics (joint velocity profiles, ranges of motion, and coordination patterns shaped by the operator&#8217;s physiology). On BONES-SEED (522 operators, 142K sequences), retargeted Unitree G1 trajectories support gender classification at 96.0% and operator re-identification at 97.2% Top-1; on operators never seen during training, gender holds at 83.4% and age and height regress within ±4.2 yr and ±5.7 cm. Partial correlation analysis reveals emergent, biomechanically interpretable structure: the signals are task-invariant across activity categories and hold across retargeting implementations. We introduce <span class="unveil-kw">UNVEIL</span>, a skeleton-aware spatiotemporal graph network to measure and interpret this effect, take initial steps toward operator anonymization, and ask what this implies for data practices and the operator-invariance of learned policies. Code, models, and anonymized trajectories are at our project website <a href="https://project-unveil.github.io" target="_blank" rel="noopener">project-unveil.github.io</a>.
