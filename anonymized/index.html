@@ -38,6 +38,21 @@
         </svg>
       </button>
     </div>
+    <div class="cb-search-wrap">
+      <svg class="cb-search-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" width="13" height="13">
+        <path d="M11.5 7a4.499 4.499 0 1 1-8.998 0A4.499 4.499 0 0 1 11.5 7zm-.82 4.74a6 6 0 1 1 1.06-1.06l3.04 3.04a.75.75 0 1 1-1.06 1.06z"/>
+      </svg>
+      <input type="search" id="cb-search" class="cb-search-input"
+             placeholder="Search files…  e.g. climbing box"
+             aria-label="Search files" autocomplete="off" spellcheck="false" />
+      <button class="cb-search-clear" id="cb-search-clear" type="button" title="Clear search" aria-label="Clear search" hidden>
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" width="11" height="11">
+          <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.75.75 0 1 1 1.06 1.06L9.06 8l3.22 3.22a.75.75 0 1 1-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 0 1-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06z"/>
+        </svg>
+      </button>
+    </div>
+    <div class="cb-search-status" id="cb-search-status" hidden></div>
+    <div class="cb-search-results" id="cb-search-results" hidden role="listbox" aria-label="Search results"></div>
     <div class="cb-tree" id="cb-tree" role="tree">
       <div class="cb-tree-loading">Loading file tree…</div>
     </div>
