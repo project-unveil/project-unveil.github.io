@@ -371,6 +371,24 @@
     $fileSize.textContent = '';
   };
 
+  const showMarkdown = (text, path, size) => {
+    hideAllViews();
+    $markdown.hidden = false;
+    const rendered = window.marked
+      ? window.marked.parse(text, { mangle: false, headerIds: false })
+      : `<pre>${escapeHtml(text)}</pre>`;
+    $markdown.innerHTML = rendered;
+    if (window.hljs) {
+      $markdown.querySelectorAll('pre code').forEach(block => {
+        try { window.hljs.highlightElement(block); } catch (_) { /* ignore */ }
+      });
+    }
+    $fileName.textContent = path;
+    $langBadge.textContent = 'markdown';
+    $fileSize.textContent = formatSize(size);
+    $viewerBody.scrollTop = 0;
+  };
+
   const showCode = (text, path, size) => {
     hideAllViews();
     $codeWrap.hidden = false;
