@@ -43,6 +43,7 @@
   const $codeWrap     = document.getElementById('cb-code-wrap');
   const $code         = document.getElementById('cb-code');
   const $lineNumbers  = document.getElementById('cb-line-numbers');
+  const $markdown     = document.getElementById('cb-markdown');
   const $dirView      = document.getElementById('cb-dir-view');
   const $dirList      = document.getElementById('cb-dir-list');
   const $copyBtn      = document.getElementById('cb-copy-btn');
