@@ -648,7 +648,9 @@
     if (!manifestEntries) return null;     // not ready yet
     const q = rawQuery.toLowerCase().trim();
     if (!q) return [];
-    const tokens = q.split(/[\s_]+/).filter(Boolean);
+    // Split on whitespace ONLY so underscores in the query (e.g. "jumping_rop_R")
+    // stay literal — matches the exact path substring, not each underscore-piece.
+    const tokens = q.split(/\s+/).filter(Boolean);
     if (tokens.length === 0) return [];
     const out = [];
     for (const path of manifestEntries) {
