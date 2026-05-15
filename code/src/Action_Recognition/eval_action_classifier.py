@@ -1,32 +1,6 @@
-#!/usr/bin/env python3
-"""
-eval_protogcn_action_g1.py  --  Action recognition: original G1 vs sanitized G1.
-
-Trains TWO independent ProtoGCN models and compares their accuracy:
-
-    Model A : trained on original  G1  ->  tested on original  test split
-    Model B : trained on sanitized G1  ->  tested on sanitized test split
-
-If Model B achieves similar top-1 / top-5 accuracy to Model A, the sanitized
-data preserves action-recognition utility.
-
-Workflow
---------
-Step 1 -- convert data (once each):
-    python Action_Recognition/g1_to_protogcn_pkl.py --variant original
-    python Action_Recognition/g1_to_protogcn_pkl.py --variant sanitized
-
-Step 2 -- train both models + compare:
-    python Action_Recognition/eval_protogcn_action_g1.py
-
---fast mode (recommended first run, ~60 min on GPU):
-    python Action_Recognition/g1_to_protogcn_pkl.py --variant original  --fast
-    python Action_Recognition/g1_to_protogcn_pkl.py --variant sanitized --fast
-    python Action_Recognition/eval_protogcn_action_g1.py --fast
-
-Full run (all data, 150 epochs):
-    python Action_Recognition/eval_protogcn_action_g1.py --epochs 150 --batch-size 32
-"""
+"""Train the unveil action classifier on original G1 and on each anonymized
+G1 variant, then compare their accuracy. See Action_Recognition/README.md
+for usage and the rationale behind this utility check."""
 
 from __future__ import annotations
 
