@@ -725,8 +725,14 @@
   // ── Copy ───────────────────────────────────────────────────
   const wireCopyButton = () => {
     $copyBtn.addEventListener('click', async () => {
-      if ($codeWrap.hidden) return;
-      const text = $code.textContent || '';
+      // CSV table view → copy the cached raw text. Code view → copy what's
+      // rendered. Anything else (markdown/dir/empty) → nothing to copy.
+      let text = '';
+      if ($csvView && !$csvView.hidden && csvState.text) {
+        text = csvState.text;
+      } else if (!$codeWrap.hidden) {
+        text = $code.textContent || '';
+      }
       if (!text) return;
       try {
         await navigator.clipboard.writeText(text);
