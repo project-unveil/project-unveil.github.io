@@ -66,6 +66,16 @@
   let manifestLoading = null;        // Promise during initial fetch
   const SEARCH_MAX_RESULTS = 200;    // cap shown to keep DOM cheap
 
+  // CSV viewer state — currently-loaded file's parsed text + view mode
+  const csvState = {
+    text: null,           // raw CSV text of the file currently shown
+    path: null,           // the path of that file
+    size: null,           // hint
+    mode: 'table',        // 'table' | 'raw'
+  };
+  const CSV_MAX_ROWS = 5000;   // cap rendered rows to keep the DOM responsive
+  const CSV_FLOAT_DIGITS = 4;  // decimals shown for float cells
+
   // ── Persistence ────────────────────────────────────────────
   const loadOpenFolders = () => {
     try {
