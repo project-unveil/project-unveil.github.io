@@ -539,6 +539,7 @@
     renderTree();
     wireCopyButton();
     wireCollapseAll();
+    wireDownloadButton();
     window.addEventListener('hashchange', applyHash);
     applyHash();
   };
