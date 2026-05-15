@@ -217,7 +217,7 @@ def train_and_eval(
     save_ckpt: Optional[Path],   # auto-save path (used for both saving and resuming)
 ) -> Tuple[Dict[str, float], Dict[int, Dict[str, float]]]:
     """
-    Build ProtoGCN, optionally train, then evaluate on test_data.
+    Build the unveil action classifier, optionally train, then evaluate on test_data.
 
     Modes (controlled by args.resume and load_ckpt):
       load_ckpt set  -> load weights, skip training, evaluate only
