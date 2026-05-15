@@ -104,7 +104,10 @@ def make_loader(data: List[dict], batch_size: int,
 # Model
 # ---------------------------------------------------------------------------
 
-def build_protogcn(num_classes: int) -> nn.Module:
+def build_action_classifier(num_classes: int) -> nn.Module:
+    """Build the unveil action classifier (graph backbone + linear head)."""
+    # Backbone implementation lives under code/src/ProtoGCN/; imported lazily
+    # so this module loads without requiring it on the path at import time.
     from protogcn.models.gcns.protogcn import ProtoGCN  # type: ignore[import]
 
     backbone = ProtoGCN(
