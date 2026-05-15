@@ -73,11 +73,6 @@
 <section id="demo">
   <div class="demo-container">
 
-    <div class="viz-method-card fade-in">
-      <span class="viz-method-label">How it's rendered</span>
-      Each panel below is a Three.js iframe sharing one master clock. The <span class="unveil-kw">G1</span> robot replays the retargeted joint-angle CSV directly; the <span class="unveil-kw">SMPL</span> meshes are pre-baked by IK-fitting SMPL pose to the source BVH motion in world joint-position space, with per-operator height, weight, and gender driving the shape betas.
-    </div>
-
     <p class="demo-tldr fade-in">
       <span class="demo-tldr-tag">TL;DR</span>
       We show that human-to-humanoid motion retargeting preserves operator movement dynamics despite discarding body shape, enabling recovery of gender, age, height, and identity from robot joint-angle trajectories alone. We measure and interpret this effect at scale, and ask what it implies for how the robotics community collects and shares demonstration data.
