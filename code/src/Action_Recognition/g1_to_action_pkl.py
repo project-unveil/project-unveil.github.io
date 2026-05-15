@@ -285,7 +285,7 @@ def fast_sample_balanced(
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
-        description='Convert G1 CSV data to ProtoGCN pickle format',
+        description='Convert G1 CSV data to the unveil action classifier pickle format',
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     p.add_argument(
