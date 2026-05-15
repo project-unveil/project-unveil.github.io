@@ -622,15 +622,161 @@
     });
   };
 
+  // ── Search ─────────────────────────────────────────────────
+  const loadManifest = () => {
+    if (manifestEntries) return Promise.resolve(manifestEntries);
+    if (manifestLoading) return manifestLoading;
+    manifestLoading = (async () => {
+      const res = await fetch('./manifest.json');
+      if (!res.ok) throw new Error(`manifest HTTP ${res.status}`);
+      const data = await res.json();
+      // Flatten {date: [file, …]} → ["csv/<date>/<file>", …]
+      const flat = [];
+      for (const date of Object.keys(data)) {
+        for (const file of data[date]) flat.push(`csv/${date}/${file}`);
+      }
+      manifestEntries = flat;
+      return flat;
+    })();
+    return manifestLoading;
+  };
+
+  // Token-based substring matcher. Query is lowercased, split on whitespace
+  // and underscores; a path matches when EVERY token appears as a substring
+  // of the lowercased path. Returns the first SEARCH_MAX_RESULTS matches.
+  const runSearch = (rawQuery) => {
+    if (!manifestEntries) return null;     // not ready yet
+    const q = rawQuery.toLowerCase().trim();
+    if (!q) return [];
+    const tokens = q.split(/[\s_]+/).filter(Boolean);
+    if (tokens.length === 0) return [];
+    const out = [];
+    for (const path of manifestEntries) {
+      const lp = path.toLowerCase();
+      let ok = true;
+      for (const t of tokens) {
+        if (!lp.includes(t)) { ok = false; break; }
+      }
+      if (ok) {
+        out.push(path);
+        if (out.length >= SEARCH_MAX_RESULTS) break;
+      }
+    }
+    return out;
+  };
+
+  // Escape special regex chars in user input so we can build a highlighter.
+  const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+  // Highlight each query token within `text` (case-insensitive).
+  const highlightHtml = (text, tokens) => {
+    if (tokens.length === 0) return escapeHtml(text);
+    const pattern = new RegExp('(' + tokens.map(escapeRegex).join('|') + ')', 'gi');
+    return escapeHtml(text).replace(pattern, '<mark>$1</mark>');
+  };
+
+  const renderSearchResults = (query, results) => {
+    $searchResults.innerHTML = '';
+    if (results === null) {
+      $searchStatus.textContent = 'Loading file index…';
+      return;
+    }
+    if (results.length === 0) {
+      $searchStatus.textContent = `No matches for “${query}”`;
+      return;
+    }
+    const tokens = query.toLowerCase().trim().split(/[\s_]+/).filter(Boolean);
+    const cap = results.length >= SEARCH_MAX_RESULTS;
+    $searchStatus.textContent = cap
+      ? `Showing first ${SEARCH_MAX_RESULTS} matches — refine your search to narrow.`
+      : `${results.length} match${results.length === 1 ? '' : 'es'}`;
+
+    const frag = document.createDocumentFragment();
+    for (const path of results) {
+      const file = basename(path);
+      const dir  = dirname(path);
+      const row = document.createElement('div');
+      row.className = 'cb-search-result';
+      row.setAttribute('role', 'option');
+      row.dataset.path = path;
+      row.innerHTML =
+        `<span class="cb-search-result-name">${highlightHtml(file, tokens)}</span>` +
+        `<span class="cb-search-result-dir">${highlightHtml(dir, tokens)}</span>`;
+      row.addEventListener('click', () => navigateTo('file', path));
+      frag.appendChild(row);
+    }
+    $searchResults.appendChild(frag);
+  };
+
+  // Show search panel (results + status), hide the file tree.
+  const showSearchPanel = () => {
+    $tree.hidden = true;
+    $searchResults.hidden = false;
+    $searchStatus.hidden = false;
+    $searchClear.hidden = false;
+  };
+  // Hide search panel, show the file tree again.
+  const hideSearchPanel = () => {
+    $tree.hidden = false;
+    $searchResults.hidden = true;
+    $searchStatus.hidden = true;
+    $searchClear.hidden = true;
+    $searchResults.innerHTML = '';
+    $searchStatus.textContent = '';
+  };
+
+  const wireSearch = () => {
+    let debounceTimer = null;
+    const handleInput = () => {
+      const q = $search.value;
+      if (!q.trim()) { hideSearchPanel(); return; }
+      showSearchPanel();
+
+      // Kick off manifest load on first non-empty input
+      if (!manifestEntries) {
+        renderSearchResults(q, null);
+        loadManifest().then(() => {
+          // Re-run with the latest query value (user may have typed more)
+          renderSearchResults($search.value, runSearch($search.value));
+        }).catch(err => {
+          $searchStatus.textContent = 'Search index failed to load: ' + err.message;
+        });
+        return;
+      }
+      renderSearchResults(q, runSearch(q));
+    };
+
+    $search.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(handleInput, 80);
+    });
+    // Esc clears
+    $search.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        $search.value = '';
+        hideSearchPanel();
+        $search.blur();
+      }
+    });
+    $searchClear.addEventListener('click', () => {
+      $search.value = '';
+      hideSearchPanel();
+      $search.focus();
+    });
+  };
+
   // ── Boot ───────────────────────────────────────────────────
   const boot = async () => {
     loadOpenFolders();
     wireCopyButton();
     wireCollapseAll();
+    wireSearch();
     window.addEventListener('hashchange', applyHash);
     await renderRootTree();
     // Apply initial route once tree is ready (so expandAncestors finds nodes)
     await applyHash();
+    // Pre-warm the manifest in the background so the first search is instant.
+    loadManifest().catch(() => { /* surfaced when user actually searches */ });
   };
 
   boot();
