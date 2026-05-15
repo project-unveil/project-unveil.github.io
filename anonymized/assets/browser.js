@@ -54,6 +54,11 @@
   const $searchClear  = document.getElementById('cb-search-clear');
   const $searchStatus = document.getElementById('cb-search-status');
   const $searchResults = document.getElementById('cb-search-results');
+  const $csvView      = document.getElementById('cb-csv-view');
+  const $csvThead     = document.getElementById('cb-csv-thead');
+  const $csvTbody     = document.getElementById('cb-csv-tbody');
+  const $viewToggle   = document.getElementById('cb-view-toggle');
+  const $viewToggleLabel = document.getElementById('cb-view-toggle-label');
 
   // Manifest of all CSV paths (loaded once, lazily). Used by the search box
   // for client-side fuzzy matching without per-keystroke API hits.
