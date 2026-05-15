@@ -21,16 +21,16 @@ from torch.utils.data import DataLoader, Dataset
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
-_HERE     = Path(__file__).resolve().parent
-_ROOT     = _HERE.parent
-_PROTOGCN = _ROOT / 'ProtoGCN'
-_PKL      = _HERE / 'data' / 'pkl'
+_HERE       = Path(__file__).resolve().parent
+_ROOT       = _HERE.parent
+_MODEL_SRC  = _ROOT / 'ProtoGCN'           # backbone implementation lives here
+_PKL        = _HERE / 'data' / 'pkl'
 
-for _p in [str(_HERE), str(_PROTOGCN), str(_ROOT)]:
+for _p in [str(_HERE), str(_MODEL_SRC), str(_ROOT)]:
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from g1_to_protogcn_pkl import CATEGORIES, VARIANT_ROOTS    # noqa: E402
+from g1_to_action_pkl import CATEGORIES, VARIANT_ROOTS    # noqa: E402
 
 CLIP_LEN = 100
 DEVICE   = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
