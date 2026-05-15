@@ -129,7 +129,8 @@ def save_faces(faces, path):
 def run_smpl(bvh_path, height, weight, gender, max_frames, device):
     sys.path.insert(0, BVH2SMPL_SRC)
     os.chdir(BVH2SMPL_SRC)
-    from soma_viewer import BVHMotionZYX, fit_smpl
+    from soma_viewer import BVHMotionZYX
+    from soma_viewer_smplfit_improved import fit_smpl
     bvh_path = os.path.abspath(bvh_path)
     bvh = BVHMotionZYX(bvh_path)
     nf  = bvh.motion_length
