@@ -4,17 +4,6 @@
 
 ---
 
-## Spatial backbones
-
-| Flag | Description |
-|---|---|
-| `stream-attn` | Streamed-input attention-pooled graph encoder; per-stream embeddings (position / velocity / acceleration) fused via a learned joint adjacency and attention pooling over temporal segments |
-| `dyn-graph` | Dynamic-adjacency multi-stage spatiotemporal network with multi-scale dilated temporal convolutions and global average pooling |
-| `proto-mem` | Memory-augmented spatiotemporal network with a learned latent prototype module and class-conditional contrastive regularization |
-| `unveil-vanilla` | Hierarchical spatiotemporal GCN baseline with a two-level joint hierarchy (intra-limb + limb-torso) and a learned kinematic encoder over raw position-only input |
-
----
-
 ## Install
 
 ```bash
