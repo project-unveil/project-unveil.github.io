@@ -465,7 +465,7 @@ def main():
     fast_flag = ' --fast' if args.fast else ''
     print(f'\nDone.  Pickle files in: {out_dir}')
     print('\nNext step -- train + evaluate:')
-    print(f'  python Action_Recognition/eval_protogcn_action_g1.py{fast_flag}{lt_flag}')
+    print(f'  python Action_Recognition/eval_action_classifier.py{fast_flag}{lt_flag}')
 
 
 if __name__ == '__main__':
