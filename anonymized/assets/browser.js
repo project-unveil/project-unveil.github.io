@@ -382,6 +382,8 @@
     $codeWrap.hidden = true;
     $dirView.hidden = true;
     if ($markdown) $markdown.hidden = true;
+    if ($csvView)  $csvView.hidden  = true;
+    if ($viewToggle) $viewToggle.hidden = true;   // hidden by default; CSV path shows it
   };
 
   const showEmpty = (msg) => {
