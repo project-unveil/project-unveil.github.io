@@ -436,6 +436,119 @@
     $viewerBody.scrollTop = 0;
   };
 
+  // ── CSV table renderer ─────────────────────────────────────
+  // Format a single cell value: integers as-is, floats trimmed to a fixed
+  // number of decimals (trailing zeros stripped), non-numeric kept literal.
+  const formatCsvCell = (v) => {
+    if (v === null || v === undefined || v === '') return '';
+    if (typeof v === 'number') {
+      if (Number.isInteger(v)) return String(v);
+      return v.toFixed(CSV_FLOAT_DIGITS).replace(/\.?0+$/, '');
+    }
+    return String(v);
+  };
+
+  // Build the table DOM from parsed rows. First row is the header.
+  const renderCsvTable = (rows) => {
+    $csvThead.innerHTML = '';
+    $csvTbody.innerHTML = '';
+    if (!rows || rows.length === 0) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.className = 'cb-csv-empty';
+      td.colSpan = 1;
+      td.textContent = '(empty CSV)';
+      tr.appendChild(td);
+      $csvTbody.appendChild(tr);
+      return;
+    }
+
+    const header = rows[0];
+    const headRow = document.createElement('tr');
+    for (const h of header) {
+      const th = document.createElement('th');
+      th.textContent = String(h);
+      headRow.appendChild(th);
+    }
+    $csvThead.appendChild(headRow);
+
+    const dataRows = rows.slice(1);
+    const cap = Math.min(dataRows.length, CSV_MAX_ROWS);
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < cap; i++) {
+      const r = dataRows[i];
+      const tr = document.createElement('tr');
+      for (let c = 0; c < header.length; c++) {
+        const td = document.createElement('td');
+        td.textContent = formatCsvCell(r[c]);
+        tr.appendChild(td);
+      }
+      frag.appendChild(tr);
+    }
+    $csvTbody.appendChild(frag);
+
+    if (dataRows.length > CSV_MAX_ROWS) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = header.length;
+      td.className = 'cb-csv-truncated';
+      td.textContent = `Showing first ${CSV_MAX_ROWS.toLocaleString()} of ${dataRows.length.toLocaleString()} rows — toggle to Raw view for the full file.`;
+      tr.appendChild(td);
+      $csvTbody.appendChild(tr);
+    }
+  };
+
+  const showCsv = (text, path, size) => {
+    csvState.text = text;
+    csvState.path = path;
+    csvState.size = size;
+    csvState.mode = 'table';
+
+    hideAllViews();
+    $csvView.hidden = false;
+    $viewToggle.hidden = false;
+    $viewToggleLabel.textContent = 'Raw';
+    $viewToggle.title = 'Switch to raw text view';
+
+    $fileName.textContent = path;
+    $langBadge.textContent = 'csv';
+    $fileSize.textContent = formatSize(size);
+
+    // PapaParse may not have loaded yet (CDN failure / slow). Fall back to raw.
+    if (!window.Papa) {
+      console.warn('PapaParse not loaded; falling back to raw view.');
+      csvState.mode = 'raw';
+      showCode(text, path, size);
+      return;
+    }
+
+    // Parse with dynamic typing so numeric cells become Numbers (better
+    // formatting). skipEmptyLines avoids stray trailing-newline rows.
+    const parsed = window.Papa.parse(text, {
+      header: false,
+      dynamicTyping: true,
+      skipEmptyLines: true,
+    });
+    renderCsvTable(parsed.data);
+    $viewerBody.scrollTop = 0;
+    $viewerBody.scrollLeft = 0;
+  };
+
+  // Toggle between table and raw for the currently-loaded CSV.
+  const toggleCsvView = () => {
+    if (!csvState.text) return;
+    if (csvState.mode === 'table') {
+      csvState.mode = 'raw';
+      showCode(csvState.text, csvState.path, csvState.size);
+      $viewToggle.hidden = false;
+      $viewToggleLabel.textContent = 'Table';
+      $viewToggle.title = 'Switch back to table view';
+    } else {
+      csvState.mode = 'table';
+      showCsv(csvState.text, csvState.path, csvState.size);
+    }
+  };
+
   // ── File loading ───────────────────────────────────────────
   const loadFile = async (path, sizeHint) => {
     const url = RESOLVE_BASE + '/' + encodePath(path);
