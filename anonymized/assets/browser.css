@@ -456,6 +456,7 @@ a:hover { text-decoration: underline; }
 .cb-viewer-body {
   flex: 1;
   overflow: auto;
+  min-width: 0;            /* same fix at this level */
   background: var(--cb-bg);
 }
 
