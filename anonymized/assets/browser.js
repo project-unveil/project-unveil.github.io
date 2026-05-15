@@ -569,10 +569,15 @@
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const text = await res.text();
       const ext = (path.split('.').pop() || '').toLowerCase();
+      const size = sizeHint ?? text.length;
       if (ext === 'md' || ext === 'markdown') {
-        showMarkdown(text, path, sizeHint ?? text.length);
+        showMarkdown(text, path, size);
+      } else if (ext === 'csv') {
+        showCsv(text, path, size);
       } else {
-        showCode(text, path, sizeHint ?? text.length);
+        // Non-CSV file: clear any stale CSV state so the view toggle is hidden.
+        csvState.text = null;
+        showCode(text, path, size);
       }
     } catch (err) {
       hideAllViews();
