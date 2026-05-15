@@ -231,7 +231,7 @@ def train_and_eval(
     print(f'  classes: {num_classes}')
     print(f'{"=" * 62}')
 
-    model = build_protogcn(num_classes).to(DEVICE)
+    model = build_action_classifier(num_classes).to(DEVICE)
 
     # -- Evaluate-only mode (explicit checkpoint path) -----------------------
     if load_ckpt and load_ckpt.exists():
