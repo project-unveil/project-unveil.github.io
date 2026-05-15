@@ -174,15 +174,15 @@
       "fps": 2.1377673149108887,
       "predicted": {
         "height": 175,
-        "weight": 58,
+        "weight": 63,
         "age": 32,
-        "gender": "female"
+        "gender": "male"
       },
       "groundTruth": {
         "height": 171,
-        "weight": 62,
+        "weight": 59,
         "age": 29,
-        "gender": "female"
+        "gender": "male"
       }
     },
     {
