@@ -902,12 +902,17 @@
     });
   };
 
+  const wireViewToggle = () => {
+    $viewToggle.addEventListener('click', toggleCsvView);
+  };
+
   // ── Boot ───────────────────────────────────────────────────
   const boot = async () => {
     loadOpenFolders();
     wireCopyButton();
     wireCollapseAll();
     wireSearch();
+    wireViewToggle();
     window.addEventListener('hashchange', applyHash);
     await renderRootTree();
     // Apply initial route once tree is ready (so expandAncestors finds nodes)
