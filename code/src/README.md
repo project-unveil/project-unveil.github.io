@@ -151,7 +151,7 @@ Joints with fewer than 3 DoFs are zero-padded to a uniform 3-channel feature. To
 
 ## Checkpoint layout
 
-Each spatial-backbone × format × task combination writes to its own directory to prevent collisions:
+Each `--spatial-backbone` × `--format` × `--task` combination writes to its own directory to prevent collisions:
 
 ```
 artifacts/models/unveil/<spatial-backbone>/actor_holdout_split_<format>/<task>/
