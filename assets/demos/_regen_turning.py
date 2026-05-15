@@ -1,4 +1,4 @@
-"""One-off: regen turning_*.bin with male SMPL + updated weights."""
+"""One-off: regen pulling_*.bin with updated weights."""
 import os, sys, struct
 import numpy as np
 
@@ -12,10 +12,11 @@ SMPL_MODELS  = {
 }
 SMPL_OUT     = os.path.join(HERE, "smpl")
 MAX_FRAMES   = 150
+NAME         = "pulling"
 
-BVH  = os.path.join(BONES_SEED, r"soma_uniform\bvh\240918\idle_turn_000_R_long_002__A548.bvh")
-PRED = dict(height=175, weight=63, gender="male")
-GT   = dict(height=171, weight=59, gender="male")
+BVH  = os.path.join(BONES_SEED, r"soma_uniform\bvh\231019\high_big_crank_ccw_002__A484.bvh")
+PRED = dict(height=163, weight=56, gender="female")
+GT   = dict(height=167, weight=62, gender="female")
 
 
 def save_verts(verts, fps, path):
