@@ -441,7 +441,7 @@ def main():
     if not orig_train:
         flag = '--fast' if args.fast else ''
         print('\n[ERROR] Original training data not found.')
-        print(f'  Run:  python Action_Recognition/g1_to_protogcn_pkl.py --variant original {flag}')
+        print(f'  Run:  python Action_Recognition/g1_to_action_pkl.py --variant original {flag}')
         sys.exit(1)
 
     overall_orig, per_class_orig = train_and_eval(
