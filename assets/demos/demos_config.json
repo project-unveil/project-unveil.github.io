@@ -209,29 +209,6 @@
       }
     },
     {
-      "id": "standing_idle",
-      "label": "Standing Idle",
-      "count": 3190,
-      "g1CsvFile": "./g1_csv/standing_idle.csv",
-      "smplPredFile": "./smpl/standing_idle_predicted.bin",
-      "smplGtFile": "./smpl/standing_idle_gt.bin",
-      "smplFacesFile": "./smpl/faces.bin",
-      "numFrames": 150,
-      "fps": 15.971606254577637,
-      "predicted": {
-        "height": 187,
-        "weight": 56,
-        "age": 24,
-        "gender": "male"
-      },
-      "groundTruth": {
-        "height": 183,
-        "weight": 52,
-        "age": 27,
-        "gender": "male"
-      }
-    },
-    {
       "id": "kneeling",
       "label": "Kneeling",
       "count": 1731,

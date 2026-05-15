@@ -1,20 +1,4 @@
 #!/usr/bin/env python3
-"""
-BONES-SEED: Phase 2 - Mirror-safe train/val/test split generation.
-
-Creates actor-wise splits from metadata with the following guarantees:
-1. Test set contains only original motions (is_mirror=False) from unseen actors.
-2. Train/val are disjoint by actors (no actor overlap between pure_train and seen_val).
-3. Test and train/val are disjoint by canonical motion key (no original/mirror leakage).
-4. Three-way actor split: 20% unseen_test, 60% pure_train, 20% seen_val.
-5. Optional minimum motions threshold per actor.
-
-Outputs:
-- splits/train_manifest.csv (pure_train + seen_val actors, all motions including mirrors)
-- splits/val_manifest.csv (seen_val actors only, all motions including mirrors)
-- splits/test_manifest.csv (unseen_test actors, originals only)
-- splits/split_summary.json
-"""
 
 from __future__ import annotations
 
