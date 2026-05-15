@@ -428,7 +428,12 @@
       const res = await fetch(url);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const text = await res.text();
-      showCode(text, path, sizeHint ?? text.length);
+      const ext = (path.split('.').pop() || '').toLowerCase();
+      if (ext === 'md' || ext === 'markdown') {
+        showMarkdown(text, path, sizeHint ?? text.length);
+      } else {
+        showCode(text, path, sizeHint ?? text.length);
+      }
     } catch (err) {
       hideAllViews();
       $codeWrap.hidden = false;
