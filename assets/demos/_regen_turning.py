@@ -55,7 +55,7 @@ def main():
 
     print("Fitting GT (male)...")
     vg, fps2 = run_smpl(BVH, GT["height"], GT["weight"], GT["gender"])
-    save_verts(vg, fps2, os.path.join(SMPL_OUT, "turning_gt.bin"))
+    save_verts(vg, fps2, os.path.join(SMPL_OUT, f"{NAME}_gt.bin"))
 
     print("Done.")
 
