@@ -474,7 +474,7 @@ def main():
         if not san_train:
             flag = '--fast' if args.fast else ''
             print(f'\n[SKIP] No training data for variant "{variant}" at {pkl_dir}')
-            print(f'  Run:  python Action_Recognition/g1_to_protogcn_pkl.py '
+            print(f'  Run:  python Action_Recognition/g1_to_action_pkl.py '
                   f'--variant {variant} {flag}')
             continue
 
