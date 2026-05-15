@@ -34,7 +34,7 @@ python unveil.py --spatial-backbone proto-mem --format proportional --task age
 
 ---
 
-## The `unveil-vanilla` spatial backbone
+## `unveil-vanilla` in detail
 
 A clean hierarchical spatiotemporal GCN baseline. Unlike `stream-attn` (which feeds position
 + velocity + acceleration as three explicit input streams), `unveil-vanilla` consumes only
