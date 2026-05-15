@@ -97,6 +97,16 @@ DEMOS = [
          bvh=os.path.join(BONES_SEED, r"soma_uniform\bvh\230424\throw_ball_R_001__A345.bvh"),
          gt  =dict(height=168, weight=61, age=27, gender="female"),
          pred=dict(height=172, weight=68, age=30, gender="female")),
+    dict(id="smoking",      label="Smoking",      count=500,
+         g1 =os.path.join(BONES_SEED, r"g1\csv\240918\idle_to_smoke_idle_R_001__A549.csv"),
+         bvh=os.path.join(BONES_SEED, r"soma_uniform\bvh\240918\idle_to_smoke_idle_R_001__A549.bvh"),
+         gt  =dict(height=172, weight=70, age=27, gender="male"),
+         pred=dict(height=169, weight=73, age=24, gender="male")),
+    dict(id="guitar",       label="Guitar",       count=200,
+         g1 =os.path.join(BONES_SEED, r"g1\csv\230417\playing_guitar_R_001__A330.csv"),
+         bvh=os.path.join(BONES_SEED, r"soma_uniform\bvh\230417\playing_guitar_R_001__A330.bvh"),
+         gt  =dict(height=169, weight=61, age=27, gender="female"),
+         pred=dict(height=172, weight=58, age=30, gender="female")),
 ]
 
 # ── Helpers ───────────────────────────────────────────────────────────────
