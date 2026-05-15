@@ -366,7 +366,7 @@ def load_pkl(pkl_dir: Path, split: str, max_clips: int = 0) -> List[dict]:
 def parse_args() -> argparse.Namespace:
     san_choices = [k for k in VARIANT_ROOTS if k != 'original']
     p = argparse.ArgumentParser(
-        description='ProtoGCN action recognition: original G1 vs one or more sanitized variants',
+        description='Unveil action classifier: original G1 vs one or more anonymized variants',
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     p.add_argument('--fast', action='store_true',
