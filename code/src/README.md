@@ -1,6 +1,6 @@
-# UNVEIL — BONES-SEED Supplementary Code
+# UNVEIL
 
-**UNVEIL** is the training and evaluation framework used in the paper. Within this framework we instantiate four different *spatial backbones* — each is an independent spatiotemporal network; the rest of the pipeline (loaders, splits, heads, training loop, evaluation) is shared.
+**UNVEIL** is the training and evaluation framework from our paper *Inverting Retargeting: Humanoid Datasets Remember Their Operators*. It recovers operator attributes — gender, age, height, weight, and re-identification — directly from humanoid joint-angle trajectories, with no access to body shape. This page is the supplementary code: everything below is what you need to reproduce the paper's numbers, including the actor-disjoint data splits and the per-task evaluation harness.
 
 ---
 
@@ -146,26 +146,6 @@ Joints with fewer than 3 DoFs are zero-padded to a uniform 3-channel feature. To
 | `--num-prototype` | proto-mem | 100 | Number of latent prototypes |
 | `--dropout` | dyn-graph, proto-mem, unveil-vanilla | 0.5 | Dropout rate |
 | `--variance-percentile` | all (BVH) | spatial-backbone-specific | BVH channel variance filtering (0 = keep all) |
-
----
-
-## Spatial-backbone defaults
-
-| Argument | stream-attn | dyn-graph | proto-mem | unveil-vanilla |
-|---|---|---|---|---|
-| `--lr` | 3e-4 | 1e-3 | 1e-3 | 1e-3 |
-| `--batch-size` | 64 | 32 | 32 | 128 |
-| `--supcon-warmup` | 20 | 20 | 8 | 20 |
-| `--emb-dim` | 256 | 256 | 256 | 256 |
-| `--variance-percentile` | 10.0 | 0.0 | 0.0 | 0.0 |
-| `--dim1` | 256 | — | — | — |
-| `--seg` | 64 | — | — | — |
-| `--base-channels` | — | 64 | 96 | — |
-| `--num-stages` | — | 10 | 10 | 10 (fixed) |
-| `--num-prototype` | — | — | 100 | — |
-| `--lambda-proto` | — | — | 0.1 | — |
-| `--dropout` | — | 0.5 | 0.5 | 0.5 |
-| `--reid-eval` default | centroid | closed-set | closed-set | closed-set |
 
 ---
 
