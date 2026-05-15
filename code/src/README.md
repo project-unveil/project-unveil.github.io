@@ -72,7 +72,7 @@ the raw **position** trajectory and learns the temporal dynamics inside a kinema
 
 6. **Global average pool** over both joints (J) and time (T) → `(B, 256)`.
 
-7. **Heads** (shared with the other spatial backbones):
+7. **Heads** (shared across all `--spatial-backbone` choices):
    - Re-ID: `Linear(256, num_actors)` + CE-with-label-smoothing + SupCon (warmup 20 epochs)
    - Gender: `Linear(256, 2)` + CE-with-label-smoothing
    - Age / Height / Weight: `Linear(256, 1)` + MSE
