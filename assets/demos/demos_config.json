@@ -278,29 +278,6 @@
       }
     },
     {
-      "id": "smoking",
-      "label": "Smoking",
-      "count": 500,
-      "g1CsvFile": "./g1_csv/smoking.csv",
-      "smplPredFile": "./smpl/smoking_predicted.bin",
-      "smplGtFile": "./smpl/smoking_gt.bin",
-      "smplFacesFile": "./smpl/faces.bin",
-      "numFrames": 150,
-      "fps": 6.282722513089006,
-      "predicted": {
-        "height": 169,
-        "weight": 73,
-        "age": 24,
-        "gender": "male"
-      },
-      "groundTruth": {
-        "height": 172,
-        "weight": 70,
-        "age": 27,
-        "gender": "male"
-      }
-    },
-    {
       "id": "guitar",
       "label": "Guitar",
       "count": 200,
