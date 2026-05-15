@@ -136,7 +136,7 @@ Joints with fewer than 3 DoFs are zero-padded to a uniform 3-channel feature. To
 
 ### Architecture arguments
 
-| Argument | Spatial backbones | Default | Description |
+| Argument | Applies to | Default | Description |
 |---|---|---|---|
 | `--emb-dim` | all | 256 | Embedding dimension |
 | `--dim1` | stream-attn | 256 | Feature dimension |
