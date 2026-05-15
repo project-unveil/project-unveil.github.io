@@ -55,6 +55,12 @@
   const $searchStatus = document.getElementById('cb-search-status');
   const $searchResults = document.getElementById('cb-search-results');
 
+  // Manifest of all CSV paths (loaded once, lazily). Used by the search box
+  // for client-side fuzzy matching without per-keystroke API hits.
+  let manifestEntries = null;        // array of full paths "csv/<date>/<file>"
+  let manifestLoading = null;        // Promise during initial fetch
+  const SEARCH_MAX_RESULTS = 200;    // cap shown to keep DOM cheap
+
   // ── Persistence ────────────────────────────────────────────
   const loadOpenFolders = () => {
     try {
