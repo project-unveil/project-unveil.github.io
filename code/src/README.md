@@ -14,6 +14,19 @@ Required: `torch >= 2.0`, `numpy`, `pandas`, `scikit-learn`. Passing `--spatial-
 
 ---
 
+## Data preparation
+
+Before training, run these two scripts once:
+
+```bash
+python Data_split/create_splits.py                      # → artifacts/splits/{train,val,test}_manifest.csv
+python Motion_cache_builder/build_g1_motion_cache.py    # → float32 memmap of every G1 trajectory referenced in the manifests
+```
+
+`create_splits.py` produces the actor-wise split described under *Train / val / test split* below. `build_g1_motion_cache.py` reads those manifests and packs every referenced G1 CSV into a flat memmap, which the training loop loads in one shot for substantially faster dataloading.
+
+---
+
 ## Quick start
 
 ```bash
