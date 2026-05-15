@@ -46,6 +46,34 @@
     },
     {
       "type": "dir",
+      "name": "Action_Recognition",
+      "path": "Action_Recognition",
+      "children": [
+        {
+          "type": "file",
+          "name": "eval_action_classifier.py",
+          "path": "Action_Recognition/eval_action_classifier.py",
+          "size": 23898,
+          "lang": "python"
+        },
+        {
+          "type": "file",
+          "name": "g1_to_action_pkl.py",
+          "path": "Action_Recognition/g1_to_action_pkl.py",
+          "size": 18504,
+          "lang": "python"
+        },
+        {
+          "type": "file",
+          "name": "README.md",
+          "path": "Action_Recognition/README.md",
+          "size": 3569,
+          "lang": "markdown"
+        }
+      ]
+    },
+    {
+      "type": "dir",
       "name": "Data_split",
       "path": "Data_split",
       "children": [
@@ -53,7 +81,7 @@
           "type": "file",
           "name": "create_splits.py",
           "path": "Data_split/create_splits.py",
-          "size": 11412,
+          "size": 10597,
           "lang": "python"
         }
       ]
