@@ -189,6 +189,106 @@ a:hover { text-decoration: underline; }
   font-size: 0.92rem;
 }
 
+/* ── Search bar (above tree) ─────────────────────────────── */
+.cb-search-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--cb-bg-tree);
+  border-bottom: 1px solid var(--cb-border-soft);
+}
+.cb-search-icon {
+  flex: 0 0 13px;
+  color: var(--cb-text-faint);
+}
+.cb-search-input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--cb-border);
+  border-radius: 6px;
+  padding: 0.32rem 0.55rem;
+  font-family: var(--cb-sans);
+  font-size: 0.85rem;
+  color: var(--cb-text);
+  background: #fff;
+  outline: none;
+  transition: border-color 0.12s, box-shadow 0.12s;
+}
+.cb-search-input:focus {
+  border-color: var(--cb-primary);
+  box-shadow: 0 0 0 2px rgba(44, 62, 107, 0.12);
+}
+.cb-search-input::-webkit-search-cancel-button { display: none; }
+.cb-search-clear {
+  background: transparent;
+  border: none;
+  color: var(--cb-text-faint);
+  cursor: pointer;
+  padding: 3px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cb-search-clear:hover { background: var(--cb-hover); color: var(--cb-text); }
+
+.cb-search-status {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.78rem;
+  color: var(--cb-text-faint);
+  border-bottom: 1px solid var(--cb-border-soft);
+  font-family: var(--cb-mono);
+}
+
+.cb-search-results {
+  padding: 0.3rem 0;
+  font-size: 0.88rem;
+}
+.cb-search-result {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 0.32rem 0.75rem;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cb-search-result:hover {
+  background: var(--cb-hover);
+}
+.cb-search-result.cb-selected {
+  background: var(--cb-selected);
+  border-left-color: var(--cb-selected-border);
+}
+.cb-search-result-name {
+  font-family: var(--cb-mono);
+  font-size: 0.84rem;
+  color: var(--cb-text);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cb-search-result-dir {
+  font-family: var(--cb-mono);
+  font-size: 0.72rem;
+  color: var(--cb-text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cb-search-result-name mark,
+.cb-search-result-dir mark {
+  background: #fff3b8;
+  color: inherit;
+  padding: 0;
+  border-radius: 2px;
+}
+
 .cb-tree-loading {
   padding: 1rem;
   color: var(--cb-text-faint);
