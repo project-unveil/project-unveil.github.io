@@ -363,6 +363,7 @@ a:hover { text-decoration: underline; }
   display: flex;
   flex-direction: column;
   min-height: 0;
+  min-width: 0;            /* let inner overflow:auto kick in for wide CSV tables */
   background: var(--cb-bg);
 }
 
