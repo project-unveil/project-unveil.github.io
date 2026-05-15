@@ -105,7 +105,7 @@ ALL_TASKS = ["reid", "gender", "age", "height", "weight"]
 REGRESSION_TASKS = {"age", "height", "weight"}
 EPS = 1e-4
 
-VARIANT_DEFAULTS: Dict[str, Dict] = {
+SPATIAL_BACKBONE_DEFAULTS: Dict[str, Dict] = {
     "stream-attn": {
         "lr": 3e-4, "batch_size": 64, "supcon_warmup": 20,
         "dim1": 256, "seg": 64, "emb_dim": 256,
@@ -644,7 +644,7 @@ class SupConLoss(nn.Module):
 
 
 class MemoryContrastiveLoss(nn.Module):
-    """Per-class prototype memory updated with momentum; used by proto-mem variant."""
+    """Per-class prototype memory updated with momentum; used by proto-mem spatial backbone."""
 
     def __init__(self, n_class, n_channel=576, h_channel=256,
                  tmp=0.125, mom=0.9, pred_threshold=0.0):
@@ -1324,21 +1324,21 @@ class VanillaBackbone(nn.Module):
 # === SECTION: UNVEIL WRAPPER ===
 
 class UNVEIL(nn.Module):
-    """Selects backbone by variant name; forward always returns (logits, z, aux)."""
+    """Selects the spatial backbone by name; forward always returns (logits, z, aux)."""
 
-    def __init__(self, variant: str, **kwargs):
+    def __init__(self, spatial_backbone: str, **kwargs):
         super().__init__()
-        self.variant = variant
-        if variant == "stream-attn":
+        self.spatial_backbone = spatial_backbone
+        if spatial_backbone == "stream-attn":
             self.backbone = StreamAttnBackbone(**kwargs)
-        elif variant == "dyn-graph":
+        elif spatial_backbone == "dyn-graph":
             self.backbone = DynGraphBackbone(**kwargs)
-        elif variant == "proto-mem":
+        elif spatial_backbone == "proto-mem":
             self.backbone = ProtoMemBackbone(**kwargs)
-        elif variant == "unveil-vanilla":
+        elif spatial_backbone == "unveil-vanilla":
             self.backbone = VanillaBackbone(**kwargs)
         else:
-            raise ValueError(f"Unknown variant: {variant!r}")
+            raise ValueError(f"Unknown spatial_backbone: {spatial_backbone!r}")
         self.num_classes = self.backbone.num_classes
         self.num_joints = getattr(self.backbone, "num_joints",
                                    getattr(self.backbone, "num_joint", None))
@@ -1555,7 +1555,7 @@ def save_checkpoint(model, opt, epoch, metrics, args, filename):
         "opt_state": opt.state_dict(),
         "metrics": metrics,
         "config": {
-            "variant": args.variant, "format": args.format, "task": args.task,
+            "spatial_backbone": args.spatial_backbone, "format": args.format, "task": args.task,
             "num_joints": getattr(raw_model, "num_joints", None),
             "num_classes": raw_model.num_classes,
             "emb_dim": args.emb_dim, "target_fps": args.target_fps,
@@ -1589,7 +1589,7 @@ def resume_checkpoint(model, opt, args):
     print(f"Resuming from: {load_path}")
     ckpt = torch.load(load_path, map_location=DEVICE, weights_only=True)
     ckpt_cfg = ckpt.get("config", {})
-    for key, val in [("format", args.format), ("task", args.task), ("variant", args.variant)]:
+    for key, val in [("format", args.format), ("task", args.task), ("spatial_backbone", args.spatial_backbone)]:
         if ckpt_cfg.get(key, val) != val:
             print(f"  [WARN] Checkpoint {key}={ckpt_cfg.get(key)!r} != {val!r}. Starting fresh.")
             return 1, -1.0, -1, None, 0
@@ -1616,7 +1616,7 @@ def resume_checkpoint(model, opt, args):
 def run_single_task(args: argparse.Namespace) -> Dict:
     set_seed(args.seed)
     print("=" * 80)
-    print(f"UNVEIL | variant={args.variant} | task={args.task} | format={args.format} | split={args.split_mode}")
+    print(f"UNVEIL | spatial_backbone={args.spatial_backbone} | task={args.task} | format={args.format} | split={args.split_mode}")
     print("=" * 80)
 
     train_df, seen_val_df, unseen_val_df = prepare_data(args)
@@ -1725,19 +1725,19 @@ def run_single_task(args: argparse.Namespace) -> Dict:
           f"sa_unseen={len(sa_unseen_ds):,} unseen={len(unseen_ds):,}")
 
     model_kwargs: Dict = dict(num_classes=num_classes, emb_dim=args.emb_dim)
-    if args.variant == "stream-attn":
+    if args.spatial_backbone == "stream-attn":
         model_kwargs.update(num_joint=num_channels, dim1=args.dim1, seg=args.seg)
-    elif args.variant == "unveil-vanilla":
+    elif args.spatial_backbone == "unveil-vanilla":
         model_kwargs.update(fmt=args.format, dropout=args.dropout)
     else:
         model_kwargs.update(fmt=args.format, base_channels=args.base_channels,
                             num_stages=args.num_stages, dropout=args.dropout)
-        if args.variant == "proto-mem":
+        if args.spatial_backbone == "proto-mem":
             model_kwargs["num_prototype"] = args.num_prototype
 
-    model = UNVEIL(variant=args.variant, **model_kwargs).to(DEVICE)
+    model = UNVEIL(spatial_backbone=args.spatial_backbone, **model_kwargs).to(DEVICE)
     n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    print(f"\nUNVEIL ({args.variant}): {n_params:,} parameters | device={DEVICE}")
+    print(f"\nUNVEIL ({args.spatial_backbone}): {n_params:,} parameters | device={DEVICE}")
 
     if not args.no_compile and hasattr(torch, "compile"):
         try:
@@ -1750,7 +1750,7 @@ def run_single_task(args: argparse.Namespace) -> Dict:
     ce_loss_fn = nn.MSELoss() if is_regression else nn.CrossEntropyLoss(label_smoothing=args.label_smoothing)
     supcon_fn = SupConLoss(temperature=args.supcon_temp)
     mem_contrast_fn = None
-    if args.variant == "proto-mem" and not is_regression and num_classes > 1:
+    if args.spatial_backbone == "proto-mem" and not is_regression and num_classes > 1:
         raw_m = getattr(model, "_orig_mod", model)
         n_joints_val = getattr(raw_m, "num_joints", 35)
         mem_contrast_fn = MemoryContrastiveLoss(
@@ -1870,7 +1870,7 @@ def run_single_task(args: argparse.Namespace) -> Dict:
                     "epoch": best_epoch, "model_state": best_state,
                     "opt_state": opt.state_dict(),
                     "metrics": {"best_metric": best_metric, "test_acc": te_acc},
-                    "config": {"variant": args.variant, "format": args.format,
+                    "config": {"spatial_backbone": args.spatial_backbone, "format": args.format,
                                 "task": args.task, "num_classes": num_classes},
                 }, os.path.join(args.checkpoint_dir, "best_model.pt"))
                 print(f"  Best checkpoint saved (epoch {best_epoch})")
@@ -1892,7 +1892,7 @@ def run_single_task(args: argparse.Namespace) -> Dict:
     eval_kwargs = {**model_kwargs}
     if "dropout" in eval_kwargs:
         eval_kwargs["dropout"] = 0.0
-    eval_model = UNVEIL(variant=args.variant, **eval_kwargs).to(DEVICE)
+    eval_model = UNVEIL(spatial_backbone=args.spatial_backbone, **eval_kwargs).to(DEVICE)
     if best_state is not None:
         eval_model.load_state_dict(best_state)
     eval_model.eval()
@@ -1910,7 +1910,7 @@ def run_single_task(args: argparse.Namespace) -> Dict:
     fl_unseen = make_loader(unseen_ds)
 
     final_metrics = {
-        "task": args.task, "format": args.format, "variant": args.variant,
+        "task": args.task, "format": args.format, "spatial_backbone": args.spatial_backbone,
         "split_mode": args.split_mode, "best_epoch": best_epoch,
         "train_samples": len(train_ds), "sa_seen_samples": len(sa_seen_ds),
         "sa_unseen_samples": len(sa_unseen_ds), "unseen_samples": len(unseen_ds),
@@ -2057,7 +2057,7 @@ def run_single_task(args: argparse.Namespace) -> Dict:
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="UNVEIL: privacy modeling on BONES-SEED")
 
-    p.add_argument("--variant",
+    p.add_argument("--spatial-backbone",
                    choices=["stream-attn", "dyn-graph", "proto-mem", "unveil-vanilla"],
                    default="stream-attn")
     p.add_argument("--data-root", type=str, default=".")
@@ -2092,7 +2092,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--dropout", type=float, default=0.5)
     p.add_argument("--reid-eval", choices=["centroid", "closed-set"], default=None)
 
-    # Variant-specific args with None defaults (filled from VARIANT_DEFAULTS after parsing)
+    # Backbone-specific args with None defaults (filled from SPATIAL_BACKBONE_DEFAULTS after parsing)
     p.add_argument("--lr", type=float, default=None)
     p.add_argument("--batch-size", type=int, default=None)
     p.add_argument("--emb-dim", type=int, default=None)
@@ -2107,7 +2107,7 @@ def parse_args() -> argparse.Namespace:
 
     args = p.parse_args()
 
-    vd = VARIANT_DEFAULTS[args.variant]
+    vd = SPATIAL_BACKBONE_DEFAULTS[args.spatial_backbone]
     for key, val in vd.items():
         attr = key.replace("-", "_")
         if getattr(args, attr, None) is None:
@@ -2127,12 +2127,12 @@ def parse_args() -> argparse.Namespace:
     if args.lambda_proto is None: args.lambda_proto = 0.0
 
     if args.reid_eval is None:
-        args.reid_eval = "centroid" if args.variant == "stream-attn" else "closed-set"
+        args.reid_eval = "centroid" if args.spatial_backbone == "stream-attn" else "closed-set"
 
-    # Graph-based variants need all BVH channels (exact joint count required)
-    if args.variant in ("dyn-graph", "proto-mem", "unveil-vanilla") and args.format in ("uniform", "proportional"):
+    # Graph-based spatial backbones need all BVH channels (exact joint count required)
+    if args.spatial_backbone in ("dyn-graph", "proto-mem", "unveil-vanilla") and args.format in ("uniform", "proportional"):
         if args.variance_percentile != 0.0:
-            print(f"[INFO] Forcing variance_percentile=0.0 for {args.variant} (needs {BVH_NUM_JOINTS} joints)")
+            print(f"[INFO] Forcing variance_percentile=0.0 for {args.spatial_backbone} (needs {BVH_NUM_JOINTS} joints)")
             args.variance_percentile = 0.0
 
     data_root_resolved = Path(args.data_root).resolve()
@@ -2154,12 +2154,12 @@ def parse_args() -> argparse.Namespace:
             try:
                 from project_paths import MODELS_DIR
                 args.checkpoint_dir = str(
-                    MODELS_DIR / "unveil" / args.variant / f"actor_holdout_split_{args.format}"
+                    MODELS_DIR / "unveil" / args.spatial_backbone / f"actor_holdout_split_{args.format}"
                 )
             except Exception:
-                args.checkpoint_dir = os.path.join(str(PROJECT_ROOT), "checkpoints_unveil", args.variant)
+                args.checkpoint_dir = os.path.join(str(PROJECT_ROOT), "checkpoints_unveil", args.spatial_backbone)
         else:
-            args.checkpoint_dir = os.path.join(args.data_root, "checkpoints_unveil", args.variant)
+            args.checkpoint_dir = os.path.join(args.data_root, "checkpoints_unveil", args.spatial_backbone)
 
     return args
 
@@ -2180,7 +2180,7 @@ def main():
         os.makedirs(base_ckpt_dir, exist_ok=True)
         summary_path = os.path.join(base_ckpt_dir, f"summary_{args.format}.json")
         with open(summary_path, "w", encoding="utf-8") as f:
-            json.dump({"format": args.format, "variant": args.variant,
+            json.dump({"format": args.format, "spatial_backbone": args.spatial_backbone,
                        "tasks": tasks, "results": all_results}, f, indent=2)
         print(f"\nSummary saved: {summary_path}")
 

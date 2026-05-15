@@ -1,11 +1,10 @@
 # UNVEIL — BONES-SEED Supplementary Code
 
-**UNVEIL**  is the
-training and evaluation framework used in the paper. 
+**UNVEIL** is the training and evaluation framework used in the paper. Within this framework we instantiate four different *spatial backbones* — each is an independent spatiotemporal network; the rest of the pipeline (loaders, splits, heads, training loop, evaluation) is shared.
 
 ---
 
-## Variants
+## Spatial backbones
 
 | Flag | Description |
 |---|---|
@@ -14,48 +13,39 @@ training and evaluation framework used in the paper.
 | `proto-mem` | Memory-augmented spatiotemporal network with a learned latent prototype module and class-conditional contrastive regularization |
 | `unveil-vanilla` | Hierarchical spatiotemporal GCN baseline with a two-level joint hierarchy (intra-limb + limb-torso) and a learned kinematic encoder over raw position-only input |
 
+---
 
-## Dependencies
+## Install
 
+```bash
+pip install -r requirements.txt
 ```
-torch >= 2.0
-numpy
-pandas
-scikit-learn
-mmcv          # required for proto-mem only
-triton        # required for torch.compile (optional; use --no-compile if not available)
-```
+
+Required: `torch >= 2.0`, `numpy`, `pandas`, `scikit-learn`. The `proto-mem` spatial backbone additionally needs `mmcv`. `torch.compile` (enabled by default) needs `triton`; pass `--no-compile` to skip it if `triton` is unavailable.
 
 ---
 
 ## Quick start
 
 ```bash
-# Re-ID with stream-attn on G1 data (default variant)
-python Submission/unveil.py --variant stream-attn --format g1 --task reid
+# Quick dry-run (limited data, 1 epoch) — sanity-check that everything is wired up
+python unveil.py --spatial-backbone unveil-vanilla --task reid --max-train 200 --max-test 100 --epochs 1
 
-# Gender classification with dyn-graph on uniform BVH
-python Submission/unveil.py --variant dyn-graph --format uniform --task gender
+# Vanilla UNVEIL on the full dataset, gender classification
+python unveil.py --spatial-backbone unveil-vanilla --format g1 --task gender
 
-# Age regression with proto-mem on proportional BVH
-python Submission/unveil.py --variant proto-mem --format proportional --task age
+# Same spatial backbone, all privacy tasks at once
+python unveil.py --spatial-backbone unveil-vanilla --format g1 --task all
 
-# Re-ID with the vanilla hierarchical GCN baseline (G1)
-python Submission/unveil.py --variant unveil-vanilla --format g1 --task reid
-
-# Gender with the vanilla baseline on BVH
-python Submission/unveil.py --variant unveil-vanilla --format uniform --task gender
-
-# Run all privacy tasks with stream-attn
-python Submission/unveil.py --variant stream-attn --format g1 --task all
-
-# Quick dry-run (limited data, 1 epoch)
-python Submission/unveil.py --variant unveil-vanilla --task reid --max-train 200 --max-test 100 --epochs 1
+# Other spatial backbones — same flags, just swap --spatial-backbone
+python unveil.py --spatial-backbone stream-attn --format g1 --task reid
+python unveil.py --spatial-backbone dyn-graph --format uniform --task gender
+python unveil.py --spatial-backbone proto-mem --format proportional --task age
 ```
 
 ---
 
-## The `unveil-vanilla` variant
+## The `unveil-vanilla` spatial backbone
 
 A clean hierarchical spatiotemporal GCN baseline. Unlike `stream-attn` (which feeds position
 + velocity + acceleration as three explicit input streams), `unveil-vanilla` consumes only
@@ -93,7 +83,7 @@ the raw **position** trajectory and learns the temporal dynamics inside a kinema
 
 6. **Global average pool** over both joints (J) and time (T) → `(B, 256)`.
 
-7. **Heads** (shared with the other variants):
+7. **Heads** (shared with the other spatial backbones):
    - Re-ID: `Linear(256, num_actors)` + CE-with-label-smoothing + SupCon (warmup 20 epochs)
    - Gender: `Linear(256, 2)` + CE-with-label-smoothing
    - Age / Height / Weight: `Linear(256, 1)` + MSE
@@ -143,13 +133,13 @@ Joints with fewer than 3 DoFs are zero-padded to a uniform 3-channel feature. To
 | Argument | Default | Description |
 |---|---|---|
 | `--epochs` | 100 | Number of training epochs |
-| `--lr` | variant-specific | Learning rate |
-| `--batch-size` | variant-specific | Batch size |
+| `--lr` | spatial-backbone-specific | Learning rate |
+| `--batch-size` | spatial-backbone-specific | Batch size |
 | `--weight-decay` | 1e-4 | AdamW weight decay |
 | `--label-smoothing` | 0.05 | Cross-entropy label smoothing |
 | `--lambda-supcon` | 0.1 | SupCon loss weight (0 = CE only) |
 | `--lambda-proto` | 0.1 | Memory contrastive loss weight (proto-mem only) |
-| `--supcon-warmup` | variant-specific | Epoch to start contrastive losses |
+| `--supcon-warmup` | spatial-backbone-specific | Epoch to start contrastive losses |
 | `--supcon-temp` | 0.07 | SupCon temperature |
 | `--early-stop` | 40 | Early stopping patience (eval cycles) |
 | `--eval-every` | 1 | Evaluate every N epochs |
@@ -157,7 +147,7 @@ Joints with fewer than 3 DoFs are zero-padded to a uniform 3-channel feature. To
 
 ### Architecture arguments
 
-| Argument | Variants | Default | Description |
+| Argument | Spatial backbones | Default | Description |
 |---|---|---|---|
 | `--emb-dim` | all | 256 | Embedding dimension |
 | `--dim1` | stream-attn | 256 | Feature dimension |
@@ -166,11 +156,11 @@ Joints with fewer than 3 DoFs are zero-padded to a uniform 3-channel feature. To
 | `--num-stages` | dyn-graph, proto-mem | 10 | Number of spatiotemporal blocks |
 | `--num-prototype` | proto-mem | 100 | Number of latent prototypes |
 | `--dropout` | dyn-graph, proto-mem, unveil-vanilla | 0.5 | Dropout rate |
-| `--variance-percentile` | all (BVH) | variant-specific | BVH channel variance filtering (0 = keep all) |
+| `--variance-percentile` | all (BVH) | spatial-backbone-specific | BVH channel variance filtering (0 = keep all) |
 
 ---
 
-## Variant-specific defaults
+## Spatial-backbone defaults
 
 | Argument | stream-attn | dyn-graph | proto-mem | unveil-vanilla |
 |---|---|---|---|---|
@@ -192,10 +182,10 @@ Joints with fewer than 3 DoFs are zero-padded to a uniform 3-channel feature. To
 
 ## Checkpoint layout
 
-Each variant × format × task combination writes to its own directory to prevent collisions:
+Each spatial-backbone × format × task combination writes to its own directory to prevent collisions:
 
 ```
-artifacts/models/unveil/<variant>/actor_holdout_split_<format>/<task>/
+artifacts/models/unveil/<spatial-backbone>/actor_holdout_split_<format>/<task>/
 ├── best_model.pt
 ├── checkpoint_epoch010.pt
 ├── checkpoint_epoch020.pt
