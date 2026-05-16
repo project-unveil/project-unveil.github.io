@@ -976,10 +976,15 @@ section:nth-of-type(even) {
 .pdf-canvas.rendered + .pdf-fallback { display: none; }
 
 /* ── Visualization method note (top of demo container) ────── */
+.viz-method-row {
+  display: grid;
+  grid-template-columns: minmax(130px, 0.45fr) 1fr 1fr 1fr;
+  column-gap: 18px;
+  margin-top: 0.9rem;
+}
+
 .viz-method-card {
-  width: 100%;
-  max-width: 100%;
-  margin: 0.9rem 0 0;
+  grid-column: 2 / 5;
   padding: 0.7rem 1.1rem;
   background: #f6f7fb;
   border-left: 3px solid #b8c8f0;
@@ -987,6 +992,11 @@ section:nth-of-type(even) {
   font-size: 0.9rem;
   line-height: 1.55;
   color: #555;
+}
+
+@media (max-width: 900px) {
+  .viz-method-row { grid-template-columns: 1fr; max-width: 520px; margin: 0.9rem auto 0; }
+  .viz-method-card { grid-column: 1; }
 }
 .viz-method-label {
   display: inline-block;
