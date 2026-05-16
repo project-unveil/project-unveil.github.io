@@ -84,23 +84,88 @@ def run_smpl_vposer(bvh_path, height, weight, gender, max_frames, device,
     return verts, faces, eff_fps
 
 
+def _git(*args):
+    """Run a git command in REPO_ROOT, capturing output."""
+    return subprocess.run(
+        ["git", "-C", REPO_ROOT, *args],
+        check=True, capture_output=True, text=True,
+    )
+
+
+def _git_has_staged_changes():
+    """Return True iff there's anything staged to commit."""
+    r = subprocess.run(
+        ["git", "-C", REPO_ROOT, "diff", "--cached", "--quiet"],
+    )
+    return r.returncode != 0   # quiet: 0 = no diff, 1 = diff
+
+
+def push_demo(did, idx, total):
+    """git add + commit + push the artifacts for one finished demo.
+    Silently no-ops if nothing changed or PUSH_PER_DEMO is disabled."""
+    if not PUSH_PER_DEMO:
+        return
+    rel_paths = [
+        f"assets/demos/smpl/{did}_predicted.bin",
+        f"assets/demos/smpl/{did}_gt.bin",
+        f"assets/demos/smpl/faces.bin",
+        f"assets/demos/g1_csv/{did}.csv",
+        "assets/demos/demos_config.json",
+    ]
+    try:
+        _git("add", *rel_paths)
+        if not _git_has_staged_changes():
+            print(f"  [GIT] {did}: no changes to commit")
+            return
+        _git("commit", "-m",
+             f"Rebuild {did} ({idx}/{total}) — VPoser + wrist-weighted fit")
+        _git("push")
+        print(f"  [GIT] {did}: committed + pushed")
+    except subprocess.CalledProcessError as e:
+        out = (e.stderr or e.stdout or str(e)).strip()
+        print(f"  [GIT ERROR] {did}: {out}")
+
+
+def _write_config(config_by_id, config_path):
+    """Write demos_config.json sorted by count descending (dancing default)."""
+    demos_list = sorted(config_by_id.values(), key=lambda d: -d.get("count", 0))
+    cfg = {"defaultDemo": "dancing", "demos": demos_list}
+    with open(config_path, "w") as f:
+        json.dump(cfg, f, indent=2)
+
+
 def main():
     if not os.path.isdir(VPOSER_PATH):
         sys.exit(f"ERROR: VPOSER_PATH not a valid dir: {VPOSER_PATH!r}")
-    print(f"Device     : {DEVICE}")
-    print(f"VPoser dir : {VPOSER_PATH}\n")
+    print(f"Device         : {DEVICE}")
+    print(f"VPoser dir     : {VPOSER_PATH}")
+    print(f"Push per demo  : {PUSH_PER_DEMO}\n")
 
-    faces_saved = False
-    config_out  = []
+    # Carry forward whatever the live demos_config.json already has, so a
+    # partial regen (or one with a new id mid-way) does not drop earlier
+    # entries pointing at still-valid bins.
+    config_path = os.path.join(HERE, "demos_config.json")
+    config_by_id = {}
+    if os.path.exists(config_path):
+        try:
+            with open(config_path) as f:
+                existing = json.load(f)
+            for d in existing.get("demos", []):
+                config_by_id[d["id"]] = d
+        except Exception as e:
+            print(f"  [WARN] failed to read existing config: {e}")
+
+    faces_saved = os.path.exists(os.path.join(SMPL_OUT, "faces.bin"))
 
     # Sort by count descending (dancing first so it's the default)
     demos = sorted(DEMOS, key=lambda d: -d["count"])
+    total = len(demos)
 
-    for demo in demos:
+    for idx, demo in enumerate(demos, 1):
         did   = demo["id"]
         label = demo["label"]
         print(f"\n{'='*60}")
-        print(f"  {label.upper()}  (id={did}, count={demo['count']:,})")
+        print(f"  [{idx}/{total}] {label.upper()}  (id={did}, count={demo['count']:,})")
         print(f"{'='*60}")
 
         g1_src = demo["g1"]
@@ -142,7 +207,7 @@ def main():
             struct.unpack("<I", f.read(4))[0]
             pfps = struct.unpack("<f", f.read(4))[0]
 
-        config_out.append({
+        config_by_id[did] = {
             "id":            did,
             "label":         label,
             "count":         demo["count"],
@@ -154,13 +219,12 @@ def main():
             "fps":           pfps,
             "predicted":     demo["pred"],
             "groundTruth":   demo["gt"],
-        })
+        }
 
-    cfg = {"defaultDemo": "dancing", "demos": config_out}
-    out_path = os.path.join(HERE, "demos_config.json")
-    with open(out_path, "w") as f:
-        json.dump(cfg, f, indent=2)
-    print(f"\nWrote {out_path}  ({len(config_out)} demos)")
+        _write_config(config_by_id, config_path)
+        push_demo(did, idx, total)
+
+    print(f"\nDone. {len(config_by_id)} demos in {config_path}.")
 
 
 if __name__ == "__main__":
