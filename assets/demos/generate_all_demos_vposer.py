@@ -26,14 +26,17 @@ Output:
 Regenerates every demo, including dancing (no skip).
 """
 
-import os, sys, shutil, json, struct
+import os, sys, shutil, json, struct, subprocess
 import numpy as np
 
 HERE         = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT    = os.path.normpath(os.path.join(HERE, "..", ".."))
 BONES_SEED   = os.environ.get("BONES_SEED_DIR", "<path-to-bones-seed>")
 BVH2SMPL_SRC = os.environ.get("BVH2SMPL_SRC",   "<path-to-BVH2SMPL>/src")
 VPOSER_PATH  = os.environ.get("VPOSER_PATH",    "")
 DEVICE       = os.environ.get("VPOSER_DEVICE",  "cuda")
+# Set PUSH_PER_DEMO=0 in the env to keep all artifacts local and skip git.
+PUSH_PER_DEMO = os.environ.get("PUSH_PER_DEMO", "1") != "0"
 
 SMPL_DIR     = os.path.join(BVH2SMPL_SRC, "rendering_utils", "smpl")
 SMPL_MODELS  = {
