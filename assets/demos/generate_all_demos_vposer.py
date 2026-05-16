@@ -65,6 +65,12 @@ def run_smpl_vposer(bvh_path, height, weight, gender, max_frames, device,
         bvh, scale=100.0,
         smpl_path=SMPL_MODELS[gender], vposer_dir=vposer_dir, device=device,
         height_cm=height, weight_kg=weight, gender=gender, uid=None,
+        # Boost upper-arm chain weights so the data loss out-pulls VPoser's
+        # z prior on extreme reaches (hand-to-head, hand-far-from-body).
+        # Wrists are the bottleneck for hand reach — they get the biggest bump.
+        elbow_weight=2.5,
+        wrist_weight=6.0,
+        hand_weight=1.5,
     )
     if nf > max_frames:
         idx = np.round(np.linspace(0, nf-1, max_frames)).astype(int)
