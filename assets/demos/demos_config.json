@@ -2,6 +2,29 @@
   "defaultDemo": "dancing",
   "demos": [
     {
+      "id": "walking",
+      "label": "Walking",
+      "count": 20222,
+      "g1CsvFile": "./g1_csv/walking.csv",
+      "smplPredFile": "./smpl/walking_predicted.bin",
+      "smplGtFile": "./smpl/walking_gt.bin",
+      "smplFacesFile": "./smpl/faces.bin",
+      "numFrames": 150,
+      "fps": 17.424976348876953,
+      "predicted": {
+        "height": 175,
+        "weight": 57,
+        "age": 31,
+        "gender": "male"
+      },
+      "groundTruth": {
+        "height": 171,
+        "weight": 62,
+        "age": 29,
+        "gender": "male"
+      }
+    },
+    {
       "id": "jogging",
       "label": "Jogging",
       "count": 16437,
