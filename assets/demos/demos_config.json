@@ -9,6 +9,8 @@
       "smplPredFile": "./smpl/walking_predicted.bin",
       "smplGtFile": "./smpl/walking_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
+      "sourceG1Csv": "g1/csv/240918/grab_walk_ff_180_001__A548.csv",
+      "sourceBvh": "soma_uniform/bvh/240918/grab_walk_ff_180_001__A548.bvh",
       "numFrames": 150,
       "fps": 17.424976348876953,
       "predicted": {
@@ -32,6 +34,8 @@
       "smplPredFile": "./smpl/jogging_predicted.bin",
       "smplGtFile": "./smpl/jogging_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
+      "sourceG1Csv": "g1/csv/240918/smoke_jog_ff_360_stop_R_001__A548.csv",
+      "sourceBvh": "soma_uniform/bvh/240918/smoke_jog_ff_360_stop_R_001__A548.bvh",
       "numFrames": 150,
       "fps": 25.53191566467285,
       "predicted": {
@@ -55,6 +59,8 @@
       "smplPredFile": "./smpl/gesture_predicted.bin",
       "smplGtFile": "./smpl/gesture_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
+      "sourceG1Csv": "g1/csv/240529/neutral_alone_R_001__A542.csv",
+      "sourceBvh": "soma_uniform/bvh/240529/neutral_alone_R_001__A542.bvh",
       "numFrames": 150,
       "fps": 20.111732482910156,
       "predicted": {
@@ -78,6 +84,8 @@
       "smplPredFile": "./smpl/action_predicted.bin",
       "smplGtFile": "./smpl/action_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
+      "sourceG1Csv": "g1/csv/240529/neutral_itching_head_R_001__A542.csv",
+      "sourceBvh": "soma_uniform/bvh/240529/neutral_itching_head_R_001__A542.bvh",
       "numFrames": 150,
       "fps": 45.226131439208984,
       "predicted": {
@@ -101,6 +109,8 @@
       "smplPredFile": "./smpl/dancing_predicted.bin",
       "smplGtFile": "./smpl/dancing_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
+      "sourceG1Csv": "g1/csv/240529/macarena_001__A545_M.csv",
+      "sourceBvh": "soma_uniform/bvh/240529/macarena_001__A545_M.bvh",
       "numFrames": 150,
       "fps": 5.449591159820557,
       "predicted": {
@@ -124,6 +134,8 @@
       "smplPredFile": "./smpl/jumping_predicted.bin",
       "smplGtFile": "./smpl/jumping_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
+      "sourceG1Csv": "g1/csv/240527/neutral_dancecard_jump_002__A534.csv",
+      "sourceBvh": "soma_uniform/bvh/240527/neutral_dancecard_jump_002__A534.bvh",
       "numFrames": 150,
       "fps": 9.682624816894531,
       "predicted": {
@@ -147,6 +159,8 @@
       "smplPredFile": "./smpl/turning_predicted.bin",
       "smplGtFile": "./smpl/turning_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
+      "sourceG1Csv": "g1/csv/240918/idle_turn_000_R_long_002__A548.csv",
+      "sourceBvh": "soma_uniform/bvh/240918/idle_turn_000_R_long_002__A548.bvh",
       "numFrames": 150,
       "fps": 2.1377673149108887,
       "predicted": {
@@ -170,6 +184,8 @@
       "smplPredFile": "./smpl/climbing_box_predicted.bin",
       "smplGtFile": "./smpl/climbing_box_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
+      "sourceG1Csv": "g1/csv/240529/neutral_come_down_50cm_box_R_001__A542.csv",
+      "sourceBvh": "soma_uniform/bvh/240529/neutral_come_down_50cm_box_R_001__A542.bvh",
       "numFrames": 150,
       "fps": 38.46154022216797,
       "predicted": {
@@ -193,6 +209,8 @@
       "smplPredFile": "./smpl/kneeling_predicted.bin",
       "smplGtFile": "./smpl/kneeling_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
+      "sourceG1Csv": "g1/csv/230713/knightly_bow_R_001__A429.csv",
+      "sourceBvh": "soma_uniform/bvh/230713/knightly_bow_R_001__A429.bvh",
       "numFrames": 150,
       "fps": 33.39517593383789,
       "predicted": {
@@ -216,6 +234,8 @@
       "smplPredFile": "./smpl/exercising_predicted.bin",
       "smplGtFile": "./smpl/exercising_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
+      "sourceG1Csv": "g1/csv/231019/squeak_003__A484.csv",
+      "sourceBvh": "soma_uniform/bvh/231019/squeak_003__A484.bvh",
       "numFrames": 150,
       "fps": 11.299434661865234,
       "predicted": {
@@ -239,6 +259,8 @@
       "smplPredFile": "./smpl/pulling_predicted.bin",
       "smplGtFile": "./smpl/pulling_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
+      "sourceG1Csv": "g1/csv/231019/high_big_crank_ccw_002__A484.csv",
+      "sourceBvh": "soma_uniform/bvh/231019/high_big_crank_ccw_002__A484.bvh",
       "numFrames": 150,
       "fps": 15.831134796142578,
       "predicted": {
@@ -262,6 +284,8 @@
       "smplPredFile": "./smpl/throwing_predicted.bin",
       "smplGtFile": "./smpl/throwing_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
+      "sourceG1Csv": "g1/csv/230424/throw_ball_R_001__A345.csv",
+      "sourceBvh": "soma_uniform/bvh/230424/throw_ball_R_001__A345.bvh",
       "numFrames": 150,
       "fps": 27.69230842590332,
       "predicted": {
@@ -285,6 +309,8 @@
       "smplPredFile": "./smpl/guitar_predicted.bin",
       "smplGtFile": "./smpl/guitar_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
+      "sourceG1Csv": "g1/csv/230417/playing_guitar_R_001__A330.csv",
+      "sourceBvh": "soma_uniform/bvh/230417/playing_guitar_R_001__A330.bvh",
       "numFrames": 150,
       "fps": 7.413508892059326,
       "predicted": {
