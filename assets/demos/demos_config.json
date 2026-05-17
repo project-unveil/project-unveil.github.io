@@ -32,8 +32,6 @@
       "smplPredFile": "./smpl/jogging_predicted.bin",
       "smplGtFile": "./smpl/jogging_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
-      "sourceG1Csv": "g1/csv/240918/smoke_jog_ff_360_stop_R_001__A548.csv",
-      "sourceBvh": "soma_uniform/bvh/240918/smoke_jog_ff_360_stop_R_001__A548.bvh",
       "numFrames": 150,
       "fps": 25.53191566467285,
       "predicted": {
