@@ -193,8 +193,6 @@
       "smplPredFile": "./smpl/kneeling_predicted.bin",
       "smplGtFile": "./smpl/kneeling_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
-      "sourceG1Csv": "g1/csv/230713/knightly_bow_R_001__A429.csv",
-      "sourceBvh": "soma_uniform/bvh/230713/knightly_bow_R_001__A429.bvh",
       "numFrames": 150,
       "fps": 33.39517593383789,
       "predicted": {
