@@ -41,6 +41,13 @@ PUSH_PER_DEMO = os.environ.get("PUSH_PER_DEMO", "1") != "0"
 # Empty means rebuild every demo in DEMOS.
 INCLUDE_IDS   = {s.strip() for s in os.environ.get("INCLUDE_IDS", "").split(",")
                  if s.strip()}
+# Comma-separated ids to skip (applied after INCLUDE_IDS filter).
+EXCLUDE_IDS   = {s.strip() for s in os.environ.get("EXCLUDE_IDS", "").split(",")
+                 if s.strip()}
+# Toggle SMPL arm-joint free-optimisation (bypasses VPoser prior on
+# shoulders / elbows / wrists). Fixes "arms stop at the shoulder" and
+# overhead-reach restrictions for dance / throw / itching-head motions.
+FREE_ARMS     = os.environ.get("FREE_ARMS", "0") == "1"
 
 SMPL_DIR     = os.path.join(BVH2SMPL_SRC, "rendering_utils", "smpl")
 SMPL_MODELS  = {
