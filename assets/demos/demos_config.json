@@ -78,8 +78,6 @@
       "smplPredFile": "./smpl/action_predicted.bin",
       "smplGtFile": "./smpl/action_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
-      "sourceG1Csv": "g1/csv/240529/neutral_itching_head_R_001__A542.csv",
-      "sourceBvh": "soma_uniform/bvh/240529/neutral_itching_head_R_001__A542.bvh",
       "numFrames": 150,
       "fps": 45.226131439208984,
       "predicted": {
