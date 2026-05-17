@@ -9,8 +9,6 @@
       "smplPredFile": "./smpl/walking_predicted.bin",
       "smplGtFile": "./smpl/walking_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
-      "sourceG1Csv": "g1/csv/240918/grab_walk_ff_180_001__A548.csv",
-      "sourceBvh": "soma_uniform/bvh/240918/grab_walk_ff_180_001__A548.bvh",
       "numFrames": 150,
       "fps": 17.424976348876953,
       "predicted": {
