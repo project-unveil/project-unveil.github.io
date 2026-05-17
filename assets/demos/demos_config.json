@@ -262,8 +262,6 @@
       "smplPredFile": "./smpl/throwing_predicted.bin",
       "smplGtFile": "./smpl/throwing_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
-      "sourceG1Csv": "g1/csv/230424/throw_ball_R_001__A345.csv",
-      "sourceBvh": "soma_uniform/bvh/230424/throw_ball_R_001__A345.bvh",
       "numFrames": 150,
       "fps": 27.69230842590332,
       "predicted": {
