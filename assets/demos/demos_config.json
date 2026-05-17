@@ -170,8 +170,6 @@
       "smplPredFile": "./smpl/climbing_box_predicted.bin",
       "smplGtFile": "./smpl/climbing_box_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
-      "sourceG1Csv": "g1/csv/240529/neutral_come_down_50cm_box_R_001__A542.csv",
-      "sourceBvh": "soma_uniform/bvh/240529/neutral_come_down_50cm_box_R_001__A542.bvh",
       "numFrames": 150,
       "fps": 38.46154022216797,
       "predicted": {
