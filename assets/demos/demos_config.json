@@ -101,8 +101,6 @@
       "smplPredFile": "./smpl/dancing_predicted.bin",
       "smplGtFile": "./smpl/dancing_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
-      "sourceG1Csv": "g1/csv/240529/macarena_001__A545_M.csv",
-      "sourceBvh": "soma_uniform/bvh/240529/macarena_001__A545_M.bvh",
       "numFrames": 150,
       "fps": 5.449591159820557,
       "predicted": {
