@@ -123,6 +123,7 @@ def push_demo(did, idx, total):
         f"assets/demos/smpl/faces.bin",
         f"assets/demos/g1_csv/{did}.csv",
         "assets/demos/demos_config.json",
+        "smpl_engine/viewer.html",
     ]
     try:
         _git("add", *rel_paths)
