@@ -163,6 +163,9 @@ def main():
 
     # Sort by count descending (dancing first so it's the default)
     demos = sorted(DEMOS, key=lambda d: -d["count"])
+    if INCLUDE_IDS:
+        demos = [d for d in demos if d["id"] in INCLUDE_IDS]
+        print(f"INCLUDE_IDS    : {sorted(INCLUDE_IDS)}  ({len(demos)} demos)\n")
     total = len(demos)
 
     for idx, demo in enumerate(demos, 1):
