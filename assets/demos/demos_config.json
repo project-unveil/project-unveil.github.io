@@ -216,8 +216,6 @@
       "smplPredFile": "./smpl/exercising_predicted.bin",
       "smplGtFile": "./smpl/exercising_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
-      "sourceG1Csv": "g1/csv/231019/squeak_003__A484.csv",
-      "sourceBvh": "soma_uniform/bvh/231019/squeak_003__A484.bvh",
       "numFrames": 150,
       "fps": 11.299434661865234,
       "predicted": {
