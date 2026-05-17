@@ -37,6 +37,10 @@ VPOSER_PATH  = os.environ.get("VPOSER_PATH",    "")
 DEVICE       = os.environ.get("VPOSER_DEVICE",  "cuda")
 # Set PUSH_PER_DEMO=0 in the env to keep all artifacts local and skip git.
 PUSH_PER_DEMO = os.environ.get("PUSH_PER_DEMO", "1") != "0"
+# Comma-separated subset to rebuild (e.g. INCLUDE_IDS=jumping,throwing).
+# Empty means rebuild every demo in DEMOS.
+INCLUDE_IDS   = {s.strip() for s in os.environ.get("INCLUDE_IDS", "").split(",")
+                 if s.strip()}
 
 SMPL_DIR     = os.path.join(BVH2SMPL_SRC, "rendering_utils", "smpl")
 SMPL_MODELS  = {
