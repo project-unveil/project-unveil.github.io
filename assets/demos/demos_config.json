@@ -147,8 +147,6 @@
       "smplPredFile": "./smpl/turning_predicted.bin",
       "smplGtFile": "./smpl/turning_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
-      "sourceG1Csv": "g1/csv/240918/idle_turn_000_R_long_002__A548.csv",
-      "sourceBvh": "soma_uniform/bvh/240918/idle_turn_000_R_long_002__A548.bvh",
       "numFrames": 150,
       "fps": 2.1377673149108887,
       "predicted": {
