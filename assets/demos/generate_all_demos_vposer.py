@@ -85,6 +85,7 @@ def run_smpl_vposer(bvh_path, height, weight, gender, max_frames, device,
         elbow_weight=2.5,
         wrist_weight=6.0,
         hand_weight=1.5,
+        free_arms=FREE_ARMS,
     )
     if nf > max_frames:
         idx = np.round(np.linspace(0, nf-1, max_frames)).astype(int)
