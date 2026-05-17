@@ -55,8 +55,6 @@
       "smplPredFile": "./smpl/gesture_predicted.bin",
       "smplGtFile": "./smpl/gesture_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
-      "sourceG1Csv": "g1/csv/240529/neutral_alone_R_001__A542.csv",
-      "sourceBvh": "soma_uniform/bvh/240529/neutral_alone_R_001__A542.bvh",
       "numFrames": 150,
       "fps": 20.111732482910156,
       "predicted": {
