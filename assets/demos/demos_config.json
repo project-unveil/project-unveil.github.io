@@ -239,8 +239,6 @@
       "smplPredFile": "./smpl/pulling_predicted.bin",
       "smplGtFile": "./smpl/pulling_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
-      "sourceG1Csv": "g1/csv/231019/high_big_crank_ccw_002__A484.csv",
-      "sourceBvh": "soma_uniform/bvh/231019/high_big_crank_ccw_002__A484.bvh",
       "numFrames": 150,
       "fps": 15.831134796142578,
       "predicted": {
