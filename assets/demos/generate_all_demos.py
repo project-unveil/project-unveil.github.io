@@ -212,6 +212,11 @@ def main():
         with open(pred_bin,"rb") as f:
             pnf = st.unpack("<I",f.read(4))[0]; st.unpack("<I",f.read(4))[0]; pfps=st.unpack("<f",f.read(4))[0]
 
+        # Forward-slash relative paths into the bones-seed dataset so the
+        # config documents where each demo came from.
+        src_g1  = os.path.relpath(demo["g1"],  BONES_SEED).replace("\\", "/")
+        src_bvh = os.path.relpath(demo["bvh"], BONES_SEED).replace("\\", "/")
+
         config_out.append({
             "id":    did,
             "label": label,
@@ -220,6 +225,8 @@ def main():
             "smplPredFile": f"./smpl/{did}_predicted.bin",
             "smplGtFile":   f"./smpl/{did}_gt.bin",
             "smplFacesFile": "./smpl/faces.bin",
+            "sourceG1Csv": src_g1,
+            "sourceBvh":   src_bvh,
             "numFrames": pnf,
             "fps": pfps,
             "predicted": demo["pred"],
