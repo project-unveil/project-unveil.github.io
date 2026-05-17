@@ -140,29 +140,6 @@
       }
     },
     {
-      "id": "sitting",
-      "label": "Sitting",
-      "count": 5601,
-      "g1CsvFile": "./g1_csv/sitting.csv",
-      "smplPredFile": "./smpl/sitting_predicted.bin",
-      "smplGtFile": "./smpl/sitting_gt.bin",
-      "smplFacesFile": "./smpl/faces.bin",
-      "numFrames": 150,
-      "fps": 29.079160690307617,
-      "predicted": {
-        "height": 174,
-        "weight": 56,
-        "age": 30,
-        "gender": "female"
-      },
-      "groundTruth": {
-        "height": 171,
-        "weight": 60,
-        "age": 27,
-        "gender": "female"
-      }
-    },
-    {
       "id": "turning",
       "label": "Turning",
       "count": 3472,
