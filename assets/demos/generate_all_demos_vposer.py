@@ -173,7 +173,12 @@ def main():
     demos = sorted(DEMOS, key=lambda d: -d["count"])
     if INCLUDE_IDS:
         demos = [d for d in demos if d["id"] in INCLUDE_IDS]
-        print(f"INCLUDE_IDS    : {sorted(INCLUDE_IDS)}  ({len(demos)} demos)\n")
+        print(f"INCLUDE_IDS    : {sorted(INCLUDE_IDS)}")
+    if EXCLUDE_IDS:
+        demos = [d for d in demos if d["id"] not in EXCLUDE_IDS]
+        print(f"EXCLUDE_IDS    : {sorted(EXCLUDE_IDS)}")
+    print(f"Free arms      : {FREE_ARMS}")
+    print(f"Will rebuild   : {[d['id'] for d in demos]}\n")
     total = len(demos)
 
     for idx, demo in enumerate(demos, 1):
