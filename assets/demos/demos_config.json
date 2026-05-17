@@ -134,8 +134,6 @@
       "smplPredFile": "./smpl/jumping_predicted.bin",
       "smplGtFile": "./smpl/jumping_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
-      "sourceG1Csv": "g1/csv/240527/neutral_dancecard_jump_002__A534.csv",
-      "sourceBvh": "soma_uniform/bvh/240527/neutral_dancecard_jump_002__A534.bvh",
       "numFrames": 150,
       "fps": 9.682624816894531,
       "predicted": {
