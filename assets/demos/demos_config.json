@@ -285,8 +285,6 @@
       "smplPredFile": "./smpl/guitar_predicted.bin",
       "smplGtFile": "./smpl/guitar_gt.bin",
       "smplFacesFile": "./smpl/faces.bin",
-      "sourceG1Csv": "g1/csv/230417/playing_guitar_R_001__A330.csv",
-      "sourceBvh": "soma_uniform/bvh/230417/playing_guitar_R_001__A330.bvh",
       "numFrames": 150,
       "fps": 7.413508892059326,
       "predicted": {
