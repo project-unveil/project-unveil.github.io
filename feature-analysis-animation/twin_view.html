@@ -759,17 +759,10 @@ function drawStrip() {
     const cx = subX + frac * subW;
     ctx.strokeStyle = 'rgba(20,30,50,0.55)'; ctx.lineWidth = 1.4*dpr;
     ctx.beginPath(); ctx.moveTo(cx, padT); ctx.lineTo(cx, padT + plotH); ctx.stroke();
-
-    // Sub-plot label (operator role) — top of the sub-plot, colour-keyed
-    ctx.fillStyle = color;
-    ctx.font = `600 ${10.5*dpr}px Segoe UI`;
-    ctx.textBaseline = 'top'; ctx.textAlign = 'left';
-    ctx.fillText(label, subX + 4*dpr, padT + 2*dpr);
-    ctx.font = `${10*dpr}px Segoe UI`;
   }
 
-  plot(hM, COLOR_HEAVY_HEX, 'heavy', padL);
-  plot(lM, COLOR_LIGHT_HEX, 'light', padL + subW + gap);
+  plot(hM, COLOR_HEAVY_HEX, padL);
+  plot(lM, COLOR_LIGHT_HEX, padL + subW + gap);
 }
 
 // ── Animation loop ─────────────────────────────────────────────────────
