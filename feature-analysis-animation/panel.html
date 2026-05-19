@@ -255,16 +255,59 @@ async function boot() {
   );
 
   setStatus('Building robots…');
-  VIEWERS.g1 = await createG1Pair('g1-row', heavyMotion, lightMotion, clip.highlight_joint);
+  setupSharedRenderer();
+  VIEWERS.g1 = await buildG1Scene(heavyMotion, lightMotion, clip.highlight_joint);
 
   if (smplData) {
     document.getElementById('root').classList.add('has-smpl');
-    VIEWERS.smpl = createSMPLPair('smpl-row', smplData.high, smplData.low, smplData.faces);
+    VIEWERS.smpl = buildSMPLScene(smplData.high, smplData.low, smplData.faces);
   }
 
   setupPlots();
   document.getElementById('loading').style.display = 'none';
   requestAnimationFrame(loop);
+}
+
+// ── Shared renderer + viewport plumbing ─────────────────────
+// One WebGLRenderer per panel, attached to #body-canvas. We render two
+// viewports per frame: SMPL on the top portion of the canvas, G1 on the
+// bottom. The middle strip is hidden by the #plots HTML overlay.
+let SHARED_RENDERER = null;
+function setupSharedRenderer() {
+  const cnv = document.getElementById('body-canvas');
+  SHARED_RENDERER = new THREE.WebGLRenderer({ canvas: cnv, antialias: true });
+  SHARED_RENDERER.setPixelRatio(window.devicePixelRatio);
+  SHARED_RENDERER.autoClear = false;     // we clear per viewport manually
+  const area = document.getElementById('body-area');
+  function size() {
+    const w = area.clientWidth, h = area.clientHeight;
+    if (w && h) SHARED_RENDERER.setSize(w, h, false);
+  }
+  size();
+  new ResizeObserver(size).observe(area);
+}
+
+// Viewport split — must match the CSS `top: 36%; bottom: 39%` on #plots.
+// Returns canvas-pixel rects for each row (in WebGL convention: origin at
+// bottom-left, y increases upward).
+function panelViewports() {
+  const cnv = document.getElementById('body-canvas');
+  const W = cnv.width, H = cnv.height;
+  // CSS percentages are measured top-down; convert to WebGL bottom-up.
+  const SMPL_TOP_FRAC = 0;      // top of SMPL row in CSS-space
+  const SMPL_BOT_FRAC = 0.36;   // bottom of SMPL row = top of plots
+  const G1_TOP_FRAC   = 0.61;   // bottom of plots = top of G1 row
+  const G1_BOT_FRAC   = 1.0;
+  // In WebGL coords: y=0 at canvas bottom.
+  const smpl = {
+    x: 0, y: Math.round(H * (1 - SMPL_BOT_FRAC)),
+    w: W, h: Math.round(H * (SMPL_BOT_FRAC - SMPL_TOP_FRAC)),
+  };
+  const g1 = {
+    x: 0, y: Math.round(H * (1 - G1_BOT_FRAC)),
+    w: W, h: Math.round(H * (G1_BOT_FRAC - G1_TOP_FRAC)),
+  };
+  return { smpl, g1 };
 }
 
 async function fetchJSON(url) { const r = await fetch(url); if (!r.ok) throw new Error(`${r.status} ${url}`); return r.json(); }
