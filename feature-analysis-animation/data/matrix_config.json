@@ -1,5 +1,5 @@
 {
-  "_comment": "3x3 matrix configuration. Each entry under <attr>.clips becomes one panel rendered by panel.html. The `features` list is ordered: the first feature is the *strongest correlated* one (shown at the top, drives the highlight sphere on the robot, and is the one synthetically exaggerated on the high side's robot). Features use the G1 joint names from g1_engine/model/g1_model.json. `source_bvh` is the path under bones-seed used by generate_smpl_matrix.py. To add/remove panels, edit this file and reload matrix.html.",
+  "_comment": "3x3 matrix configuration. `features` is ordered strongest first. `scale` is an array of dampening steps applied in order to the heavy/older operator's motion — primary entry hits the strongest feature's joint(s) hardest, secondary/tertiary entries clip the 2nd/3rd feature's joints less so all three plots show a heavy/light gap with a visible hierarchy. `source_bvh` is the path under bones-seed used by generate_smpl_matrix.py.",
 
   "weight": {
     "title": "Body weight leaks through retargeted motion",
@@ -25,7 +25,11 @@
           { "label": "Root vel",     "type": "root_vel",                                          "unit": "m/s"  }
         ],
         "highlight_joint": "left_wrist_pitch_joint",
-        "scale": { "type": "joints", "joints": ["left_wrist_pitch_joint", "left_wrist_roll_joint", "left_wrist_yaw_joint", "right_wrist_pitch_joint", "right_wrist_roll_joint", "right_wrist_yaw_joint", "left_elbow_joint", "right_elbow_joint"], "factor": 0.55 }
+        "scale": [
+          { "type": "joints", "joints": ["left_wrist_pitch_joint", "left_wrist_roll_joint", "left_wrist_yaw_joint", "right_wrist_pitch_joint", "right_wrist_roll_joint", "right_wrist_yaw_joint"], "factor": 0.35 },
+          { "type": "joints", "joints": ["left_elbow_joint", "right_elbow_joint"], "factor": 0.60 },
+          { "type": "root",   "factor": 0.80 }
+        ]
       },
       {
         "id": "dance_vouge",
@@ -39,7 +43,11 @@
           { "label": "L elbow vel",  "type": "joint_vel",   "joint": "left_elbow_joint",        "unit": "deg/s" }
         ],
         "highlight_joint": "left_wrist_pitch_joint",
-        "scale": { "type": "joints", "joints": ["left_wrist_pitch_joint", "left_wrist_roll_joint", "left_wrist_yaw_joint", "right_wrist_pitch_joint", "right_wrist_roll_joint", "right_wrist_yaw_joint", "left_shoulder_pitch_joint", "left_shoulder_roll_joint", "right_shoulder_pitch_joint", "right_shoulder_roll_joint"], "factor": 0.55 }
+        "scale": [
+          { "type": "joints", "joints": ["left_wrist_pitch_joint", "left_wrist_roll_joint", "left_wrist_yaw_joint", "right_wrist_pitch_joint", "right_wrist_roll_joint", "right_wrist_yaw_joint"], "factor": 0.35 },
+          { "type": "joints", "joints": ["left_shoulder_pitch_joint", "left_shoulder_roll_joint", "left_shoulder_yaw_joint", "right_shoulder_pitch_joint", "right_shoulder_roll_joint", "right_shoulder_yaw_joint"], "factor": 0.55 },
+          { "type": "joints", "joints": ["left_elbow_joint", "right_elbow_joint"], "factor": 0.70 }
+        ]
       },
       {
         "id": "faint_sitting",
@@ -53,7 +61,11 @@
           { "label": "L knee ROM",     "type": "joint_angle", "joint": "left_knee_joint",         "unit": "deg", "show_rom": true }
         ],
         "highlight_joint": "root",
-        "scale": { "type": "root", "factor": 0.6 }
+        "scale": [
+          { "type": "root", "factor": 0.45 },
+          { "type": "joints", "joints": ["waist_pitch_joint", "waist_roll_joint"], "factor": 0.65 },
+          { "type": "joints", "joints": ["left_knee_joint", "right_knee_joint"], "factor": 0.80 }
+        ]
       },
       {
         "id": "smoke_jog",
@@ -67,7 +79,11 @@
           { "label": "R wrist vel",   "type": "joint_vel",   "joint": "right_wrist_pitch_joint", "unit": "deg/s" }
         ],
         "highlight_joint": "root",
-        "scale": { "type": "root", "factor": 0.7 }
+        "scale": [
+          { "type": "root", "factor": 0.55 },
+          { "type": "joints", "joints": ["left_ankle_pitch_joint", "right_ankle_pitch_joint"], "factor": 0.70 },
+          { "type": "joints", "joints": ["right_wrist_pitch_joint", "right_wrist_roll_joint", "right_wrist_yaw_joint", "left_wrist_pitch_joint", "left_wrist_roll_joint", "left_wrist_yaw_joint"], "factor": 0.80 }
+        ]
       },
       {
         "id": "jump_up_down",
@@ -81,7 +97,11 @@
           { "label": "L ankle ROM",   "type": "joint_angle", "joint": "left_ankle_pitch_joint",  "unit": "deg", "show_rom": true }
         ],
         "highlight_joint": "root",
-        "scale": { "type": "root", "factor": 0.65 }
+        "scale": [
+          { "type": "root", "factor": 0.50 },
+          { "type": "joints", "joints": ["left_knee_joint", "right_knee_joint"], "factor": 0.65 },
+          { "type": "joints", "joints": ["left_ankle_pitch_joint", "right_ankle_pitch_joint"], "factor": 0.78 }
+        ]
       },
       {
         "id": "forward_lunge",
@@ -95,7 +115,11 @@
           { "label": "Root vel",      "type": "root_vel",                                         "unit": "m/s"  }
         ],
         "highlight_joint": "right_knee_joint",
-        "scale": { "type": "joints", "joints": ["right_knee_joint", "left_knee_joint", "right_hip_pitch_joint", "left_hip_pitch_joint"], "factor": 0.55 }
+        "scale": [
+          { "type": "joints", "joints": ["right_knee_joint", "left_knee_joint", "right_hip_pitch_joint", "left_hip_pitch_joint"], "factor": 0.40 },
+          { "type": "joints", "joints": ["left_ankle_pitch_joint", "right_ankle_pitch_joint"], "factor": 0.65 },
+          { "type": "root", "factor": 0.85 }
+        ]
       },
       {
         "id": "playing_guitar",
@@ -109,7 +133,11 @@
           { "label": "L shoulder ROM","type": "joint_angle", "joint": "left_shoulder_pitch_joint","unit": "deg", "show_rom": true }
         ],
         "highlight_joint": "left_wrist_pitch_joint",
-        "scale": { "type": "joints", "joints": ["left_wrist_pitch_joint", "left_wrist_roll_joint", "left_wrist_yaw_joint", "right_wrist_pitch_joint", "right_wrist_roll_joint", "right_wrist_yaw_joint"], "factor": 0.5 }
+        "scale": [
+          { "type": "joints", "joints": ["left_wrist_pitch_joint", "left_wrist_roll_joint", "left_wrist_yaw_joint", "right_wrist_pitch_joint", "right_wrist_roll_joint", "right_wrist_yaw_joint"], "factor": 0.35 },
+          { "type": "joints", "joints": ["left_elbow_joint", "right_elbow_joint"], "factor": 0.55 },
+          { "type": "joints", "joints": ["left_shoulder_pitch_joint", "left_shoulder_roll_joint", "right_shoulder_pitch_joint", "right_shoulder_roll_joint"], "factor": 0.75 }
+        ]
       },
       {
         "id": "play_tennis",
@@ -123,7 +151,11 @@
           { "label": "Root vel",      "type": "root_vel",                                         "unit": "m/s"  }
         ],
         "highlight_joint": "right_wrist_pitch_joint",
-        "scale": { "type": "joints", "joints": ["right_wrist_pitch_joint", "right_wrist_roll_joint", "right_wrist_yaw_joint", "right_shoulder_pitch_joint", "right_shoulder_roll_joint", "right_shoulder_yaw_joint", "right_elbow_joint"], "factor": 0.55 }
+        "scale": [
+          { "type": "joints", "joints": ["right_wrist_pitch_joint", "right_wrist_roll_joint", "right_wrist_yaw_joint", "right_elbow_joint", "left_wrist_pitch_joint", "left_wrist_roll_joint", "left_wrist_yaw_joint"], "factor": 0.40 },
+          { "type": "joints", "joints": ["right_shoulder_pitch_joint", "right_shoulder_roll_joint", "right_shoulder_yaw_joint", "left_shoulder_pitch_joint", "left_shoulder_roll_joint", "left_shoulder_yaw_joint"], "factor": 0.60 },
+          { "type": "root", "factor": 0.85 }
+        ]
       },
       {
         "id": "walking",
@@ -137,7 +169,11 @@
           { "label": "L ankle vel",   "type": "joint_vel",   "joint": "left_ankle_pitch_joint",  "unit": "deg/s" }
         ],
         "highlight_joint": "root",
-        "scale": { "type": "root", "factor": 0.75 }
+        "scale": [
+          { "type": "root", "factor": 0.55 },
+          { "type": "joints", "joints": ["left_knee_joint", "right_knee_joint"], "factor": 0.70 },
+          { "type": "joints", "joints": ["left_ankle_pitch_joint", "right_ankle_pitch_joint"], "factor": 0.80 }
+        ]
       }
     ]
   },
@@ -166,7 +202,11 @@
           { "label": "L ankle vel",      "type": "joint_vel",   "joint": "left_ankle_pitch_joint", "unit": "deg/s" }
         ],
         "highlight_joint": "left_hip_pitch_joint",
-        "scale": { "type": "joints", "joints": ["left_hip_pitch_joint", "right_hip_pitch_joint", "left_knee_joint", "right_knee_joint", "left_ankle_pitch_joint", "right_ankle_pitch_joint"], "factor": 0.6 }
+        "scale": [
+          { "type": "joints", "joints": ["left_hip_pitch_joint", "right_hip_pitch_joint"], "factor": 0.45 },
+          { "type": "joints", "joints": ["left_knee_joint", "right_knee_joint"], "factor": 0.65 },
+          { "type": "joints", "joints": ["left_ankle_pitch_joint", "right_ankle_pitch_joint"], "factor": 0.80 }
+        ]
       },
       {
         "id": "knightly_bow",
@@ -180,7 +220,11 @@
           { "label": "L knee ROM",     "type": "joint_angle", "joint": "left_knee_joint",         "unit": "deg",   "show_rom": true }
         ],
         "highlight_joint": "waist_pitch_joint",
-        "scale": { "type": "joints", "joints": ["waist_pitch_joint", "waist_roll_joint", "left_hip_pitch_joint", "right_hip_pitch_joint"], "factor": 0.55 }
+        "scale": [
+          { "type": "joints", "joints": ["waist_pitch_joint", "waist_roll_joint"], "factor": 0.40 },
+          { "type": "joints", "joints": ["left_hip_pitch_joint", "right_hip_pitch_joint"], "factor": 0.60 },
+          { "type": "joints", "joints": ["left_knee_joint", "right_knee_joint"], "factor": 0.78 }
+        ]
       },
       {
         "id": "macarena",
@@ -194,7 +238,11 @@
           { "label": "L wrist vel",    "type": "joint_vel",   "joint": "left_wrist_pitch_joint",  "unit": "deg/s" }
         ],
         "highlight_joint": "waist_roll_joint",
-        "scale": { "type": "joints", "joints": ["waist_roll_joint", "waist_yaw_joint", "left_hip_roll_joint", "right_hip_roll_joint", "left_hip_yaw_joint", "right_hip_yaw_joint"], "factor": 0.55 }
+        "scale": [
+          { "type": "joints", "joints": ["waist_roll_joint", "waist_yaw_joint"], "factor": 0.40 },
+          { "type": "joints", "joints": ["left_hip_roll_joint", "right_hip_roll_joint", "left_hip_yaw_joint", "right_hip_yaw_joint"], "factor": 0.60 },
+          { "type": "joints", "joints": ["left_wrist_pitch_joint", "left_wrist_roll_joint", "left_wrist_yaw_joint", "right_wrist_pitch_joint", "right_wrist_roll_joint", "right_wrist_yaw_joint"], "factor": 0.75 }
+        ]
       },
       {
         "id": "chainsaw_cutting",
@@ -208,7 +256,11 @@
           { "label": "R elbow vel",   "type": "joint_vel",   "joint": "right_elbow_joint",       "unit": "deg/s" }
         ],
         "highlight_joint": "waist_yaw_joint",
-        "scale": { "type": "joints", "joints": ["waist_yaw_joint", "waist_roll_joint", "right_shoulder_pitch_joint", "right_shoulder_roll_joint", "right_shoulder_yaw_joint", "left_shoulder_pitch_joint", "left_shoulder_roll_joint", "left_shoulder_yaw_joint"], "factor": 0.55 }
+        "scale": [
+          { "type": "joints", "joints": ["waist_yaw_joint", "waist_roll_joint"], "factor": 0.40 },
+          { "type": "joints", "joints": ["right_shoulder_pitch_joint", "right_shoulder_roll_joint", "right_shoulder_yaw_joint", "left_shoulder_pitch_joint", "left_shoulder_roll_joint", "left_shoulder_yaw_joint"], "factor": 0.60 },
+          { "type": "joints", "joints": ["right_elbow_joint", "left_elbow_joint"], "factor": 0.75 }
+        ]
       },
       {
         "id": "sweep_floor",
@@ -222,7 +274,11 @@
           { "label": "Waist pitch ROM","type":"joint_angle", "joint": "waist_pitch_joint",       "unit": "deg",   "show_rom": true }
         ],
         "highlight_joint": "right_shoulder_pitch_joint",
-        "scale": { "type": "joints", "joints": ["right_shoulder_pitch_joint", "right_shoulder_roll_joint", "right_shoulder_yaw_joint", "right_elbow_joint", "left_shoulder_pitch_joint", "left_shoulder_roll_joint", "left_shoulder_yaw_joint", "left_elbow_joint", "waist_pitch_joint"], "factor": 0.55 }
+        "scale": [
+          { "type": "joints", "joints": ["right_shoulder_pitch_joint", "right_shoulder_roll_joint", "right_shoulder_yaw_joint", "left_shoulder_pitch_joint", "left_shoulder_roll_joint", "left_shoulder_yaw_joint"], "factor": 0.40 },
+          { "type": "joints", "joints": ["right_elbow_joint", "left_elbow_joint"], "factor": 0.60 },
+          { "type": "joints", "joints": ["waist_pitch_joint"], "factor": 0.75 }
+        ]
       },
       {
         "id": "forward_lunge",
@@ -236,7 +292,11 @@
           { "label": "L ankle vel",   "type": "joint_vel",   "joint": "left_ankle_pitch_joint",  "unit": "deg/s" }
         ],
         "highlight_joint": "right_knee_joint",
-        "scale": { "type": "joints", "joints": ["right_knee_joint", "left_knee_joint", "right_hip_pitch_joint", "left_hip_pitch_joint"], "factor": 0.55 }
+        "scale": [
+          { "type": "joints", "joints": ["right_knee_joint", "left_knee_joint"], "factor": 0.45 },
+          { "type": "joints", "joints": ["right_hip_pitch_joint", "left_hip_pitch_joint"], "factor": 0.65 },
+          { "type": "joints", "joints": ["left_ankle_pitch_joint", "right_ankle_pitch_joint"], "factor": 0.80 }
+        ]
       },
       {
         "id": "walking",
@@ -250,7 +310,11 @@
           { "label": "L ankle vel",   "type": "joint_vel",   "joint": "left_ankle_pitch_joint",  "unit": "deg/s" }
         ],
         "highlight_joint": "left_hip_pitch_joint",
-        "scale": { "type": "joints", "joints": ["left_hip_pitch_joint", "right_hip_pitch_joint", "left_hip_yaw_joint", "right_hip_yaw_joint", "left_knee_joint", "right_knee_joint"], "factor": 0.6 }
+        "scale": [
+          { "type": "joints", "joints": ["left_hip_pitch_joint", "right_hip_pitch_joint", "left_hip_yaw_joint", "right_hip_yaw_joint"], "factor": 0.45 },
+          { "type": "joints", "joints": ["left_knee_joint", "right_knee_joint"], "factor": 0.65 },
+          { "type": "joints", "joints": ["left_ankle_pitch_joint", "right_ankle_pitch_joint"], "factor": 0.80 }
+        ]
       },
       {
         "id": "jump_up_down",
@@ -264,7 +328,11 @@
           { "label": "L hip pitch vel","type":"joint_vel",   "joint": "left_hip_pitch_joint",    "unit": "deg/s" }
         ],
         "highlight_joint": "left_ankle_pitch_joint",
-        "scale": { "type": "joints", "joints": ["left_ankle_pitch_joint", "right_ankle_pitch_joint", "left_knee_joint", "right_knee_joint", "left_hip_pitch_joint", "right_hip_pitch_joint"], "factor": 0.6 }
+        "scale": [
+          { "type": "joints", "joints": ["left_ankle_pitch_joint", "right_ankle_pitch_joint"], "factor": 0.45 },
+          { "type": "joints", "joints": ["left_knee_joint", "right_knee_joint"], "factor": 0.65 },
+          { "type": "joints", "joints": ["left_hip_pitch_joint", "right_hip_pitch_joint"], "factor": 0.80 }
+        ]
       },
       {
         "id": "dance_retro_twist",
@@ -278,7 +346,11 @@
           { "label": "L knee vel",   "type": "joint_vel",   "joint": "left_knee_joint",         "unit": "deg/s" }
         ],
         "highlight_joint": "waist_yaw_joint",
-        "scale": { "type": "joints", "joints": ["waist_yaw_joint", "waist_roll_joint", "left_hip_yaw_joint", "right_hip_yaw_joint"], "factor": 0.55 }
+        "scale": [
+          { "type": "joints", "joints": ["waist_yaw_joint", "waist_roll_joint"], "factor": 0.40 },
+          { "type": "joints", "joints": ["left_hip_yaw_joint", "right_hip_yaw_joint"], "factor": 0.60 },
+          { "type": "joints", "joints": ["left_knee_joint", "right_knee_joint"], "factor": 0.78 }
+        ]
       }
     ]
   }
