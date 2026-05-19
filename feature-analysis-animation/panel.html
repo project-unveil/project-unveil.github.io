@@ -112,8 +112,14 @@ html, body {
   z-index: 3;
   font-variant-numeric: tabular-nums;
 }
-.role.heavy { left: 6px; background: #e63a4a; }
-.role.light { right: 6px; background: #2f7fc6; }
+/* SMPL row role chips sit at top of body-area; G1 row chips sit just above
+   the G1 viewport (i.e. just below the plots strip). */
+.role.smpl { top: 8px; z-index: 3; }
+.role.g1   { bottom: calc(39% - 22px); z-index: 3; }  /* just above G1 viewport */
+.role.heavy { left: 8px;  background: #e63a4a; }
+.role.light { right: 8px; background: #2f7fc6; }
+#root.has-smpl .role.smpl { display: block; }
+.role.smpl { display: none; }    /* hidden until SMPL data loads */
 
 /* ── Loading overlay ───────────────────────────────────── */
 #loading {
