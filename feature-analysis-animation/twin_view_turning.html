@@ -835,76 +835,6 @@ function drawStrip() {
   drawStrip._plotRightX = padL + plotW;
 }
 
-// ── Pointer arrows ─────────────────────────────────────────────────────
-let arrowSvg;
-function setupPointerOverlay() {
-  arrowSvg = document.getElementById('pointer-overlay');
-}
-
-function getProjectedScreen(viewer, vec3) {
-  const v = vec3.clone().project(viewer.camera);
-  const r = viewer.renderer.domElement.getBoundingClientRect();
-  return { x: r.left + (v.x * 0.5 + 0.5) * r.width,
-           y: r.top  + (-v.y * 0.5 + 0.5) * r.height };
-}
-
-function updatePointers() {
-  if (!arrowSvg || !VIEWERS.g1_heavy) return;
-  const W = window.innerWidth, H = window.innerHeight;
-  arrowSvg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-  arrowSvg.setAttribute('width', W); arrowSvg.setAttribute('height', H);
-  while (arrowSvg.firstChild) arrowSvg.removeChild(arrowSvg.firstChild);
-
-  const NS = 'http://www.w3.org/2000/svg';
-  const defs = document.createElementNS(NS, 'defs');
-  for (const [id, color] of [['arr-heavy', COLOR_HEAVY_HEX], ['arr-light', COLOR_LIGHT_HEX]]) {
-    const m = document.createElementNS(NS, 'marker');
-    m.setAttribute('id', id);
-    m.setAttribute('viewBox', '0 0 10 10'); m.setAttribute('refX', '9'); m.setAttribute('refY', '5');
-    m.setAttribute('markerWidth', '11'); m.setAttribute('markerHeight', '11'); m.setAttribute('orient', 'auto');
-    const p = document.createElementNS(NS, 'path');
-    p.setAttribute('d', 'M 0 0 L 10 5 L 0 10 z'); p.setAttribute('fill', color);
-    m.appendChild(p); defs.appendChild(m);
-  }
-  arrowSvg.appendChild(defs);
-
-  // Arrows go from each G1 robot's waist (torso_link, projected to screen)
-  // into the strip plot. Heavy enters from the LEFT edge, light from RIGHT.
-  const tmp = new THREE.Vector3();
-  function waistScreen(viewer) {
-    (viewer.waistGroup || viewer.rootGroup).getWorldPosition(tmp);
-    return getProjectedScreen(viewer, tmp);
-  }
-  const hRoot = waistScreen(VIEWERS.g1_heavy);
-  const lRoot = waistScreen(VIEWERS.g1_light);
-
-  const stripCanvas = document.getElementById('strip-canvas');
-  const sRect = stripCanvas.getBoundingClientRect();
-  const dpr = window.devicePixelRatio;
-  const heavyAvgY  = (drawStrip._heavyAvgY  || 0) / dpr;
-  const lightAvgY  = (drawStrip._lightAvgY  || 0) / dpr;
-  const plotLeftX  = (drawStrip._plotLeftX  || 0) / dpr;
-  const plotRightX = (drawStrip._plotRightX || 0) / dpr;
-
-  const hTarget = { x: sRect.left + plotLeftX  + 6, y: sRect.top + heavyAvgY };
-  const lTarget = { x: sRect.left + plotRightX - 6, y: sRect.top + lightAvgY };
-
-  function curve(from, to, color, markerId) {
-    const dx = to.x - from.x;
-    const c1x = from.x + dx * 0.40, c1y = from.y;
-    const c2x = from.x + dx * 0.60, c2y = to.y;
-    const p = document.createElementNS(NS, 'path');
-    p.setAttribute('d', `M ${from.x} ${from.y} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${to.x} ${to.y}`);
-    p.setAttribute('fill', 'none');
-    p.setAttribute('stroke', color); p.setAttribute('stroke-width', '2.4');
-    p.setAttribute('stroke-opacity', '0.85'); p.setAttribute('stroke-dasharray', '7 5');
-    p.setAttribute('marker-end', `url(#${markerId})`);
-    arrowSvg.appendChild(p);
-  }
-  curve(hRoot, hTarget, COLOR_HEAVY_HEX, 'arr-heavy');
-  curve(lRoot, lTarget, COLOR_LIGHT_HEX, 'arr-light');
-}
-
 // ── Animation loop ─────────────────────────────────────────────────────
 function loop(ts) {
   requestAnimationFrame(loop);
@@ -923,7 +853,6 @@ function loop(ts) {
   }
 
   drawStrip();
-  updatePointers();
 }
 
 boot().catch(err => {
