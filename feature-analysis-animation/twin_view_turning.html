@@ -841,8 +841,8 @@ function updatePointers() {
   for (const [id, color] of [['arr-heavy', COLOR_HEAVY_HEX], ['arr-light', COLOR_LIGHT_HEX]]) {
     const m = document.createElementNS(NS, 'marker');
     m.setAttribute('id', id);
-    m.setAttribute('viewBox', '0 0 10 10'); m.setAttribute('refX', '8'); m.setAttribute('refY', '5');
-    m.setAttribute('markerWidth', '7'); m.setAttribute('markerHeight', '7'); m.setAttribute('orient', 'auto');
+    m.setAttribute('viewBox', '0 0 10 10'); m.setAttribute('refX', '9'); m.setAttribute('refY', '5');
+    m.setAttribute('markerWidth', '11'); m.setAttribute('markerHeight', '11'); m.setAttribute('orient', 'auto');
     const p = document.createElementNS(NS, 'path');
     p.setAttribute('d', 'M 0 0 L 10 5 L 0 10 z'); p.setAttribute('fill', color);
     m.appendChild(p); defs.appendChild(m);
@@ -854,8 +854,8 @@ function updatePointers() {
     const sR = document.getElementById(smplCellId).getBoundingClientRect();
     const gR = document.getElementById(g1CellId).getBoundingClientRect();
     return {
-      from: { x: sR.left + sR.width / 2, y: sR.bottom - 6 },
-      to:   { x: gR.left + gR.width / 2, y: gR.top + 8 },
+      from: { x: sR.left + sR.width / 2, y: sR.bottom - 45 },
+      to:   { x: gR.left + gR.width / 2, y: gR.top    + 45 },
     };
   }
   function drawDown(from, to, color, markerId) {
@@ -865,8 +865,8 @@ function updatePointers() {
     const c2x = to.x,   c2y = to.y   - dy * 0.45;
     p.setAttribute('d', `M ${from.x} ${from.y} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${to.x} ${to.y}`);
     p.setAttribute('fill', 'none');
-    p.setAttribute('stroke', color); p.setAttribute('stroke-width', '2.4');
-    p.setAttribute('stroke-opacity', '0.85'); p.setAttribute('stroke-dasharray', '7 5');
+    p.setAttribute('stroke', color); p.setAttribute('stroke-width', '3');
+    p.setAttribute('stroke-opacity', '0.9'); p.setAttribute('stroke-dasharray', '9 6');
     p.setAttribute('marker-end', `url(#${markerId})`);
     arrowSvg.appendChild(p);
   }
