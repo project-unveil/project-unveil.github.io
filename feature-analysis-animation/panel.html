@@ -142,20 +142,20 @@ html, body {
 <div id="root">
   <div id="panel-head">— <span class="actor"></span></div>
 
-  <div id="smpl-row">
-    <div class="role heavy" id="role-smpl-high"></div>
-    <div class="role light" id="role-smpl-low"></div>
-  </div>
+  <div id="body-area">
+    <canvas id="body-canvas"></canvas>
 
-  <div id="plots">
-    <div class="plot-row strongest" data-idx="0"><div class="feat-label"></div><canvas></canvas></div>
-    <div class="plot-row"            data-idx="1"><div class="feat-label"></div><canvas></canvas></div>
-    <div class="plot-row"            data-idx="2"><div class="feat-label"></div><canvas></canvas></div>
-  </div>
+    <div class="role smpl heavy" id="role-smpl-high"></div>
+    <div class="role smpl light" id="role-smpl-low"></div>
 
-  <div id="g1-row">
-    <div class="role heavy" id="role-g1-heavy"></div>
-    <div class="role light" id="role-g1-light"></div>
+    <div id="plots">
+      <div class="plot-row strongest" data-idx="0"><div class="feat-label"></div><canvas></canvas></div>
+      <div class="plot-row"            data-idx="1"><div class="feat-label"></div><canvas></canvas></div>
+      <div class="plot-row"            data-idx="2"><div class="feat-label"></div><canvas></canvas></div>
+    </div>
+
+    <div class="role g1 heavy" id="role-g1-heavy"></div>
+    <div class="role g1 light" id="role-g1-light"></div>
   </div>
 </div>
 
