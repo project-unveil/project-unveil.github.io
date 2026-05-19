@@ -77,45 +77,59 @@ h1 em { font-style: normal; color: #ffba6e; }
 <div class="wrap">
 
 <div class="eyebrow">UNVEIL · feature-leak matrix</div>
-<h1 id="weight-title">—</h1>
-<div class="sub" id="weight-sub">—</div>
+<h1>Two operator attributes, nine activities each — the motion <em>remembers</em></h1>
+<div class="sub">Each panel: same retargeted G1 clip driving two robots side-by-side, with the three features most coupled to the attribute stacked above. Top plot is the strongest; the highlighted joint on each robot matches that feature.</div>
 
-<section class="matrix-card">
-  <h2>9 activities · 3 features per panel · strongest at top</h2>
-  <div class="deck">Each panel shows the same retargeted G1 clip driving two robots (left red = heavy operator, right blue = light operator), with three feature time-series stacked above. The top plot is the feature whose population-level partial correlation with weight is strongest for that activity; the highlighted joint on each robot matches that feature.</div>
+<section class="matrix-card" id="card-weight">
+  <h2 id="weight-title">—</h2>
+  <div class="deck" id="weight-sub">—</div>
   <div class="matrix-grid" id="grid-weight"></div>
   <div class="legend-note">
-    Robots:<span class="dot heavy"></span>heavy operator (110 kg, synthetic)<span class="dot light"></span>light operator (60 kg, raw retargeted motion).
-    Plot Y-axes are shared between heavy/light sides so amplitude difference is visible at a glance.
+    <span class="dot heavy"></span><strong id="weight-high-lbl">heavy</strong>
+    <span class="dot light"></span><strong id="weight-low-lbl">light</strong>
+    · Y-axes are shared between sides so amplitude difference is visible at a glance.
   </div>
 </section>
 
-<div class="placeholder" id="age-placeholder">
-  Age matrix is configured for population once you sign off on weight — edit <code style="color:#88c0ff">data/matrix_config.json</code> under the <code style="color:#88c0ff">"age"</code> key.
-</div>
+<section class="matrix-card" id="card-age">
+  <h2 id="age-title">—</h2>
+  <div class="deck" id="age-sub">—</div>
+  <div class="matrix-grid" id="grid-age"></div>
+  <div class="legend-note">
+    <span class="dot heavy"></span><strong id="age-high-lbl">older</strong>
+    <span class="dot light"></span><strong id="age-low-lbl">younger</strong>
+    · Same retargeted CSV per panel; the older side has its strongest-feature joint(s) scaled around their mean to mimic narrower ROM / slower velocity.
+  </div>
+</section>
 
 </div>
 <script>
 async function loadAndBuild() {
   const cfg = await fetch('./data/matrix_config.json?v=' + Date.now()).then(r => r.json());
-  const w = cfg.weight;
-  document.getElementById('weight-title').innerHTML = w.title.replace(/(weight)/i, '<em>$1</em>');
-  document.getElementById('weight-sub').textContent = w.subtitle;
-
-  const grid = document.getElementById('grid-weight');
+  buildMatrix('weight', cfg.weight, 'grid-weight', 'weight-title', 'weight-sub',
+              'weight-high-lbl', 'weight-low-lbl');
+  buildMatrix('age',    cfg.age,    'grid-age',    'age-title',    'age-sub',
+              'age-high-lbl',    'age-low-lbl');
+}
+function buildMatrix(attr, ac, gridId, titleId, subId, highLblId, lowLblId) {
+  if (!ac || !ac.clips || ac.clips.length === 0) {
+    document.getElementById('card-' + attr).style.display = 'none';
+    return;
+  }
+  document.getElementById(titleId).innerHTML = ac.title.replace(/(weight|age)/i, '<em>$1</em>');
+  document.getElementById(subId).textContent = ac.subtitle;
+  document.getElementById(highLblId).textContent = `${ac.high_label} · ${ac.high_value} ${ac.high_unit}`;
+  document.getElementById(lowLblId).textContent  = `${ac.low_label} · ${ac.low_value} ${ac.low_unit}`;
+  const grid = document.getElementById(gridId);
   const ts = Date.now();
-  for (const clip of w.clips) {
+  for (const clip of ac.clips) {
     const cell = document.createElement('div');
     cell.className = 'panel-cell';
     const iframe = document.createElement('iframe');
     iframe.loading = 'lazy';
-    iframe.src = `./panel.html?attr=weight&clip=${encodeURIComponent(clip.id)}&t=${ts}`;
+    iframe.src = `./panel.html?attr=${attr}&clip=${encodeURIComponent(clip.id)}&t=${ts}`;
     cell.appendChild(iframe);
     grid.appendChild(cell);
-  }
-
-  if (cfg.age && cfg.age.clips && cfg.age.clips.length > 0) {
-    // Populate age matrix the same way (left as TODO since age.clips=[] for now).
   }
 }
 loadAndBuild().catch(err => {
