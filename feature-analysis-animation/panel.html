@@ -224,8 +224,13 @@ async function boot() {
 
   document.querySelector('#panel-head').firstChild.textContent = clip.label + ' ';
   document.querySelector('#panel-head .actor').textContent = `· ${clip.actor}`;
-  const highTxt = `${attrCfg.high_label} · ${attrCfg.high_value} ${attrCfg.high_unit}`;
-  const lowTxt  = `${attrCfg.low_label} · ${attrCfg.low_value} ${attrCfg.low_unit}`;
+  // Per-clip values (random within each attribute's range); units + side label
+  // come from the attribute. Fall back to attr-level if a legacy config still
+  // has the value at the top.
+  const highV = clip.high_value ?? attrCfg.high_value;
+  const lowV  = clip.low_value  ?? attrCfg.low_value;
+  const highTxt = `${attrCfg.high_label} · ${highV} ${attrCfg.high_unit}`;
+  const lowTxt  = `${attrCfg.low_label} · ${lowV} ${attrCfg.low_unit}`;
   document.getElementById('role-g1-heavy').textContent = highTxt;
   document.getElementById('role-g1-light').textContent = lowTxt;
   document.getElementById('role-smpl-high').textContent = highTxt;
