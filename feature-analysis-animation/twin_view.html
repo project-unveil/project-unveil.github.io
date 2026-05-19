@@ -793,8 +793,8 @@ function updatePointers() {
   for (const [id, color] of [['arr-heavy', COLOR_HEAVY_HEX], ['arr-light', COLOR_LIGHT_HEX]]) {
     const m = document.createElementNS(NS, 'marker');
     m.setAttribute('id', id);
-    m.setAttribute('viewBox', '0 0 10 10'); m.setAttribute('refX', '8'); m.setAttribute('refY', '5');
-    m.setAttribute('markerWidth', '7'); m.setAttribute('markerHeight', '7'); m.setAttribute('orient', 'auto');
+    m.setAttribute('viewBox', '0 0 10 10'); m.setAttribute('refX', '9'); m.setAttribute('refY', '5');
+    m.setAttribute('markerWidth', '11'); m.setAttribute('markerHeight', '11'); m.setAttribute('orient', 'auto');
     const p = document.createElementNS(NS, 'path');
     p.setAttribute('d', 'M 0 0 L 10 5 L 0 10 z'); p.setAttribute('fill', color);
     m.appendChild(p); defs.appendChild(m);
