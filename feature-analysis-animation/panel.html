@@ -12,11 +12,16 @@ html, body {
   font-family: 'Segoe UI', system-ui, sans-serif; overflow:hidden;
 }
 
-/* Per-panel grid: header + 3 plots + 2 G1 cells. */
+/* Per-panel grid. Default is 2-row (plots / robots); when SMPL is available
+   .root.has-smpl gets an extra SMPL row above the plots. Set via JS once the
+   .bin files load successfully. */
 #root {
   width: 100%; height: 100%;
   display: grid;
   grid-template-rows: 26px 1fr 1.55fr;
+}
+#root.has-smpl {
+  grid-template-rows: 26px 1.25fr 1fr 1.25fr;   /* head + SMPL + plots + G1 */
 }
 
 /* ── Header ─────────────────────────────────────────────── */
