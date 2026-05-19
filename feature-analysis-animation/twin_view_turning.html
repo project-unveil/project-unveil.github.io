@@ -591,23 +591,10 @@ async function createG1Viewer(cellId, motion, accentHex) {
   floor.rotation.x = -Math.PI/2; floor.receiveShadow = true;
   scene.add(floor);
 
-  // Handedness fix: the BVH→G1 retargeting reverses the operator's yaw
-  // direction (BVH→SMPL preserves it), so without correction the robot
-  // appears to turn mirror to the human. Wrap robotWorld in a mirror group
-  // that reflects across the world XY plane (scale.z = -1). The reflection is
-  // applied AFTER robotWorld's -π/2 X-rotation (parent → child order), so
-  // the robot stays upright. This both reverses the rendered yaw direction
-  // (matching the SMPL) and remaps MuJoCo +Y (the actor's frame-0 forward
-  // after rotateZ=+93°) onto world +Z so the robot faces the camera at frame
-  // 0 like the SMPL human. Robot is symmetric so the mirrored anatomy is
-  // visually indistinguishable.
-  const mirrorWrap = new THREE.Group();
-  mirrorWrap.scale.z = -1;
-  scene.add(mirrorWrap);
   // Z-up → Y-up
   const robotWorld = new THREE.Group();
   robotWorld.rotation.x = -Math.PI/2;
-  mirrorWrap.add(robotWorld);
+  scene.add(robotWorld);
 
   const groupMap = {}, bodyGroups = {};
   let rootGroup = null;
