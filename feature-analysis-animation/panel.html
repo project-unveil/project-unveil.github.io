@@ -522,6 +522,127 @@ async function createG1Viewer(cellId, motion, accentHex, highlightJoint) {
            duration: motion.duration, frameTime: motion.frameTime, numFrames: motion.numFrames };
 }
 
+// ── SMPL (optional, loaded if matching .bin files exist) ─────
+function parseVertsBin(buf) {
+  const v = new DataView(buf);
+  const nf = v.getUint32(0, true), nv = v.getUint32(4, true), fps = v.getFloat32(8, true);
+  return { numFrames: nf, numVerts: nv, fps, verts: new Float32Array(buf, 12), duration: nf / fps };
+}
+function parseFacesBin(buf) {
+  const v = new DataView(buf); const nf = v.getUint32(0, true);
+  return new Uint32Array(buf, 4, nf * 3);
+}
+async function tryLoadSMPL(attr, clipId) {
+  const base = `./data/smpl_matrix/${attr}`;
+  // HEAD fetch is cheap; only proceed if all three files respond OK.
+  async function ok(url) {
+    try { const r = await fetch(url, { method: 'HEAD' }); return r.ok; } catch { return false; }
+  }
+  const facesUrl = `${base}/faces.bin`;
+  const highUrl  = `${base}/${clipId}_high.bin`;
+  const lowUrl   = `${base}/${clipId}_low.bin`;
+  if (!(await ok(facesUrl) && await ok(highUrl) && await ok(lowUrl))) return null;
+  const [faces, high, low] = await Promise.all([
+    fetch(facesUrl).then(r => r.arrayBuffer()).then(parseFacesBin),
+    fetch(highUrl) .then(r => r.arrayBuffer()).then(parseVertsBin),
+    fetch(lowUrl)  .then(r => r.arrayBuffer()).then(parseVertsBin),
+  ]);
+  computeSMPLCentroid(high); computeSMPLCentroid(low);
+  return { faces, high, low };
+}
+function computeSMPLCentroid(data) {
+  let sx = 0, sz = 0, n = 0;
+  for (let fi = 0; fi < data.numFrames; fi++) {
+    const base = fi * data.numVerts * 3;
+    for (let j = 0; j < data.numVerts; j++) {
+      sx += data.verts[base + j*3];
+      sz += data.verts[base + j*3 + 2];
+      n++;
+    }
+  }
+  data.meanX = sx / n; data.meanZ = sz / n;
+}
+
+function createSMPLViewer(cellId, data, faces, accentHex, isHigh) {
+  const cell = document.getElementById(cellId);
+  const cnv = document.createElement('canvas'); cell.appendChild(cnv);
+  const renderer = new THREE.WebGLRenderer({ canvas: cnv, antialias: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(cell.clientWidth, cell.clientHeight);
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color('#eef2f7');
+  scene.fog = new THREE.Fog('#eef2f7', 5, 14);
+
+  const camera = new THREE.PerspectiveCamera(38, cell.clientWidth/cell.clientHeight, 0.05, 30);
+  camera.position.set(0, 1.0, 3.0);
+  camera.lookAt(0, 0.95, 0);
+  const controls = new THREE.OrbitControls(camera, cnv);
+  controls.target.set(0, 0.95, 0);
+  controls.enableDamping = true; controls.dampingFactor = 0.06;
+  controls.enableZoom = false;
+
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xc0c8d4, 1.05));
+  const sun = new THREE.DirectionalLight(0xfff4e0, 0.95);
+  sun.position.set(3, 7, 4); scene.add(sun);
+
+  const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(8, 8),
+    new THREE.MeshBasicMaterial({ color: 0xdee4ec })
+  );
+  floor.rotation.x = -Math.PI/2; scene.add(floor);
+
+  // Skin tone — slightly tinted toward the side accent so heavy/light read
+  // even before any animation kicks in.
+  const baseSkin = new THREE.Color(0.94, 0.76, 0.58);
+  const tint = new THREE.Color(accentHex);
+  const skin = baseSkin.clone().lerp(tint, 0.06);
+
+  const geo = new THREE.BufferGeometry();
+  const posAttr = new THREE.BufferAttribute(new Float32Array(data.numVerts * 3), 3);
+  geo.setAttribute('position', posAttr);
+  geo.setIndex(new THREE.BufferAttribute(faces, 1));
+  const mat = new THREE.MeshPhongMaterial({
+    color: skin, specular: 0x111111, shininess: 25, side: THREE.DoubleSide,
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  scene.add(mesh);
+
+  // Floor alignment via 10th percentile of per-frame min-Y.
+  const frameMin = new Float32Array(data.numFrames);
+  for (let fi = 0; fi < data.numFrames; fi++) {
+    const base = fi * data.numVerts * 3;
+    let mn = Infinity;
+    for (let j = 0; j < data.numVerts; j++) {
+      const y = data.verts[base + j*3 + 1];
+      if (y < mn) mn = y;
+    }
+    frameMin[fi] = mn;
+  }
+  const sorted = [...frameMin].sort((a,b) => a - b);
+  const yOff = sorted[Math.floor(sorted.length * 0.10)];
+
+  new ResizeObserver(() => {
+    const w = cell.clientWidth, h = cell.clientHeight;
+    if (w && h) { camera.aspect = w/h; camera.updateProjectionMatrix(); renderer.setSize(w, h); }
+  }).observe(cell);
+
+  const arr = posAttr.array;
+  const mX = data.meanX, mZ = data.meanZ;
+  function applyFrame(fi) {
+    const base = fi * data.numVerts * 3;
+    for (let j = 0; j < data.numVerts; j++) {
+      arr[j*3]   = data.verts[base + j*3]     - mX;
+      arr[j*3+1] = data.verts[base + j*3 + 1] - yOff;
+      arr[j*3+2] = data.verts[base + j*3 + 2] - mZ;
+    }
+    posAttr.needsUpdate = true;
+    geo.computeVertexNormals();
+  }
+  return { kind:'smpl', scene, camera, controls, renderer, applyFrame,
+           duration: data.duration, frameTime: 1/data.fps, numFrames: data.numFrames };
+}
+
 // ── Plot stack ────────────────────────────────────────────
 const PLOT_CTXS = [];
 function setupPlots() {
