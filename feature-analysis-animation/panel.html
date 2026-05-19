@@ -576,7 +576,9 @@ async function buildG1Scene(heavyMotion, lightMotion, highlightJoint) {
     applyOne(heavy, heavyMotion, fiH);
     applyOne(light, lightMotion, fiL);
   }
-  return { scene, camera, applyFrameAtTime };
+  // Expose the motions on the returned object so drawPlots can read each
+  // motion's per-feature time series.
+  return { scene, camera, applyFrameAtTime, heavyMotion, lightMotion };
 }
 
 // ── SMPL (optional, loaded if matching .bin files exist) ─────
