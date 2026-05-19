@@ -582,9 +582,19 @@ async function createG1Viewer(cellId, motion, accentHex) {
   floor.rotation.x = -Math.PI/2; floor.receiveShadow = true;
   scene.add(floor);
 
-  // Z-up → Y-up
+  // Z-up → Y-up + handedness fix.
+  // BVH→G1 retargeting reverses yaw direction (BVH Hips Yrot at source frame
+  // 3010 is ≈ -180° while G1 root_rotateZ is +93°; across the clip the two
+  // turn with opposite signs). The SMPL fit preserves the BVH (the operator's
+  // true) yaw, so to keep G1 in sync with the human we apply scale.z = -1
+  // here — a reflection across the XY plane that flips the rendered handedness
+  // of the G1 and lands frame-0 forward on +Z (matching the SMPL). Material
+  // double-side isn't needed: each STL gets BackSide-friendly rendering by
+  // default and the robot is left/right symmetric so the mirrored anatomy is
+  // visually indistinguishable.
   const robotWorld = new THREE.Group();
   robotWorld.rotation.x = -Math.PI/2;
+  robotWorld.scale.z = -1;
   scene.add(robotWorld);
 
   const groupMap = {}, bodyGroups = {};
