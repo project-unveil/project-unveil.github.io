@@ -311,7 +311,6 @@ async function boot() {
   document.getElementById('label-light').textContent = `${pairs.jumping.light.weight.toFixed(0)} kg`;
 
   setupStrip();
-  setupPointerOverlay();
   document.getElementById('loading').style.display = 'none';
   requestAnimationFrame(loop);
 }
