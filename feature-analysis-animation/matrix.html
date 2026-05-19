@@ -135,23 +135,51 @@ h1 em { font-style: normal; color: #ffba6e; }
 
 </div>
 <script>
-async function loadAndBuild() {
-  const cfg = await fetch('./data/matrix_config.json?v=' + Date.now()).then(r => r.json());
-  buildMatrix('weight', cfg.weight, 'grid-weight', 'weight-title', 'weight-sub',
-              'weight-high-lbl', 'weight-low-lbl');
-  buildMatrix('age',    cfg.age,    'grid-age',    'age-title',    'age-sub',
-              'age-high-lbl',    'age-low-lbl');
+let CFG = null;
+const STATE = { activeAttr: 'weight' };
+
+async function init() {
+  CFG = await fetch('./data/matrix_config.json?v=' + Date.now()).then(r => r.json());
+  fillStatic('weight', 'weight-title', 'weight-sub', 'weight-high-lbl', 'weight-low-lbl');
+  fillStatic('age',    'age-title',    'age-sub',    'age-high-lbl',    'age-low-lbl');
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => switchTo(btn.dataset.attr));
+  });
+  switchTo('weight');
 }
-function buildMatrix(attr, ac, gridId, titleId, subId, highLblId, lowLblId) {
-  if (!ac || !ac.clips || ac.clips.length === 0) {
-    document.getElementById('card-' + attr).style.display = 'none';
-    return;
+
+function fillStatic(attr, titleId, subId, highLblId, lowLblId) {
+  const ac = CFG[attr]; if (!ac) return;
+  document.getElementById(titleId).innerHTML =
+    (ac.title || '').replace(/(weight|age)/i, '<em>$1</em>');
+  document.getElementById(subId).textContent = ac.subtitle || '';
+  document.getElementById(highLblId).textContent =
+    `${ac.high_label} · ${ac.high_value} ${ac.high_unit}`;
+  document.getElementById(lowLblId).textContent  =
+    `${ac.low_label} · ${ac.low_value} ${ac.low_unit}`;
+}
+
+function switchTo(attr) {
+  STATE.activeAttr = attr;
+  document.querySelectorAll('.tab').forEach(b => {
+    b.classList.toggle('active', b.dataset.attr === attr);
+  });
+  for (const a of ['weight', 'age']) {
+    const card = document.getElementById('card-' + a);
+    const grid = document.getElementById('grid-' + a);
+    if (a === attr) {
+      card.classList.remove('hidden');
+      if (grid.childElementCount === 0) populate(a, grid);
+    } else {
+      card.classList.add('hidden');
+      // Drop iframes so their WebGL contexts are freed.
+      while (grid.firstChild) grid.removeChild(grid.firstChild);
+    }
   }
-  document.getElementById(titleId).innerHTML = ac.title.replace(/(weight|age)/i, '<em>$1</em>');
-  document.getElementById(subId).textContent = ac.subtitle;
-  document.getElementById(highLblId).textContent = `${ac.high_label} · ${ac.high_value} ${ac.high_unit}`;
-  document.getElementById(lowLblId).textContent  = `${ac.low_label} · ${ac.low_value} ${ac.low_unit}`;
-  const grid = document.getElementById(gridId);
+}
+
+function populate(attr, grid) {
+  const ac = CFG[attr]; if (!ac || !ac.clips) return;
   const ts = Date.now();
   for (const clip of ac.clips) {
     const cell = document.createElement('div');
@@ -163,7 +191,8 @@ function buildMatrix(attr, ac, gridId, titleId, subId, highLblId, lowLblId) {
     grid.appendChild(cell);
   }
 }
-loadAndBuild().catch(err => {
+
+init().catch(err => {
   document.body.innerHTML = `<pre style="color:#ff7280;padding:30px">${err.message}</pre>`;
 });
 </script>
