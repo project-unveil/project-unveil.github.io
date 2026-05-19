@@ -495,6 +495,15 @@ function createSMPLViewer(cellId, data, faces, skin) {
   });
   const mesh = new THREE.Mesh(geo, mat);
   mesh.castShadow = true;
+  // BVH/SMPL native heading is opposite to the G1's heading after the
+  // Z-up→Y-up conversion (BVH default faces -Z while G1 retargeting lands at
+  // rotateZ ≈ +93° → world -Z at frame 0). Spinning the mesh 180° around the
+  // vertical aligns the initial heading. Across the rest of the clip the BVH
+  // Hips Yrot and the G1 root_rotateZ don't have a constant offset — the
+  // retargeting IK alternates between yaw branches for certain poses — so a
+  // static rotation can only ever align *some* frames. Re-doing the
+  // retargeting in a yaw-stable way is the data-level fix.
+  mesh.rotation.y = Math.PI;
   scene.add(mesh);
 
   // Floor align via 10th percentile of per-frame min-Y across the whole clip.
