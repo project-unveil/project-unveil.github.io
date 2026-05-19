@@ -752,73 +752,68 @@ function drawStrip() {
   ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
   ctx.fillText('time →', padL + plotW, H - 4*dpr);
 
-  // No cosmetic jitter — waist scaling already differs.
+  // Time cursor — drives "draw up to here" on each series. When masterTime
+  // wraps past masterDuration, the cursor returns to the left edge and the
+  // plot effectively vanishes / restarts on the next animation frame.
+  const frac = (masterTime / masterDuration) % 1;
+  const cx = padL + frac * plotW;
+
   function plot(arr, color, zOrder) {
     const n = arr.length;
-    // ROM bounds for this curve (peak-to-peak in degrees), used to render
-    // a dashed pair of "this operator's ROM bounds" lines.
-    let mn = +Infinity, mx = -Infinity;
-    for (let i = 0; i < n; i++) {
-      const v = arr[i] * RAD2DEG;
-      if (v < mn) mn = v; if (v > mx) mx = v;
-    }
+    const upToFrame = Math.max(1, Math.min(n - 1, Math.floor(frac * (n - 1)) + 1));
 
-    // Filled area (very faint on light bg) — between the curve and 0°
+    // Filled area up to current frame
     ctx.fillStyle = color + '18';
     ctx.beginPath();
     ctx.moveTo(padL, Yof(0));
-    for (let i = 0; i < n; i++) {
+    for (let i = 0; i <= upToFrame; i++) {
       const x = padL + (i / (n - 1)) * plotW;
       ctx.lineTo(x, Yof(arr[i] * RAD2DEG));
     }
-    ctx.lineTo(padL + plotW, Yof(0)); ctx.closePath(); ctx.fill();
+    const xEnd = padL + (upToFrame / (n - 1)) * plotW;
+    ctx.lineTo(xEnd, Yof(0)); ctx.closePath(); ctx.fill();
 
-    // Solid line
+    // Solid line up to current frame
     ctx.strokeStyle = color;
     ctx.lineWidth = (zOrder === 1 ? 2.0 : 1.6) * dpr;
     ctx.beginPath();
-    for (let i = 0; i < n; i++) {
+    for (let i = 0; i <= upToFrame; i++) {
       const x = padL + (i / (n - 1)) * plotW;
       const y = Yof(arr[i] * RAD2DEG);
       if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     }
     ctx.stroke();
 
-    // Dashed bounds lines at the operator's ROM min / max — arrows will
-    // land on the MIDPOINT between them. ROM = mx - mn.
-    ctx.strokeStyle = color; ctx.lineWidth = 1*dpr;
-    ctx.setLineDash([5*dpr, 5*dpr]);
-    for (const v of [mn, mx]) {
-      const y = Yof(v);
-      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL + plotW, y); ctx.stroke();
+    // Running ROM bounds — only consider frames seen so far. The bounds
+    // dashed lines and ROM label grow in step with the curve.
+    let mn = +Infinity, mx = -Infinity;
+    for (let i = 0; i <= upToFrame; i++) {
+      const v = arr[i] * RAD2DEG;
+      if (v < mn) mn = v; if (v > mx) mx = v;
     }
-    ctx.setLineDash([]);
-    // ROM label inside the band, top-right
-    ctx.fillStyle = color;
-    ctx.font = `600 ${10*dpr}px Segoe UI`;
-    ctx.textBaseline = 'top'; ctx.textAlign = 'right';
-    ctx.fillText(`ROM ${(mx - mn).toFixed(0)}°`,
-                 padL + plotW - 4*dpr, Yof(mx) + 2*dpr);
-    ctx.font = `${10*dpr}px Segoe UI`;
-    return (Yof(mn) + Yof(mx)) / 2;
+    if (isFinite(mn) && isFinite(mx) && mx > mn + 0.1) {
+      ctx.strokeStyle = color; ctx.lineWidth = 1*dpr;
+      ctx.setLineDash([5*dpr, 5*dpr]);
+      for (const v of [mn, mx]) {
+        const y = Yof(v);
+        ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL + plotW, y); ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      ctx.fillStyle = color;
+      ctx.font = `600 ${10*dpr}px Segoe UI`;
+      ctx.textBaseline = 'top'; ctx.textAlign = 'right';
+      ctx.fillText(`ROM ${(mx - mn).toFixed(0)}°`,
+                   padL + plotW - 4*dpr, Yof(mx) + 2*dpr);
+      ctx.font = `${10*dpr}px Segoe UI`;
+    }
   }
 
-  // plot() now takes the joint-angle array directly (signature changed
-  // because the strip plots a per-joint angle, not the precomputed speed).
-  const heavyAvgY = plot(hYaw, COLOR_HEAVY_HEX, 0);
-  const lightAvgY = plot(lYaw, COLOR_LIGHT_HEX, 1);
+  plot(hYaw, COLOR_HEAVY_HEX, 0);
+  plot(lYaw, COLOR_LIGHT_HEX, 1);
 
-  // Time cursor
-  const frac = (masterTime / masterDuration) % 1;
-  const cx = padL + frac * plotW;
-  ctx.strokeStyle = 'rgba(20,30,50,0.35)'; ctx.lineWidth = 1*dpr;
+  // Time cursor — vertical line at current playhead
+  ctx.strokeStyle = 'rgba(20,30,50,0.55)'; ctx.lineWidth = 1.4*dpr;
   ctx.beginPath(); ctx.moveTo(cx, padT); ctx.lineTo(cx, padT + plotH); ctx.stroke();
-
-  // Stash avg-line screen Y positions so updatePointers can land arrows on them.
-  drawStrip._heavyAvgY = heavyAvgY;
-  drawStrip._lightAvgY = lightAvgY;
-  drawStrip._plotLeftX = padL;
-  drawStrip._plotRightX = padL + plotW;
 }
 
 // ── Pointer arrows ─────────────────────────────────────────────────────
