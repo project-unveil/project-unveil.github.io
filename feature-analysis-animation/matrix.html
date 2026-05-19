@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>UNVEIL · feature-leak matrix</title>
+<style>
+* { margin:0; padding:0; box-sizing: border-box; }
+html, body {
+  background: #0d1017;
+  color: #e8ecf4;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.wrap { max-width: 1820px; margin: 0 auto; padding: 24px 22px 40px 22px; }
+
+.eyebrow {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+  color: #88c0ff; margin-bottom: 4px;
+}
+h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 6px; }
+h1 em { font-style: normal; color: #ffba6e; }
+.sub { color: #98a0ad; font-size: 13px; max-width: 1100px; }
+
+.matrix-card {
+  background: #141823;
+  border: 1px solid #1c2230;
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 18px;
+}
+.matrix-card h2 {
+  font-size: 15px; font-weight: 600; margin-bottom: 10px;
+}
+.matrix-card .deck {
+  color:#98a0ad; font-size: 12px; margin-bottom: 12px; max-width: 1100px;
+}
+
+.matrix-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+.panel-cell {
+  position: relative;
+  height: 480px;
+  background: #f5f7fa;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.panel-cell iframe {
+  width: 100%; height: 100%;
+  border: 0;
+  display: block;
+}
+
+.legend-note {
+  margin-top: 10px;
+  color: #6e7382;
+  font-size: 11px;
+}
+.legend-note strong { color: #c8cfdb; }
+.dot { display:inline-block; width:8px; height:8px; border-radius:50%; vertical-align: middle; margin: 0 4px 0 8px; }
+.dot.heavy { background:#e63a4a; }
+.dot.light { background:#2f7fc6; }
+
+.placeholder {
+  color: #6e7382; font-size: 12px; text-align: center;
+  padding: 30px; background: #141823; border: 1px dashed #2a3040;
+  border-radius: 12px; margin-top: 18px;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="eyebrow">UNVEIL · feature-leak matrix</div>
+<h1 id="weight-title">—</h1>
+<div class="sub" id="weight-sub">—</div>
+
+<section class="matrix-card">
+  <h2>9 activities · 3 features per panel · strongest at top</h2>
+  <div class="deck">Each panel shows the same retargeted G1 clip driving two robots (left red = heavy operator, right blue = light operator), with three feature time-series stacked above. The top plot is the feature whose population-level partial correlation with weight is strongest for that activity; the highlighted joint on each robot matches that feature.</div>
+  <div class="matrix-grid" id="grid-weight"></div>
+  <div class="legend-note">
+    Robots:<span class="dot heavy"></span>heavy operator (110 kg, synthetic)<span class="dot light"></span>light operator (60 kg, raw retargeted motion).
+    Plot Y-axes are shared between heavy/light sides so amplitude difference is visible at a glance.
+  </div>
+</section>
+
+<div class="placeholder" id="age-placeholder">
+  Age matrix is configured for population once you sign off on weight — edit <code style="color:#88c0ff">data/matrix_config.json</code> under the <code style="color:#88c0ff">"age"</code> key.
+</div>
+
+</div>
+<script>
+async function loadAndBuild() {
+  const cfg = await fetch('./data/matrix_config.json?v=' + Date.now()).then(r => r.json());
+  const w = cfg.weight;
+  document.getElementById('weight-title').innerHTML = w.title.replace(/(weight)/i, '<em>$1</em>');
+  document.getElementById('weight-sub').textContent = w.subtitle;
+
+  const grid = document.getElementById('grid-weight');
+  const ts = Date.now();
+  for (const clip of w.clips) {
+    const cell = document.createElement('div');
+    cell.className = 'panel-cell';
+    const iframe = document.createElement('iframe');
+    iframe.loading = 'lazy';
+    iframe.src = `./panel.html?attr=weight&clip=${encodeURIComponent(clip.id)}&t=${ts}`;
+    cell.appendChild(iframe);
+    grid.appendChild(cell);
+  }
+
+  if (cfg.age && cfg.age.clips && cfg.age.clips.length > 0) {
+    // Populate age matrix the same way (left as TODO since age.clips=[] for now).
+  }
+}
+loadAndBuild().catch(err => {
+  document.body.innerHTML = `<pre style="color:#ff7280;padding:30px">${err.message}</pre>`;
+});
+</script>
+</body>
+</html>
