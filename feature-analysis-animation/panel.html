@@ -831,10 +831,7 @@ function loop(ts) {
   } else { lastTime = null; }
 
   for (const v of Object.values(VIEWERS)) {
-    const t = masterTime % v.duration;
-    const fi = Math.min(v.numFrames - 1, Math.floor(t / v.frameTime));
-    v.applyFrame(fi);
-    v.controls.update();
+    v.applyFrameAtTime(masterTime);
     v.renderer.render(v.scene, v.camera);
   }
   drawPlots();
