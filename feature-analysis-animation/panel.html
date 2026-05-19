@@ -217,8 +217,10 @@ async function boot() {
   document.querySelector('#panel-head .actor').textContent = `· ${clip.actor}`;
   const highTxt = `${attrCfg.high_label} · ${attrCfg.high_value} ${attrCfg.high_unit}`;
   const lowTxt  = `${attrCfg.low_label} · ${attrCfg.low_value} ${attrCfg.low_unit}`;
-  document.querySelector('.cell .role.heavy').textContent = highTxt;
-  document.querySelector('.cell .role.light').textContent = lowTxt;
+  document.getElementById('role-g1-heavy').textContent = highTxt;
+  document.getElementById('role-g1-light').textContent = lowTxt;
+  document.getElementById('role-smpl-high').textContent = highTxt;
+  document.getElementById('role-smpl-low').textContent  = lowTxt;
   clip.features.forEach((f, i) => {
     const lbl = document.querySelector(`.plot-row[data-idx="${i}"] .feat-label`);
     lbl.textContent = `${f.label}  (${f.unit})`;
@@ -236,9 +238,6 @@ async function boot() {
   computeAllFeatures(heavyMotion, clip.features);
   computeMeanXY(lightMotion); computeMeanXY(heavyMotion);
 
-  // Optional SMPL — these bin files are written by generate_smpl_matrix.py.
-  // If they're missing (e.g. fits still running) we degrade gracefully and
-  // skip the human row.
   setStatus('Looking for SMPL fits…');
   const smplData = await tryLoadSMPL(ATTR, clip.id);
 
@@ -248,13 +247,11 @@ async function boot() {
   );
 
   setStatus('Building robots…');
-  VIEWERS.g1_heavy = await createG1Viewer('cell-g1-heavy', heavyMotion, COLOR_HEAVY_HEX, clip.highlight_joint);
-  VIEWERS.g1_light = await createG1Viewer('cell-g1-light', lightMotion, COLOR_LIGHT_HEX, clip.highlight_joint);
+  VIEWERS.g1 = await createG1Pair('g1-row', heavyMotion, lightMotion, clip.highlight_joint);
 
   if (smplData) {
     document.getElementById('root').classList.add('has-smpl');
-    VIEWERS.smpl_high = createSMPLViewer('cell-smpl-high', smplData.high, smplData.faces, COLOR_HEAVY_HEX, true);
-    VIEWERS.smpl_low  = createSMPLViewer('cell-smpl-low',  smplData.low,  smplData.faces, COLOR_LIGHT_HEX, false);
+    VIEWERS.smpl = createSMPLPair('smpl-row', smplData.high, smplData.low, smplData.faces);
   }
 
   setupPlots();
