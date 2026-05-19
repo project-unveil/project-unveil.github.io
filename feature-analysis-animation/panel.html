@@ -632,18 +632,12 @@ function buildSMPLMesh(parentGroup, data, faces, accentHex) {
            numFrames: data.numFrames };
 }
 
-// Both SMPL meshes in one scene/canvas. Same X-offset convention as G1.
-function createSMPLPair(rowId, highData, lowData, faces) {
-  const row = document.getElementById(rowId);
-  const cnv = document.createElement('canvas'); row.appendChild(cnv);
-  const renderer = new THREE.WebGLRenderer({ canvas: cnv, antialias: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(row.clientWidth, row.clientHeight);
-
+// SMPL scene + camera (renderer is shared with G1 via the panel renderer).
+function buildSMPLScene(highData, lowData, faces) {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#eef2f7');
 
-  const camera = new THREE.PerspectiveCamera(32, row.clientWidth/row.clientHeight, 0.05, 30);
+  const camera = new THREE.PerspectiveCamera(32, 1, 0.05, 30);
   camera.position.set(0, 1.05, 4.7);
   camera.lookAt(0, 0.95, 0);
 
@@ -668,18 +662,13 @@ function createSMPLPair(rowId, highData, lowData, faces) {
   scene.add(lowParent);
   const low = buildSMPLMesh(lowParent, lowData, faces, COLOR_LIGHT_HEX);
 
-  new ResizeObserver(() => {
-    const w = row.clientWidth, h = row.clientHeight;
-    if (w && h) { camera.aspect = w/h; camera.updateProjectionMatrix(); renderer.setSize(w, h); }
-  }).observe(row);
-
   function applyFrameAtTime(t) {
     const fiH = Math.min(high.numFrames - 1, Math.floor((t % high.duration) / high.frameTime));
     const fiL = Math.min(low .numFrames - 1, Math.floor((t % low .duration) / low .frameTime));
     high.applyFrame(fiH);
     low .applyFrame(fiL);
   }
-  return { kind:'smpl', scene, camera, renderer, applyFrameAtTime };
+  return { scene, camera, applyFrameAtTime };
 }
 
 // ── Plot stack ────────────────────────────────────────────
