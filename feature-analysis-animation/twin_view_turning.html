@@ -495,17 +495,6 @@ function createSMPLViewer(cellId, data, faces, skin) {
   });
   const mesh = new THREE.Mesh(geo, mat);
   mesh.castShadow = true;
-  // BVH/SMPL world frame has the opposite yaw handedness to the G1 retargeting
-  // chain (MuJoCo Z-up + robotWorld's -π/2 X rotation). At source frame 3010
-  // the BVH Hips Yrot is ≈ -180° while G1 root_rotateZ is +93° → after the
-  // Z-up→Y-up rotation, the BVH actor and the G1 face opposite world-Z
-  // directions AND turn in opposite directions across the clip. A pure 180°
-  // spin (the previous patch) only fixed initial heading; the actor's
-  // rotation across the clip remained mirrored. scale.z = -1 is a reflection
-  // across the XY plane: it lands frame-0 forward on -Z (matching G1) AND
-  // flips handedness so yaw direction matches. material.side is already
-  // DoubleSide so the inverted winding renders correctly.
-  mesh.scale.z = -1;
   scene.add(mesh);
 
   // Floor align via 10th percentile of per-frame min-Y across the whole clip.
