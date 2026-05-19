@@ -308,20 +308,9 @@ async function boot() {
   VIEWERS.g1_heavy = await createG1Viewer('cell-g1-heavy', g1HeavyMotion, COLOR_HEAVY_HEX);
   VIEWERS.g1_light = await createG1Viewer('cell-g1-light', g1LightMotion, COLOR_LIGHT_HEX);
 
-  // (live-speed chips and stat boxes removed; the strip plot is the only
-  // numeric readout now.)
-
-  // Make the loaded source clip visible so the user can confirm the right
-  // data is being served (no need to open DevTools). Both columns share the
-  // light operator's motion CSV in this config; the heavy column just renders
-  // a heavier body shape on top of the same motion.
-  console.log('[twin_view] shared motion:', pairs.jumping.light.source_csv);
-  const provBox = document.getElementById('provenance');
-  if (provBox) {
-    const src = pairs.jumping.light.source_csv.split('/').pop();
-    provBox.textContent =
-      `shared motion: ${src}  ·  heavy body 110 kg M  ·  light body ${pairs.jumping.light.weight.toFixed(0)} kg ${pairs.jumping.light.gender}`;
-  }
+  // Shape labels — weight of each operator above their SMPL mesh.
+  document.getElementById('label-heavy').textContent = `110 kg`;
+  document.getElementById('label-light').textContent = `${pairs.jumping.light.weight.toFixed(0)} kg`;
 
   setupStrip();
   setupPointerOverlay();
