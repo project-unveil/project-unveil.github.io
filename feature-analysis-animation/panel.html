@@ -41,15 +41,34 @@ html, body {
 }
 #panel-head .actor { color: #6a7585; font-weight: 400; margin-left: 6px; font-size: 11px; }
 
-/* ── 3-plot stack ───────────────────────────────────────── */
+/* ── Body area (one canvas + plots overlay) ───────────────── */
+#body-area {
+  position: relative;
+  overflow: hidden;
+  background: #eef2f7;
+}
+#body-canvas {
+  position: absolute; inset: 0;
+  width: 100% !important; height: 100% !important;
+  display: block;
+}
+
+/* Plot stack — absolute-positioned in the middle strip of #body-area so it
+   visually sits between the SMPL (top) and G1 (bottom) viewports. Opaque
+   background hides the canvas pixels behind it. */
 #plots {
+  position: absolute;
+  left: 0; right: 0;
+  top: 36%; bottom: 39%;        /* gap between SMPL row and G1 row */
   display: grid;
   grid-template-rows: 1.25fr 1fr 1fr;   /* strongest gets a bit more height */
   background: #ffffff;
+  border-top: 1px solid #d6dde6;
   border-bottom: 1px solid #d6dde6;
   padding: 4px 4px 4px 0;
   gap: 2px;
   min-height: 0;
+  z-index: 2;
 }
 .plot-row {
   position: relative;
