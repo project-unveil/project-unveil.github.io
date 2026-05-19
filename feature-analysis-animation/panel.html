@@ -400,41 +400,10 @@ function findBodyForJoint(jointName) {
   return null;
 }
 
-async function createG1Viewer(cellId, motion, accentHex, highlightJoint) {
-  const cell = document.getElementById(cellId);
-  const cnv = document.createElement('canvas'); cell.appendChild(cnv);
-  const renderer = new THREE.WebGLRenderer({ canvas: cnv, antialias: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(cell.clientWidth, cell.clientHeight);
-
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#f3f6fa');
-  scene.fog = new THREE.Fog('#f3f6fa', 5, 14);
-
-  const camera = new THREE.PerspectiveCamera(40, cell.clientWidth/cell.clientHeight, 0.05, 30);
-  camera.position.set(0, 1.0, 2.8);
-  camera.lookAt(0, 0.85, 0);
-
-  const controls = new THREE.OrbitControls(camera, cnv);
-  controls.target.set(0, 0.85, 0);
-  controls.enableDamping = true; controls.dampingFactor = 0.06;
-  controls.minDistance = 1.2; controls.maxDistance = 8;
-  controls.enableZoom = false;  // panels are small; zoom would be confusing
-
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xc0c8d4, 1.05));
-  const sun = new THREE.DirectionalLight(0xfff4e0, 1.0);
-  sun.position.set(3, 7, 4); scene.add(sun);
-  const rim = new THREE.DirectionalLight(new THREE.Color(accentHex), 0.3);
-  rim.position.set(-3, 5, -4); scene.add(rim);
-
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(8, 8),
-                               new THREE.MeshBasicMaterial({ color: 0xe2e7ee }));
-  floor.rotation.x = -Math.PI/2; scene.add(floor);
-
-  const robotWorld = new THREE.Group();
-  robotWorld.rotation.x = -Math.PI/2;
-  scene.add(robotWorld);
-
+// Build ONE robot inside `parentGroup` (which provides the world-X offset,
+// Z-up→Y-up rotation, and any future scaling). Returns the per-robot apply
+// function plus the body lookup map.
+async function buildG1Robot(parentGroup, accentHex, highlightJoint) {
   const groupMap = {}, bodyGroups = {};
   let rootGroup = null;
   for (const body of g1Model.bodies) {
@@ -448,7 +417,7 @@ async function createG1Viewer(cellId, motion, accentHex, highlightJoint) {
   for (const body of g1Model.bodies) {
     const { outer } = groupMap[body.name];
     if (body.parent && groupMap[body.parent]) groupMap[body.parent].inner.add(outer);
-    else { robotWorld.add(outer); rootGroup = outer; }
+    else { parentGroup.add(outer); rootGroup = outer; }
   }
   const accentCol = new THREE.Color(accentHex);
   const matCache = {};
@@ -479,8 +448,6 @@ async function createG1Viewer(cellId, motion, accentHex, highlightJoint) {
   await Promise.all(loadPromises);
 
   // Highlight sphere on the joint corresponding to the strongest feature.
-  // For 'root' the sphere lives on rootGroup; otherwise it's attached to the
-  // body whose joint.name matches.
   const highlightBody = findBodyForJoint(highlightJoint);
   let highlightParent = rootGroup;
   if (highlightBody && highlightBody !== 'ROOT' && bodyGroups[highlightBody]) {
@@ -497,31 +464,84 @@ async function createG1Viewer(cellId, motion, accentHex, highlightJoint) {
   );
   highlightParent.add(glow);
 
-  new ResizeObserver(() => {
-    const w = cell.clientWidth, h = cell.clientHeight;
-    if (w && h) { camera.aspect = w/h; camera.updateProjectionMatrix(); renderer.setSize(w, h); }
-  }).observe(cell);
+  return { rootGroup, bodyGroups, glow };
+}
 
-  function applyFrame(fi) {
-    rootGroup.position.set(
+// Build ONE scene with both G1 robots side-by-side. This is the lone WebGL
+// context per panel's robot row — see the comment near #smpl-row in the CSS
+// for why we collapsed two contexts into one.
+async function createG1Pair(rowId, heavyMotion, lightMotion, highlightJoint) {
+  const row = document.getElementById(rowId);
+  const cnv = document.createElement('canvas'); row.appendChild(cnv);
+  const renderer = new THREE.WebGLRenderer({ canvas: cnv, antialias: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(row.clientWidth, row.clientHeight);
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color('#f3f6fa');
+
+  const camera = new THREE.PerspectiveCamera(34, row.clientWidth/row.clientHeight, 0.05, 30);
+  camera.position.set(0, 1.05, 4.6);
+  camera.lookAt(0, 0.85, 0);
+
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xc0c8d4, 1.05));
+  const sun = new THREE.DirectionalLight(0xfff4e0, 1.0);
+  sun.position.set(3, 7, 4); scene.add(sun);
+
+  // Single shared floor — long enough to fit both robots without seam.
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(12, 12),
+                               new THREE.MeshBasicMaterial({ color: 0xe2e7ee }));
+  floor.rotation.x = -Math.PI/2; scene.add(floor);
+
+  // X offsets so the two robots stand side-by-side. Robot rough horizontal
+  // extent at rest is ~0.6 m; ±0.85 m of offset clears them comfortably.
+  const X_OFFSET = 0.85;
+
+  // Heavy on the left. parent → robotWorld (Z-up→Y-up rotation) → robot.
+  const heavyParent = new THREE.Group();
+  heavyParent.position.x = -X_OFFSET;
+  scene.add(heavyParent);
+  const heavyWorld = new THREE.Group(); heavyWorld.rotation.x = -Math.PI/2;
+  heavyParent.add(heavyWorld);
+  const heavy = await buildG1Robot(heavyWorld, COLOR_HEAVY_HEX, highlightJoint);
+
+  const lightParent = new THREE.Group();
+  lightParent.position.x = +X_OFFSET;
+  scene.add(lightParent);
+  const lightWorld = new THREE.Group(); lightWorld.rotation.x = -Math.PI/2;
+  lightParent.add(lightWorld);
+  const light = await buildG1Robot(lightWorld, COLOR_LIGHT_HEX, highlightJoint);
+
+  new ResizeObserver(() => {
+    const w = row.clientWidth, h = row.clientHeight;
+    if (w && h) { camera.aspect = w/h; camera.updateProjectionMatrix(); renderer.setSize(w, h); }
+  }).observe(row);
+
+  function applyOne(robot, motion, fi) {
+    robot.rootGroup.position.set(
       motion.rootPos[fi*3]   - motion.meanX,
       motion.rootPos[fi*3+1] - motion.meanY,
       motion.rootPos[fi*3+2],
     );
-    rootGroup.quaternion.set(motion.rootQuat[fi*4+1], motion.rootQuat[fi*4+2],
-                             motion.rootQuat[fi*4+3], motion.rootQuat[fi*4]);
+    robot.rootGroup.quaternion.set(motion.rootQuat[fi*4+1], motion.rootQuat[fi*4+2],
+                                   motion.rootQuat[fi*4+3], motion.rootQuat[fi*4]);
     for (const body of g1Model.bodies) {
       if (!body.joint || body.joint.type !== 'hinge') continue;
       const jArr = motion.joints[body.joint.name]; if (!jArr) continue;
       const axis = new THREE.Vector3(...body.joint.axis);
       const q = new THREE.Quaternion().setFromAxisAngle(axis, jArr[fi]);
-      bodyGroups[body.name].quaternion.copy(q);
+      robot.bodyGroups[body.name].quaternion.copy(q);
     }
     const phase = (performance.now() * 0.003) % (Math.PI * 2);
-    glow.scale.setScalar(1 + 0.20 * Math.sin(phase));
+    robot.glow.scale.setScalar(1 + 0.20 * Math.sin(phase));
   }
-  return { kind:'g1', motion, scene, camera, controls, renderer, applyFrame,
-           duration: motion.duration, frameTime: motion.frameTime, numFrames: motion.numFrames };
+  function applyFrameAtTime(t) {
+    const fiH = Math.min(heavyMotion.numFrames - 1, Math.floor((t % heavyMotion.duration) / heavyMotion.frameTime));
+    const fiL = Math.min(lightMotion.numFrames - 1, Math.floor((t % lightMotion.duration) / lightMotion.frameTime));
+    applyOne(heavy, heavyMotion, fiH);
+    applyOne(light, lightMotion, fiL);
+  }
+  return { kind:'g1', scene, camera, renderer, applyFrameAtTime };
 }
 
 // ── SMPL (optional, loaded if matching .bin files exist) ─────
