@@ -695,15 +695,21 @@ function drawStrip() {
   ctx.clearRect(0, 0, W, H);
 
   const hM = VIEWERS.g1_heavy.motion, lM = VIEWERS.g1_light.motion;
+  // Shared Y range across both sub-plots so the two robots' velocities are
+  // directly comparable.
   let maxV = 0;
   for (const a of [hM.perFrameSpeed, lM.perFrameSpeed])
     for (let i = 0; i < a.length; i++) if (a[i] > maxV) maxV = a[i];
   maxV = Math.max(0.2, maxV * 1.08);
 
+  // Outer padding + a small gap between the two sub-plots.
   const padL = 34*dpr, padR = 12*dpr, padT = 8*dpr, padB = 20*dpr;
-  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const gap  = 18*dpr;
+  const fullPlotW = W - padL - padR;
+  const subW = (fullPlotW - gap) / 2;
+  const plotH = H - padT - padB;
 
-  // Y axis & gridlines on white
+  // Shared Y axis (labels on the left of the LEFT sub-plot only).
   ctx.fillStyle = '#6a7585';
   ctx.font = `${10*dpr}px Segoe UI`;
   ctx.textBaseline = 'middle'; ctx.textAlign = 'right';
@@ -711,148 +717,66 @@ function drawStrip() {
     const v = maxV * (i / 4);
     const y = padT + plotH - (v / maxV) * plotH;
     ctx.fillText(v.toFixed(1), padL - 5*dpr, y);
+    // Faint gridlines spanning both sub-plots
     ctx.strokeStyle = 'rgba(20,30,50,0.06)'; ctx.lineWidth = 1*dpr;
-    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL + plotW, y); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(padL, y); ctx.lineTo(padL + subW, y);
+    ctx.moveTo(padL + subW + gap, y); ctx.lineTo(padL + subW + gap + subW, y);
+    ctx.stroke();
   }
-  ctx.strokeStyle = '#c6cfdb'; ctx.lineWidth = 1*dpr;
-  ctx.beginPath();
-  ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + plotH);
-  ctx.lineTo(padL + plotW, padT + plotH); ctx.stroke();
   ctx.textAlign = 'left'; ctx.textBaseline = 'top';
   ctx.fillText('m/s', 4*dpr, padT - 4*dpr);
-  ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
-  ctx.fillText('time →', padL + plotW, H - 4*dpr);
 
-  // Time cursor position — drives "draw up to here" on each series. When
-  // masterTime wraps past masterDuration, the cursor returns to the left
-  // edge and the plot effectively vanishes / restarts on the next frame.
   const frac = (masterTime / masterDuration) % 1;
-  const cx = padL + frac * plotW;
 
-  function plot(motion, color, zOrder) {
+  function plot(motion, color, label, subX) {
     const arr = motion.perFrameSpeed; const n = arr.length;
-    // Map masterTime to this motion's own frame index (clips share duration
-    // but may have different per-clip frame counts).
     const upToFrame = Math.max(1, Math.min(n - 1, Math.floor(frac * (n - 1)) + 1));
 
-    // Filled area up to current frame
-    ctx.fillStyle = color + '18';
+    // Axis frame (left + bottom) for this sub-plot
+    ctx.strokeStyle = '#c6cfdb'; ctx.lineWidth = 1*dpr;
     ctx.beginPath();
-    ctx.moveTo(padL, padT + plotH);
+    ctx.moveTo(subX, padT); ctx.lineTo(subX, padT + plotH);
+    ctx.lineTo(subX + subW, padT + plotH); ctx.stroke();
+
+    // Filled area up to current frame
+    ctx.fillStyle = color + '22';
+    ctx.beginPath();
+    ctx.moveTo(subX, padT + plotH);
     for (let i = 0; i <= upToFrame; i++) {
-      const x = padL + (i / (n - 1)) * plotW;
+      const x = subX + (i / (n - 1)) * subW;
       const y = padT + plotH - (arr[i] / maxV) * plotH;
       ctx.lineTo(x, y);
     }
-    const xEnd = padL + (upToFrame / (n - 1)) * plotW;
+    const xEnd = subX + (upToFrame / (n - 1)) * subW;
     ctx.lineTo(xEnd, padT + plotH); ctx.closePath(); ctx.fill();
 
     // Solid line up to current frame
     ctx.strokeStyle = color;
-    ctx.lineWidth = (zOrder === 1 ? 2.0 : 1.6) * dpr;
+    ctx.lineWidth = 2.2 * dpr;
     ctx.beginPath();
     for (let i = 0; i <= upToFrame; i++) {
-      const x = padL + (i / (n - 1)) * plotW;
+      const x = subX + (i / (n - 1)) * subW;
       const y = padT + plotH - (arr[i] / maxV) * plotH;
       if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     }
     ctx.stroke();
 
-    // Dashed clip-wide average line — static, faint, used as the anchor
-    // point for the side-arrows coming in from each robot.
-    const ay = padT + plotH - (motion.avgSpeed / maxV) * plotH;
-    ctx.strokeStyle = color; ctx.lineWidth = 1*dpr;
-    ctx.globalAlpha = 0.6;
-    ctx.setLineDash([5*dpr, 5*dpr]);
-    ctx.beginPath(); ctx.moveTo(padL, ay); ctx.lineTo(padL + plotW, ay); ctx.stroke();
-    ctx.setLineDash([]); ctx.globalAlpha = 1;
-    return ay;
+    // Time cursor inside this sub-plot
+    const cx = subX + frac * subW;
+    ctx.strokeStyle = 'rgba(20,30,50,0.55)'; ctx.lineWidth = 1.4*dpr;
+    ctx.beginPath(); ctx.moveTo(cx, padT); ctx.lineTo(cx, padT + plotH); ctx.stroke();
+
+    // Sub-plot label (operator role) — top of the sub-plot, colour-keyed
+    ctx.fillStyle = color;
+    ctx.font = `600 ${10.5*dpr}px Segoe UI`;
+    ctx.textBaseline = 'top'; ctx.textAlign = 'left';
+    ctx.fillText(label, subX + 4*dpr, padT + 2*dpr);
+    ctx.font = `${10*dpr}px Segoe UI`;
   }
 
-  // Heavy first, light on top.
-  const heavyAvgY = plot(hM, COLOR_HEAVY_HEX, 0);
-  const lightAvgY = plot(lM, COLOR_LIGHT_HEX, 1);
-
-  // Time cursor — vertical line at current playhead
-  ctx.strokeStyle = 'rgba(20,30,50,0.55)'; ctx.lineWidth = 1.4*dpr;
-  ctx.beginPath(); ctx.moveTo(cx, padT); ctx.lineTo(cx, padT + plotH); ctx.stroke();
-
-  // Stash avg-line canvas-pixel Y and plot edges for updatePointers().
-  drawStrip._heavyAvgY  = heavyAvgY;
-  drawStrip._lightAvgY  = lightAvgY;
-  drawStrip._plotLeftX  = padL;
-  drawStrip._plotRightX = padL + plotW;
-}
-
-// ── Pointer arrows ─────────────────────────────────────────────────────
-let arrowSvg;
-function setupPointerOverlay() {
-  arrowSvg = document.getElementById('pointer-overlay');
-}
-
-function getProjectedScreen(viewer, vec3) {
-  const v = vec3.clone().project(viewer.camera);
-  const r = viewer.renderer.domElement.getBoundingClientRect();
-  return { x: r.left + (v.x * 0.5 + 0.5) * r.width,
-           y: r.top  + (-v.y * 0.5 + 0.5) * r.height };
-}
-
-function updatePointers() {
-  if (!arrowSvg || !VIEWERS.g1_heavy) return;
-  const W = window.innerWidth, H = window.innerHeight;
-  arrowSvg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-  arrowSvg.setAttribute('width', W); arrowSvg.setAttribute('height', H);
-  while (arrowSvg.firstChild) arrowSvg.removeChild(arrowSvg.firstChild);
-
-  const NS = 'http://www.w3.org/2000/svg';
-  const defs = document.createElementNS(NS, 'defs');
-  for (const [id, color] of [['arr-heavy', COLOR_HEAVY_HEX], ['arr-light', COLOR_LIGHT_HEX]]) {
-    const m = document.createElementNS(NS, 'marker');
-    m.setAttribute('id', id);
-    m.setAttribute('viewBox', '0 0 10 10'); m.setAttribute('refX', '9'); m.setAttribute('refY', '5');
-    m.setAttribute('markerWidth', '11'); m.setAttribute('markerHeight', '11'); m.setAttribute('orient', 'auto');
-    const p = document.createElementNS(NS, 'path');
-    p.setAttribute('d', 'M 0 0 L 10 5 L 0 10 z'); p.setAttribute('fill', color);
-    m.appendChild(p); defs.appendChild(m);
-  }
-  arrowSvg.appendChild(defs);
-
-  // Arrows go from each G1 robot's pelvis (projected to screen) into the
-  // matching-colour dashed avg-line in the strip plot. Heavy enters from the
-  // LEFT edge of the plot, light from the RIGHT edge.
-  const tmp = new THREE.Vector3();
-  function rootScreen(viewer) {
-    viewer.rootGroup.getWorldPosition(tmp);
-    return getProjectedScreen(viewer, tmp);
-  }
-  const hRoot = rootScreen(VIEWERS.g1_heavy);
-  const lRoot = rootScreen(VIEWERS.g1_light);
-
-  const stripCanvas = document.getElementById('strip-canvas');
-  const sRect = stripCanvas.getBoundingClientRect();
-  const dpr = window.devicePixelRatio;
-  const heavyAvgY  = (drawStrip._heavyAvgY  || 0) / dpr;
-  const lightAvgY  = (drawStrip._lightAvgY  || 0) / dpr;
-  const plotLeftX  = (drawStrip._plotLeftX  || 0) / dpr;
-  const plotRightX = (drawStrip._plotRightX || 0) / dpr;
-
-  const hTarget = { x: sRect.left + plotLeftX  + 6, y: sRect.top + heavyAvgY };
-  const lTarget = { x: sRect.left + plotRightX - 6, y: sRect.top + lightAvgY };
-
-  function curve(from, to, color, markerId) {
-    const dx = to.x - from.x;
-    const c1x = from.x + dx * 0.40, c1y = from.y;
-    const c2x = from.x + dx * 0.60, c2y = to.y;
-    const p = document.createElementNS(NS, 'path');
-    p.setAttribute('d', `M ${from.x} ${from.y} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${to.x} ${to.y}`);
-    p.setAttribute('fill', 'none');
-    p.setAttribute('stroke', color); p.setAttribute('stroke-width', '2.4');
-    p.setAttribute('stroke-opacity', '0.85'); p.setAttribute('stroke-dasharray', '7 5');
-    p.setAttribute('marker-end', `url(#${markerId})`);
-    arrowSvg.appendChild(p);
-  }
-  curve(hRoot, hTarget, COLOR_HEAVY_HEX, 'arr-heavy');
-  curve(lRoot, lTarget, COLOR_LIGHT_HEX, 'arr-light');
+  plot(hM, COLOR_HEAVY_HEX, 'heavy', padL);
+  plot(lM, COLOR_LIGHT_HEX, 'light', padL + subW + gap);
 }
 
 // ── Animation loop ─────────────────────────────────────────────────────
