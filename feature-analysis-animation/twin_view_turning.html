@@ -305,13 +305,10 @@ async function boot() {
   VIEWERS.g1_heavy = await createG1Viewer('cell-g1-heavy', g1HeavyMotion, COLOR_HEAVY_HEX);
   VIEWERS.g1_light = await createG1Viewer('cell-g1-light', g1LightMotion, COLOR_LIGHT_HEX);
 
-  console.log('[twin_view_turning] shared motion:', G1_TURNING_CSV);
-  const provBox = document.getElementById('provenance');
-  if (provBox) {
-    const src = G1_TURNING_CSV.split('/').pop();
-    provBox.textContent =
-      `shared motion: ${src}  ·  older 65 yr F · 70 kg  ·  younger 22 yr F · 55 kg`;
-  }
+  // Age labels above each SMPL mesh — set in the HTML defaults; kept here
+  // in case OLDER_SHAPE / YOUNG_SHAPE diverge from those defaults later.
+  document.getElementById('label-heavy').textContent = '65 yr';
+  document.getElementById('label-light').textContent = '22 yr';
 
   setupStrip();
   setupPointerOverlay();
