@@ -12,16 +12,18 @@ html, body {
   font-family: 'Segoe UI', system-ui, sans-serif; overflow:hidden;
 }
 
-/* Per-panel grid. Default is 2-row (plots / robots); when SMPL is available
-   .root.has-smpl gets an extra SMPL row above the plots. Set via JS once the
-   .bin files load successfully. */
+/* Per-panel layout: header + body-area. The body-area is a single canvas
+   covering both the SMPL row (top portion) and G1 row (bottom portion) with
+   the plot stack absolute-positioned over the middle strip. This drops
+   per-panel WebGL contexts to 1 (down from 4 originally, 2 in the previous
+   refactor) so 9 panels' contexts stay well below Chrome's ~16-context cap. */
 #root {
   width: 100%; height: 100%;
   display: grid;
-  grid-template-rows: 26px 1fr 1.55fr;
+  grid-template-rows: 26px 1fr;
 }
 #root.has-smpl {
-  grid-template-rows: 26px 1.25fr 1fr 1.25fr;   /* head + SMPL + plots + G1 */
+  grid-template-rows: 26px 1fr;   /* same layout; just controls viewport split */
 }
 
 /* ── Header ─────────────────────────────────────────────── */
