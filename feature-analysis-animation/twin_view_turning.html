@@ -871,31 +871,41 @@ function updatePointers() {
   }
   arrowSvg.appendChild(defs);
 
-  // Arrows go straight down from each SMPL cell to its matching G1 cell.
-  function arrowEnds(smplCellId, g1CellId) {
-    const sR = document.getElementById(smplCellId).getBoundingClientRect();
-    const gR = document.getElementById(g1CellId).getBoundingClientRect();
-    return {
-      from: { x: sR.left + sR.width / 2, y: sR.bottom - 45 },
-      to:   { x: gR.left + gR.width / 2, y: gR.top    + 45 },
-    };
+  // Arrows go from each G1 robot's waist (torso_link, projected to screen)
+  // into the strip plot. Heavy enters from the LEFT edge, light from RIGHT.
+  const tmp = new THREE.Vector3();
+  function waistScreen(viewer) {
+    (viewer.waistGroup || viewer.rootGroup).getWorldPosition(tmp);
+    return getProjectedScreen(viewer, tmp);
   }
-  function drawDown(from, to, color, markerId) {
+  const hRoot = waistScreen(VIEWERS.g1_heavy);
+  const lRoot = waistScreen(VIEWERS.g1_light);
+
+  const stripCanvas = document.getElementById('strip-canvas');
+  const sRect = stripCanvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio;
+  const heavyAvgY  = (drawStrip._heavyAvgY  || 0) / dpr;
+  const lightAvgY  = (drawStrip._lightAvgY  || 0) / dpr;
+  const plotLeftX  = (drawStrip._plotLeftX  || 0) / dpr;
+  const plotRightX = (drawStrip._plotRightX || 0) / dpr;
+
+  const hTarget = { x: sRect.left + plotLeftX  + 6, y: sRect.top + heavyAvgY };
+  const lTarget = { x: sRect.left + plotRightX - 6, y: sRect.top + lightAvgY };
+
+  function curve(from, to, color, markerId) {
+    const dx = to.x - from.x;
+    const c1x = from.x + dx * 0.40, c1y = from.y;
+    const c2x = from.x + dx * 0.60, c2y = to.y;
     const p = document.createElementNS(NS, 'path');
-    const dy = to.y - from.y;
-    const c1x = from.x, c1y = from.y + dy * 0.55;
-    const c2x = to.x,   c2y = to.y   - dy * 0.45;
     p.setAttribute('d', `M ${from.x} ${from.y} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${to.x} ${to.y}`);
     p.setAttribute('fill', 'none');
-    p.setAttribute('stroke', color); p.setAttribute('stroke-width', '3');
-    p.setAttribute('stroke-opacity', '0.9'); p.setAttribute('stroke-dasharray', '9 6');
+    p.setAttribute('stroke', color); p.setAttribute('stroke-width', '2.4');
+    p.setAttribute('stroke-opacity', '0.85'); p.setAttribute('stroke-dasharray', '7 5');
     p.setAttribute('marker-end', `url(#${markerId})`);
     arrowSvg.appendChild(p);
   }
-  const hE = arrowEnds('cell-smpl-heavy', 'cell-g1-heavy');
-  const lE = arrowEnds('cell-smpl-light', 'cell-g1-light');
-  drawDown(hE.from, hE.to, COLOR_HEAVY_HEX, 'arr-heavy');
-  drawDown(lE.from, lE.to, COLOR_LIGHT_HEX, 'arr-light');
+  curve(hRoot, hTarget, COLOR_HEAVY_HEX, 'arr-heavy');
+  curve(lRoot, lTarget, COLOR_LIGHT_HEX, 'arr-light');
 }
 
 // ── Animation loop ─────────────────────────────────────────────────────
