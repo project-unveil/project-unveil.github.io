@@ -78,6 +78,16 @@ html, body {
   border: 1px solid #f1c47d;
 }
 
+/* ── SMPL row (above plots, present only when fits load) ───── */
+#smpl-row {
+  display: none;
+  grid-template-columns: 1fr 1fr;
+  min-height: 0; min-width: 0;
+  border-bottom: 1px solid #d6dde6;
+}
+#root.has-smpl #smpl-row { display: grid; }
+#smpl-row .cell { background: #eef2f7; }
+
 /* ── G1 row ─────────────────────────────────────────────── */
 #g1-row {
   display: grid;
