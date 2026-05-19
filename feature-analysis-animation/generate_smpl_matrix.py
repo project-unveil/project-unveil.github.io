@@ -175,7 +175,12 @@ def main():
 
             for side in ("high", "low"):
                 done += 1
-                shape = attr[f"{side}_shape"]
+                # Per-clip shape takes precedence; fall back to the attribute's
+                # shape block for backward compatibility with older configs.
+                shape = clip.get(f"{side}_shape") or attr.get(f"{side}_shape")
+                if not shape:
+                    print(f"    SKIP {side} — no {side}_shape in clip or attr")
+                    continue
                 out_bin = attr_out / f"{cid}_{side}.bin"
                 if args.skip_existing and out_bin.exists():
                     print(f"    [{done}/{total_fits}] {side} — skip (exists)")
