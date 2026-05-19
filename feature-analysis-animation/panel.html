@@ -177,6 +177,10 @@ const G1_MODEL_URL  = '../g1_engine/model/g1_model.json';
 const G1_MESH_BASE  = '../g1_engine/meshes';
 const MATRIX_CONFIG_URL = './data/matrix_config.json';
 const MAX_FRAMES_G1 = 600;
+// Must match generate_smpl_matrix.py --max-input-frames (currently 600 @ 120fps
+// → 5 s slab). The G1 CSV loader slices to the SAME middle slab so the SMPL
+// human and G1 robot play the same source frames.
+const SMPL_INPUT_FRAMES = 600;
 
 const DEG2RAD = Math.PI / 180;
 const RAD2DEG = 180 / Math.PI;
