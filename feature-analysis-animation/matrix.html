@@ -71,6 +71,32 @@ h1 em { font-style: normal; color: #ffba6e; }
   padding: 30px; background: #141823; border: 1px dashed #2a3040;
   border-radius: 12px; margin-top: 18px;
 }
+
+/* Attribute tabs — switching tabs DROPS the inactive matrix's iframes from
+   the DOM so we never have more than one matrix's worth of WebGL contexts
+   alive at once (each panel uses 1 context, so 9 max). */
+.tabs {
+  display: inline-flex; gap: 0;
+  background: #141823;
+  border: 1px solid #1c2230;
+  border-radius: 999px;
+  padding: 4px;
+  margin-top: 14px;
+}
+.tab {
+  background: transparent;
+  color: #98a0ad;
+  border: 0;
+  padding: 7px 18px;
+  font: 600 12px/1 'Segoe UI', system-ui, sans-serif;
+  cursor: pointer;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+  transition: background .15s, color .15s;
+}
+.tab:hover { color: #e8ecf4; }
+.tab.active { background: #ffba6e; color: #1a1a1a; }
+.matrix-card.hidden { display: none; }
 </style>
 </head>
 <body>
