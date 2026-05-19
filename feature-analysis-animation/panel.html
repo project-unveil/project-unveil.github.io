@@ -358,8 +358,21 @@ async function loadG1CSV(url, maxFrames) {
 // `spec.type` controls what gets dampened: 'root' shrinks root excursions
 // around the mean, 'joints' shrinks each listed joint's angle around its
 // per-clip mean. Mean centring keeps the trajectory in place; only the
-// excursions get attenuated.
+// excursions get attenuated. `spec` can also be an ARRAY of spec objects,
+// applied in order — that's how each panel exaggerates its primary feature
+// most and secondary/tertiary features progressively less, so all three
+// plots show a heavy/light gap.
 function applyScale(src, spec) {
+  if (!spec) return src;
+  if (Array.isArray(spec)) {
+    let m = src;
+    for (const s of spec) m = applyOneScale(m, s);
+    return m;
+  }
+  return applyOneScale(src, spec);
+}
+
+function applyOneScale(src, spec) {
   if (!spec || spec.factor === 1.0) return src;
   if (spec.type === 'root') {
     const n = src.numFrames;
