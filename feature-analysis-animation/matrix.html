@@ -153,10 +153,15 @@ function fillStatic(attr, titleId, subId, highLblId, lowLblId) {
   document.getElementById(titleId).innerHTML =
     (ac.title || '').replace(/(weight|age)/i, '<em>$1</em>');
   document.getElementById(subId).textContent = ac.subtitle || '';
-  document.getElementById(highLblId).textContent =
-    `${ac.high_label} · ${ac.high_value} ${ac.high_unit}`;
-  document.getElementById(lowLblId).textContent  =
-    `${ac.low_label} · ${ac.low_value} ${ac.low_unit}`;
+  // Values now vary per-clip, so the legend shows the RANGE drawn from.
+  const clips = ac.clips || [];
+  const highs = clips.map(c => c.high_value).filter(v => typeof v === 'number');
+  const lows  = clips.map(c => c.low_value ).filter(v => typeof v === 'number');
+  const fmt = (lbl, arr, unit) => arr.length
+    ? `${lbl} · ${Math.min(...arr)}–${Math.max(...arr)} ${unit}`
+    : `${lbl}`;
+  document.getElementById(highLblId).textContent = fmt(ac.high_label, highs, ac.high_unit);
+  document.getElementById(lowLblId).textContent  = fmt(ac.low_label,  lows,  ac.low_unit);
 }
 
 function switchTo(attr) {
