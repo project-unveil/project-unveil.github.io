@@ -544,22 +544,32 @@ function parseFacesBin(buf) {
   return new Uint32Array(buf, 4, nf * 3);
 }
 async function tryLoadSMPL(attr, clipId) {
+  // GET-with-status-check is more reliable than HEAD here: python http.server
+  // does support HEAD but the responses occasionally lag behind the body
+  // server when many iframes hit it simultaneously, causing false negatives.
   const base = `./data/smpl_matrix/${attr}`;
-  // HEAD fetch is cheap; only proceed if all three files respond OK.
-  async function ok(url) {
-    try { const r = await fetch(url, { method: 'HEAD' }); return r.ok; } catch { return false; }
+  try {
+    const [facesR, highR, lowR] = await Promise.all([
+      fetch(`${base}/faces.bin`),
+      fetch(`${base}/${clipId}_high.bin`),
+      fetch(`${base}/${clipId}_low.bin`),
+    ]);
+    if (!facesR.ok || !highR.ok || !lowR.ok) {
+      console.warn(`[panel ${clipId}] SMPL bins missing (faces=${facesR.status}, high=${highR.status}, low=${lowR.status})`);
+      return null;
+    }
+    const [facesBuf, highBuf, lowBuf] = await Promise.all([
+      facesR.arrayBuffer(), highR.arrayBuffer(), lowR.arrayBuffer()
+    ]);
+    const faces = parseFacesBin(facesBuf);
+    const high  = parseVertsBin(highBuf);
+    const low   = parseVertsBin(lowBuf);
+    computeSMPLCentroid(high); computeSMPLCentroid(low);
+    return { faces, high, low };
+  } catch (e) {
+    console.warn(`[panel ${clipId}] SMPL load failed:`, e);
+    return null;
   }
-  const facesUrl = `${base}/faces.bin`;
-  const highUrl  = `${base}/${clipId}_high.bin`;
-  const lowUrl   = `${base}/${clipId}_low.bin`;
-  if (!(await ok(facesUrl) && await ok(highUrl) && await ok(lowUrl))) return null;
-  const [faces, high, low] = await Promise.all([
-    fetch(facesUrl).then(r => r.arrayBuffer()).then(parseFacesBin),
-    fetch(highUrl) .then(r => r.arrayBuffer()).then(parseVertsBin),
-    fetch(lowUrl)  .then(r => r.arrayBuffer()).then(parseVertsBin),
-  ]);
-  computeSMPLCentroid(high); computeSMPLCentroid(low);
-  return { faces, high, low };
 }
 function computeSMPLCentroid(data) {
   let sx = 0, sz = 0, n = 0;
