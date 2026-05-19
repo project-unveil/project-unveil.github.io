@@ -757,15 +757,31 @@ function drawStrip() {
       if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     }
     ctx.stroke();
+
+    // Dashed clip-wide average line — static, faint, used as the anchor
+    // point for the side-arrows coming in from each robot.
+    const ay = padT + plotH - (motion.avgSpeed / maxV) * plotH;
+    ctx.strokeStyle = color; ctx.lineWidth = 1*dpr;
+    ctx.globalAlpha = 0.6;
+    ctx.setLineDash([5*dpr, 5*dpr]);
+    ctx.beginPath(); ctx.moveTo(padL, ay); ctx.lineTo(padL + plotW, ay); ctx.stroke();
+    ctx.setLineDash([]); ctx.globalAlpha = 1;
+    return ay;
   }
 
   // Heavy first, light on top.
-  plot(hM, COLOR_HEAVY_HEX, 0);
-  plot(lM, COLOR_LIGHT_HEX, 1);
+  const heavyAvgY = plot(hM, COLOR_HEAVY_HEX, 0);
+  const lightAvgY = plot(lM, COLOR_LIGHT_HEX, 1);
 
   // Time cursor — vertical line at current playhead
   ctx.strokeStyle = 'rgba(20,30,50,0.55)'; ctx.lineWidth = 1.4*dpr;
   ctx.beginPath(); ctx.moveTo(cx, padT); ctx.lineTo(cx, padT + plotH); ctx.stroke();
+
+  // Stash avg-line canvas-pixel Y and plot edges for updatePointers().
+  drawStrip._heavyAvgY  = heavyAvgY;
+  drawStrip._lightAvgY  = lightAvgY;
+  drawStrip._plotLeftX  = padL;
+  drawStrip._plotRightX = padL + plotW;
 }
 
 // ── Pointer arrows ─────────────────────────────────────────────────────
