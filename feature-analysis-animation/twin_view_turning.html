@@ -758,7 +758,20 @@ function drawStrip() {
   const frac = (masterTime / masterDuration) % 1;
   const cx = padL + frac * plotW;
 
-  function plot(arr, color, zOrder) {
+  // Static clip-wide ROM bounds (computed once per draw, used for the anchor
+  // y of each side's arrow target).
+  function clipBounds(arr) {
+    let mn = +Infinity, mx = -Infinity;
+    for (let i = 0; i < arr.length; i++) {
+      const v = arr[i] * RAD2DEG;
+      if (v < mn) mn = v; if (v > mx) mx = v;
+    }
+    return { mn, mx };
+  }
+  const hClip = clipBounds(hYaw);
+  const lClip = clipBounds(lYaw);
+
+  function plot(arr, color, zOrder, clipB) {
     const n = arr.length;
     const upToFrame = Math.max(1, Math.min(n - 1, Math.floor(frac * (n - 1)) + 1));
 
@@ -784,8 +797,8 @@ function drawStrip() {
     }
     ctx.stroke();
 
-    // Running ROM bounds — only consider frames seen so far. The bounds
-    // dashed lines and ROM label grow in step with the curve.
+    // Running ROM bounds — only frames seen so far. The dashed bounds and
+    // ROM label grow in step with the curve.
     let mn = +Infinity, mx = -Infinity;
     for (let i = 0; i <= upToFrame; i++) {
       const v = arr[i] * RAD2DEG;
@@ -806,14 +819,23 @@ function drawStrip() {
                    padL + plotW - 4*dpr, Yof(mx) + 2*dpr);
       ctx.font = `${10*dpr}px Segoe UI`;
     }
+    // Anchor Y for the side-arrow target = midpoint of the clip-wide ROM
+    // band (static, doesn't shift as the running ROM grows).
+    return (Yof(clipB.mn) + Yof(clipB.mx)) / 2;
   }
 
-  plot(hYaw, COLOR_HEAVY_HEX, 0);
-  plot(lYaw, COLOR_LIGHT_HEX, 1);
+  const heavyAvgY = plot(hYaw, COLOR_HEAVY_HEX, 0, hClip);
+  const lightAvgY = plot(lYaw, COLOR_LIGHT_HEX, 1, lClip);
 
   // Time cursor — vertical line at current playhead
   ctx.strokeStyle = 'rgba(20,30,50,0.55)'; ctx.lineWidth = 1.4*dpr;
   ctx.beginPath(); ctx.moveTo(cx, padT); ctx.lineTo(cx, padT + plotH); ctx.stroke();
+
+  // Stash anchor Y + plot edges for updatePointers().
+  drawStrip._heavyAvgY  = heavyAvgY;
+  drawStrip._lightAvgY  = lightAvgY;
+  drawStrip._plotLeftX  = padL;
+  drawStrip._plotRightX = padL + plotW;
 }
 
 // ── Pointer arrows ─────────────────────────────────────────────────────
