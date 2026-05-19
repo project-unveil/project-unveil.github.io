@@ -1,0 +1,139 @@
+{
+  "_comment": "3x3 matrix configuration. Each entry under <attr>.clips becomes one panel rendered by panel.html. The `features` list is ordered: the first feature is the *strongest correlated* one (shown at the top, drives the highlight sphere on the robot, and is the one synthetically exaggerated on the heavy operator's robot). Features use the G1 joint names from g1_engine/model/g1_model.json. To add/remove panels, edit this file and reload matrix.html.",
+
+  "weight": {
+    "title": "Body weight leaks through retargeted motion",
+    "subtitle": "Across nine activities, retargeting strips body shape but the motion's most weight-coupled feature (top plot in each panel) still differs between a heavy and a light operator.",
+    "heavy_kg": 110,
+    "light_kg": 60,
+    "default_scale_factor": 0.55,
+    "clips": [
+      {
+        "id": "dance_hiphop",
+        "label": "Hip-hop dance",
+        "g1_csv": "data/matrix_clips/dance_hiphop.csv",
+        "actor": "A313",
+        "features": [
+          { "label": "L wrist vel",  "type": "joint_vel",   "joint": "left_wrist_pitch_joint",  "unit": "deg/s" },
+          { "label": "L elbow vel",  "type": "joint_vel",   "joint": "left_elbow_joint",        "unit": "deg/s" },
+          { "label": "Root vel",     "type": "root_vel",                                          "unit": "m/s"  }
+        ],
+        "highlight_joint": "left_wrist_pitch_joint",
+        "scale": { "type": "joints", "joints": ["left_wrist_pitch_joint", "left_wrist_roll_joint", "left_wrist_yaw_joint", "right_wrist_pitch_joint", "right_wrist_roll_joint", "right_wrist_yaw_joint", "left_elbow_joint", "right_elbow_joint"], "factor": 0.55 }
+      },
+      {
+        "id": "dance_vouge",
+        "label": "Voguing",
+        "g1_csv": "data/matrix_clips/dance_vouge.csv",
+        "actor": "A316",
+        "features": [
+          { "label": "L wrist ROM",  "type": "joint_angle", "joint": "left_wrist_pitch_joint",  "unit": "deg",   "show_rom": true },
+          { "label": "L shoulder ROM","type":"joint_angle", "joint": "left_shoulder_roll_joint","unit": "deg",   "show_rom": true },
+          { "label": "L elbow vel",  "type": "joint_vel",   "joint": "left_elbow_joint",        "unit": "deg/s" }
+        ],
+        "highlight_joint": "left_wrist_pitch_joint",
+        "scale": { "type": "joints", "joints": ["left_wrist_pitch_joint", "left_wrist_roll_joint", "left_wrist_yaw_joint", "right_wrist_pitch_joint", "right_wrist_roll_joint", "right_wrist_yaw_joint", "left_shoulder_pitch_joint", "left_shoulder_roll_joint", "right_shoulder_pitch_joint", "right_shoulder_roll_joint"], "factor": 0.55 }
+      },
+      {
+        "id": "faint_sitting",
+        "label": "Faint while sitting",
+        "g1_csv": "data/matrix_clips/faint_sitting.csv",
+        "actor": "A456",
+        "features": [
+          { "label": "Root vel",       "type": "root_vel",                                       "unit": "m/s"  },
+          { "label": "Waist pitch ROM","type": "joint_angle", "joint": "waist_pitch_joint",       "unit": "deg", "show_rom": true },
+          { "label": "L knee ROM",     "type": "joint_angle", "joint": "left_knee_joint",         "unit": "deg", "show_rom": true }
+        ],
+        "highlight_joint": "root",
+        "scale": { "type": "root", "factor": 0.6 }
+      },
+      {
+        "id": "smoke_jog",
+        "label": "Jogging",
+        "g1_csv": "data/matrix_clips/smoke_jog.csv",
+        "actor": "A550",
+        "features": [
+          { "label": "Root vel",      "type": "root_vel",                                         "unit": "m/s"  },
+          { "label": "L ankle vel",   "type": "joint_vel",   "joint": "left_ankle_pitch_joint",  "unit": "deg/s" },
+          { "label": "R wrist vel",   "type": "joint_vel",   "joint": "right_wrist_pitch_joint", "unit": "deg/s" }
+        ],
+        "highlight_joint": "root",
+        "scale": { "type": "root", "factor": 0.7 }
+      },
+      {
+        "id": "jump_up_down",
+        "label": "Jumping",
+        "g1_csv": "data/matrix_clips/jump_up_down.csv",
+        "actor": "A533",
+        "features": [
+          { "label": "Root vel",      "type": "root_vel",                                         "unit": "m/s"  },
+          { "label": "L knee ROM",    "type": "joint_angle", "joint": "left_knee_joint",         "unit": "deg", "show_rom": true },
+          { "label": "L ankle ROM",   "type": "joint_angle", "joint": "left_ankle_pitch_joint",  "unit": "deg", "show_rom": true }
+        ],
+        "highlight_joint": "root",
+        "scale": { "type": "root", "factor": 0.65 }
+      },
+      {
+        "id": "forward_lunge",
+        "label": "Forward lunge",
+        "g1_csv": "data/matrix_clips/forward_lunge.csv",
+        "actor": "A359",
+        "features": [
+          { "label": "R knee ROM",    "type": "joint_angle", "joint": "right_knee_joint",        "unit": "deg", "show_rom": true },
+          { "label": "L ankle vel",   "type": "joint_vel",   "joint": "left_ankle_pitch_joint",  "unit": "deg/s" },
+          { "label": "Root vel",      "type": "root_vel",                                         "unit": "m/s"  }
+        ],
+        "highlight_joint": "right_knee_joint",
+        "scale": { "type": "joints", "joints": ["right_knee_joint", "left_knee_joint", "right_hip_pitch_joint", "left_hip_pitch_joint"], "factor": 0.55 }
+      },
+      {
+        "id": "playing_guitar",
+        "label": "Playing guitar",
+        "g1_csv": "data/matrix_clips/playing_guitar.csv",
+        "actor": "A357",
+        "features": [
+          { "label": "L wrist vel",   "type": "joint_vel",   "joint": "left_wrist_pitch_joint",  "unit": "deg/s" },
+          { "label": "L elbow ROM",   "type": "joint_angle", "joint": "left_elbow_joint",        "unit": "deg", "show_rom": true },
+          { "label": "L shoulder ROM","type": "joint_angle", "joint": "left_shoulder_pitch_joint","unit": "deg", "show_rom": true }
+        ],
+        "highlight_joint": "left_wrist_pitch_joint",
+        "scale": { "type": "joints", "joints": ["left_wrist_pitch_joint", "left_wrist_roll_joint", "left_wrist_yaw_joint", "right_wrist_pitch_joint", "right_wrist_roll_joint", "right_wrist_yaw_joint"], "factor": 0.5 }
+      },
+      {
+        "id": "play_tennis",
+        "label": "Tennis swing",
+        "g1_csv": "data/matrix_clips/play_tennis.csv",
+        "actor": "A533",
+        "features": [
+          { "label": "R wrist vel",   "type": "joint_vel",   "joint": "right_wrist_pitch_joint", "unit": "deg/s" },
+          { "label": "R shoulder ROM","type": "joint_angle", "joint": "right_shoulder_roll_joint","unit": "deg", "show_rom": true },
+          { "label": "Root vel",      "type": "root_vel",                                         "unit": "m/s"  }
+        ],
+        "highlight_joint": "right_wrist_pitch_joint",
+        "scale": { "type": "joints", "joints": ["right_wrist_pitch_joint", "right_wrist_roll_joint", "right_wrist_yaw_joint", "right_shoulder_pitch_joint", "right_shoulder_roll_joint", "right_shoulder_yaw_joint", "right_elbow_joint"], "factor": 0.55 }
+      },
+      {
+        "id": "walking",
+        "label": "Walking",
+        "g1_csv": "data/matrix_clips/walking.csv",
+        "actor": "A548",
+        "features": [
+          { "label": "Root vel",      "type": "root_vel",                                         "unit": "m/s"  },
+          { "label": "L knee vel",    "type": "joint_vel",   "joint": "left_knee_joint",         "unit": "deg/s" },
+          { "label": "L ankle vel",   "type": "joint_vel",   "joint": "left_ankle_pitch_joint",  "unit": "deg/s" }
+        ],
+        "highlight_joint": "root",
+        "scale": { "type": "root", "factor": 0.75 }
+      }
+    ]
+  },
+
+  "age": {
+    "title": "Operator age leaks through retargeted motion",
+    "subtitle": "(populate after weight matrix is approved — keep same structure but pick joints where ROM / velocity decline with age, e.g. waist ROM, shoulder ROM, knee flexion velocity).",
+    "heavy_kg": null,
+    "light_kg": null,
+    "default_scale_factor": 0.6,
+    "clips": []
+  }
+}
