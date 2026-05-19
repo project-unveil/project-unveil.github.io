@@ -280,6 +280,13 @@ async function loadG1CSV(url, maxFrames) {
   const text = await fetch(url).then(r => { if (!r.ok) throw new Error(url); return r.text(); });
   const parsed = Papa.parse(text, { header: true, skipEmptyLines: true, dynamicTyping: true });
   let rows = parsed.data;
+  // Slice to the same middle slab the SMPL fitter used (so the human and the
+  // robot play matching source frames). Skip slicing if the clip is already
+  // shorter than the slab.
+  if (rows.length > SMPL_INPUT_FRAMES) {
+    const start = Math.floor((rows.length - SMPL_INPUT_FRAMES) / 2);
+    rows = rows.slice(start, start + SMPL_INPUT_FRAMES);
+  }
   let frames = rows;
   const ratio = rows.length / maxFrames;
   if (rows.length > maxFrames) frames = Array.from({length: maxFrames}, (_, i) => rows[Math.round(i * ratio)]);
