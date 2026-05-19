@@ -722,7 +722,7 @@ function drawStrip() {
 
   const frac = (masterTime / masterDuration) % 1;
 
-  function plot(motion, color, label, subX) {
+  function plot(motion, color, subX) {
     const arr = motion.perFrameSpeed; const n = arr.length;
     const upToFrame = Math.max(1, Math.min(n - 1, Math.floor(frac * (n - 1)) + 1));
 
