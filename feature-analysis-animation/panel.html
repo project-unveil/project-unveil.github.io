@@ -217,9 +217,10 @@ async function boot() {
 
   document.querySelector('#panel-head').firstChild.textContent = clip.label + ' ';
   document.querySelector('#panel-head .actor').textContent = `· ${clip.actor}`;
-  document.querySelector('.cell .role.heavy').textContent = `heavy · ${attrCfg.heavy_kg} kg`;
-  document.querySelector('.cell .role.light').textContent = `light · ${attrCfg.light_kg} kg`;
-  // Feature labels (with units)
+  const highTxt = `${attrCfg.high_label} · ${attrCfg.high_value} ${attrCfg.high_unit}`;
+  const lowTxt  = `${attrCfg.low_label} · ${attrCfg.low_value} ${attrCfg.low_unit}`;
+  document.querySelector('.cell .role.heavy').textContent = highTxt;
+  document.querySelector('.cell .role.light').textContent = lowTxt;
   clip.features.forEach((f, i) => {
     const lbl = document.querySelector(`.plot-row[data-idx="${i}"] .feat-label`);
     lbl.textContent = `${f.label}  (${f.unit})`;
@@ -230,20 +231,33 @@ async function boot() {
 
   setStatus('Loading motion…');
   const baseMotion = await loadG1CSV(clip.g1_csv, MAX_FRAMES_G1);
-  // Light = raw motion. Heavy = scaled per config.
   const lightMotion = baseMotion;
   const heavyMotion = applyScale(baseMotion, clip.scale);
 
-  // Pre-compute every feature for both motions.
   computeAllFeatures(lightMotion, clip.features);
   computeAllFeatures(heavyMotion, clip.features);
   computeMeanXY(lightMotion); computeMeanXY(heavyMotion);
 
-  masterDuration = Math.max(heavyMotion.duration, lightMotion.duration);
+  // Optional SMPL — these bin files are written by generate_smpl_matrix.py.
+  // If they're missing (e.g. fits still running) we degrade gracefully and
+  // skip the human row.
+  setStatus('Looking for SMPL fits…');
+  const smplData = await tryLoadSMPL(ATTR, clip.id);
+
+  masterDuration = Math.max(
+    heavyMotion.duration, lightMotion.duration,
+    smplData ? Math.max(smplData.high.duration, smplData.low.duration) : 0
+  );
 
   setStatus('Building robots…');
   VIEWERS.g1_heavy = await createG1Viewer('cell-g1-heavy', heavyMotion, COLOR_HEAVY_HEX, clip.highlight_joint);
   VIEWERS.g1_light = await createG1Viewer('cell-g1-light', lightMotion, COLOR_LIGHT_HEX, clip.highlight_joint);
+
+  if (smplData) {
+    document.getElementById('root').classList.add('has-smpl');
+    VIEWERS.smpl_high = createSMPLViewer('cell-smpl-high', smplData.high, smplData.faces, COLOR_HEAVY_HEX, true);
+    VIEWERS.smpl_low  = createSMPLViewer('cell-smpl-low',  smplData.low,  smplData.faces, COLOR_LIGHT_HEX, false);
+  }
 
   setupPlots();
   document.getElementById('loading').style.display = 'none';
