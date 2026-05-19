@@ -475,20 +475,13 @@ async function buildG1Robot(parentGroup, accentHex, highlightJoint) {
   return { rootGroup, bodyGroups, glow };
 }
 
-// Build ONE scene with both G1 robots side-by-side. This is the lone WebGL
-// context per panel's robot row — see the comment near #smpl-row in the CSS
-// for why we collapsed two contexts into one.
-async function createG1Pair(rowId, heavyMotion, lightMotion, highlightJoint) {
-  const row = document.getElementById(rowId);
-  const cnv = document.createElement('canvas'); row.appendChild(cnv);
-  const renderer = new THREE.WebGLRenderer({ canvas: cnv, antialias: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(row.clientWidth, row.clientHeight);
-
+// G1 scene + camera (no renderer; the shared renderer is owned by the panel).
+async function buildG1Scene(heavyMotion, lightMotion, highlightJoint) {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#f3f6fa');
 
-  const camera = new THREE.PerspectiveCamera(34, row.clientWidth/row.clientHeight, 0.05, 30);
+  // Aspect set later by the panel renderer (depends on viewport size).
+  const camera = new THREE.PerspectiveCamera(34, 1, 0.05, 30);
   camera.position.set(0, 1.05, 4.6);
   camera.lookAt(0, 0.85, 0);
 
@@ -496,16 +489,11 @@ async function createG1Pair(rowId, heavyMotion, lightMotion, highlightJoint) {
   const sun = new THREE.DirectionalLight(0xfff4e0, 1.0);
   sun.position.set(3, 7, 4); scene.add(sun);
 
-  // Single shared floor — long enough to fit both robots without seam.
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(12, 12),
                                new THREE.MeshBasicMaterial({ color: 0xe2e7ee }));
   floor.rotation.x = -Math.PI/2; scene.add(floor);
 
-  // X offsets so the two robots stand side-by-side. Robot rough horizontal
-  // extent at rest is ~0.6 m; ±0.85 m of offset clears them comfortably.
   const X_OFFSET = 0.85;
-
-  // Heavy on the left. parent → robotWorld (Z-up→Y-up rotation) → robot.
   const heavyParent = new THREE.Group();
   heavyParent.position.x = -X_OFFSET;
   scene.add(heavyParent);
@@ -519,11 +507,6 @@ async function createG1Pair(rowId, heavyMotion, lightMotion, highlightJoint) {
   const lightWorld = new THREE.Group(); lightWorld.rotation.x = -Math.PI/2;
   lightParent.add(lightWorld);
   const light = await buildG1Robot(lightWorld, COLOR_LIGHT_HEX, highlightJoint);
-
-  new ResizeObserver(() => {
-    const w = row.clientWidth, h = row.clientHeight;
-    if (w && h) { camera.aspect = w/h; camera.updateProjectionMatrix(); renderer.setSize(w, h); }
-  }).observe(row);
 
   function applyOne(robot, motion, fi) {
     robot.rootGroup.position.set(
@@ -549,7 +532,7 @@ async function createG1Pair(rowId, heavyMotion, lightMotion, highlightJoint) {
     applyOne(heavy, heavyMotion, fiH);
     applyOne(light, lightMotion, fiL);
   }
-  return { kind:'g1', scene, camera, renderer, applyFrameAtTime };
+  return { scene, camera, applyFrameAtTime };
 }
 
 // ── SMPL (optional, loaded if matching .bin files exist) ─────
