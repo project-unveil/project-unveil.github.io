@@ -802,17 +802,17 @@ function updatePointers() {
   arrowSvg.appendChild(defs);
 
   // Arrows go straight down from each SMPL cell to its matching G1 cell.
-  // Source = horizontal center of SMPL cell, just below its bottom edge.
-  // Target = horizontal center of the G1 cell directly below, just above its
-  // top edge. The G1 row's center column is the strip plot, so heavy/light
-  // G1 cells aren't perfectly under their SMPL cells — the arrow is allowed
-  // to angle slightly.
+  // Source = horizontal center of SMPL cell, ~45 px inside its bottom edge
+  // (clear of the feet for most poses). Target = horizontal center of the G1
+  // cell directly below, ~45 px inside its top edge (just above the robot's
+  // head). The G1 row's center column is the strip plot, so heavy/light G1
+  // cells aren't perfectly under their SMPL cells — the arrow angles slightly.
   function arrowEnds(smplCellId, g1CellId) {
     const sR = document.getElementById(smplCellId).getBoundingClientRect();
     const gR = document.getElementById(g1CellId).getBoundingClientRect();
     return {
-      from: { x: sR.left + sR.width / 2, y: sR.bottom - 6 },
-      to:   { x: gR.left + gR.width / 2, y: gR.top + 8 },
+      from: { x: sR.left + sR.width / 2, y: sR.bottom - 45 },
+      to:   { x: gR.left + gR.width / 2, y: gR.top    + 45 },
     };
   }
   function drawDown(from, to, color, markerId) {
@@ -824,8 +824,8 @@ function updatePointers() {
     const c2x = to.x,   c2y = to.y   - dy * 0.45;
     p.setAttribute('d', `M ${from.x} ${from.y} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${to.x} ${to.y}`);
     p.setAttribute('fill', 'none');
-    p.setAttribute('stroke', color); p.setAttribute('stroke-width', '2.4');
-    p.setAttribute('stroke-opacity', '0.85'); p.setAttribute('stroke-dasharray', '7 5');
+    p.setAttribute('stroke', color); p.setAttribute('stroke-width', '3');
+    p.setAttribute('stroke-opacity', '0.9'); p.setAttribute('stroke-dasharray', '9 6');
     p.setAttribute('marker-end', `url(#${markerId})`);
     arrowSvg.appendChild(p);
   }
