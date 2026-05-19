@@ -1,5 +1,5 @@
 {
-  "_comment": "3x3 matrix configuration. `features` is ordered strongest first. `scale` is an array of dampening steps applied in order to the heavy/older operator's motion — primary entry hits the strongest feature's joint(s) hardest, secondary/tertiary entries clip the 2nd/3rd feature's joints less so all three plots show a heavy/light gap with a visible hierarchy. `source_bvh` is the path under bones-seed used by generate_smpl_matrix.py.",
+  "_comment": "3x3 matrix configuration. Each clip carries its OWN high/low shape (height + weight + gender), drawn at random from the per-attribute ranges (weight: heavy 70-100 kg / light 45-60 kg; age: older 60-85 yr / younger 20-35 yr). `features` is ordered strongest first. `scale` is an array of dampening steps applied in order to the heavy/older operator's motion. `source_bvh` is the path under bones-seed used by generate_smpl_matrix.py.",
 
   "weight": {
     "title": "Body weight leaks through retargeted motion",
@@ -8,10 +8,7 @@
     "low_label":  "light",
     "high_unit":  "kg",
     "low_unit":   "kg",
-    "high_value": 110,
-    "low_value":  60,
-    "high_shape": { "height_cm": 178, "weight_kg": 110, "gender": "male" },
-    "low_shape":  { "height_cm": 178, "weight_kg": 60,  "gender": "male" },
+    "value_range_note": "high: 70-100 kg, low: 45-60 kg",
     "clips": [
       {
         "id": "dance_hiphop",
@@ -19,6 +16,9 @@
         "g1_csv": "data/matrix_clips/dance_hiphop.csv",
         "source_bvh": "soma_uniform/bvh/230412/dance_hiphop_bart_simpson_R_002__A313_M.bvh",
         "actor": "A313",
+        "high_value": 95, "low_value": 55,
+        "high_shape": { "height_cm": 178, "weight_kg": 95, "gender": "male" },
+        "low_shape":  { "height_cm": 178, "weight_kg": 55, "gender": "male" },
         "features": [
           { "label": "L wrist vel",  "type": "joint_vel",   "joint": "left_wrist_pitch_joint",  "unit": "deg/s" },
           { "label": "L elbow vel",  "type": "joint_vel",   "joint": "left_elbow_joint",        "unit": "deg/s" },
@@ -37,6 +37,9 @@
         "g1_csv": "data/matrix_clips/dance_vouge.csv",
         "source_bvh": "soma_uniform/bvh/230413/dance_vouge_picking_you_180_R_001__A316.bvh",
         "actor": "A316",
+        "high_value": 88, "low_value": 50,
+        "high_shape": { "height_cm": 173, "weight_kg": 88, "gender": "male" },
+        "low_shape":  { "height_cm": 173, "weight_kg": 50, "gender": "male" },
         "features": [
           { "label": "L wrist ROM",  "type": "joint_angle", "joint": "left_wrist_pitch_joint",  "unit": "deg",   "show_rom": true },
           { "label": "L shoulder ROM","type":"joint_angle", "joint": "left_shoulder_roll_joint","unit": "deg",   "show_rom": true },
@@ -55,6 +58,9 @@
         "g1_csv": "data/matrix_clips/faint_sitting.csv",
         "source_bvh": "soma_uniform/bvh/231004/faint_sitting_R_002__A456.bvh",
         "actor": "A456",
+        "high_value": 82, "low_value": 58,
+        "high_shape": { "height_cm": 168, "weight_kg": 82, "gender": "male" },
+        "low_shape":  { "height_cm": 168, "weight_kg": 58, "gender": "male" },
         "features": [
           { "label": "Root vel",       "type": "root_vel",                                       "unit": "m/s"  },
           { "label": "Waist pitch ROM","type": "joint_angle", "joint": "waist_pitch_joint",       "unit": "deg", "show_rom": true },
@@ -73,6 +79,9 @@
         "g1_csv": "data/matrix_clips/smoke_jog.csv",
         "source_bvh": "soma_uniform/bvh/240918/smoke_jog_ff_360_stop_R_001__A550_M.bvh",
         "actor": "A550",
+        "high_value": 78, "low_value": 52,
+        "high_shape": { "height_cm": 175, "weight_kg": 78, "gender": "male" },
+        "low_shape":  { "height_cm": 175, "weight_kg": 52, "gender": "male" },
         "features": [
           { "label": "Root vel",      "type": "root_vel",                                         "unit": "m/s"  },
           { "label": "L ankle vel",   "type": "joint_vel",   "joint": "left_ankle_pitch_joint",  "unit": "deg/s" },
@@ -91,6 +100,9 @@
         "g1_csv": "data/matrix_clips/jump_up_down.csv",
         "source_bvh": "soma_uniform/bvh/240327/jump_and_down_R_001__A533_M.bvh",
         "actor": "A533",
+        "high_value": 92, "low_value": 48,
+        "high_shape": { "height_cm": 180, "weight_kg": 92, "gender": "male" },
+        "low_shape":  { "height_cm": 180, "weight_kg": 48, "gender": "male" },
         "features": [
           { "label": "Root vel",      "type": "root_vel",                                         "unit": "m/s"  },
           { "label": "L knee ROM",    "type": "joint_angle", "joint": "left_knee_joint",         "unit": "deg", "show_rom": true },
@@ -109,6 +121,9 @@
         "g1_csv": "data/matrix_clips/forward_lunge.csv",
         "source_bvh": "soma_uniform/bvh/230509/forward_lunge_R_002__A359_M.bvh",
         "actor": "A359",
+        "high_value": 85, "low_value": 56,
+        "high_shape": { "height_cm": 173, "weight_kg": 85, "gender": "male" },
+        "low_shape":  { "height_cm": 173, "weight_kg": 56, "gender": "male" },
         "features": [
           { "label": "R knee ROM",    "type": "joint_angle", "joint": "right_knee_joint",        "unit": "deg", "show_rom": true },
           { "label": "L ankle vel",   "type": "joint_vel",   "joint": "left_ankle_pitch_joint",  "unit": "deg/s" },
@@ -127,6 +142,9 @@
         "g1_csv": "data/matrix_clips/playing_guitar.csv",
         "source_bvh": "soma_uniform/bvh/230427/playing_guitar_R_001__A357_M.bvh",
         "actor": "A357",
+        "high_value": 96, "low_value": 60,
+        "high_shape": { "height_cm": 178, "weight_kg": 96, "gender": "male" },
+        "low_shape":  { "height_cm": 178, "weight_kg": 60, "gender": "male" },
         "features": [
           { "label": "L wrist vel",   "type": "joint_vel",   "joint": "left_wrist_pitch_joint",  "unit": "deg/s" },
           { "label": "L elbow ROM",   "type": "joint_angle", "joint": "left_elbow_joint",        "unit": "deg", "show_rom": true },
@@ -145,6 +163,9 @@
         "g1_csv": "data/matrix_clips/play_tennis.csv",
         "source_bvh": "soma_uniform/bvh/240327/play_tennis_R_002__A533_M.bvh",
         "actor": "A533",
+        "high_value": 73, "low_value": 47,
+        "high_shape": { "height_cm": 182, "weight_kg": 73, "gender": "male" },
+        "low_shape":  { "height_cm": 182, "weight_kg": 47, "gender": "male" },
         "features": [
           { "label": "R wrist vel",   "type": "joint_vel",   "joint": "right_wrist_pitch_joint", "unit": "deg/s" },
           { "label": "R shoulder ROM","type": "joint_angle", "joint": "right_shoulder_roll_joint","unit": "deg", "show_rom": true },
@@ -163,6 +184,9 @@
         "g1_csv": "data/matrix_clips/walking.csv",
         "source_bvh": "soma_uniform/bvh/240918/grab_walk_ff_180_001__A548.bvh",
         "actor": "A548",
+        "high_value": 100, "low_value": 45,
+        "high_shape": { "height_cm": 175, "weight_kg": 100, "gender": "male" },
+        "low_shape":  { "height_cm": 175, "weight_kg": 45, "gender": "male" },
         "features": [
           { "label": "Root vel",      "type": "root_vel",                                         "unit": "m/s"  },
           { "label": "L knee vel",    "type": "joint_vel",   "joint": "left_knee_joint",         "unit": "deg/s" },
@@ -185,10 +209,7 @@
     "low_label":  "younger",
     "high_unit":  "yr",
     "low_unit":   "yr",
-    "high_value": 65,
-    "low_value":  22,
-    "high_shape": { "height_cm": 165, "weight_kg": 70, "gender": "female" },
-    "low_shape":  { "height_cm": 165, "weight_kg": 55, "gender": "female" },
+    "value_range_note": "high: 60-85 yr, low: 20-35 yr",
     "clips": [
       {
         "id": "step_up_box",
@@ -196,6 +217,9 @@
         "g1_csv": "data/matrix_clips/step_up_box.csv",
         "source_bvh": "soma_uniform/bvh/221010/come_up_50cm_box_R_001__A045.bvh",
         "actor": "A045",
+        "high_value": 72, "low_value": 25,
+        "high_shape": { "height_cm": 165, "weight_kg": 68, "gender": "female" },
+        "low_shape":  { "height_cm": 165, "weight_kg": 52, "gender": "female" },
         "features": [
           { "label": "L hip pitch ROM",  "type": "joint_angle", "joint": "left_hip_pitch_joint",   "unit": "deg",   "show_rom": true },
           { "label": "L knee ROM",       "type": "joint_angle", "joint": "left_knee_joint",        "unit": "deg",   "show_rom": true },
@@ -214,6 +238,9 @@
         "g1_csv": "data/matrix_clips/knightly_bow.csv",
         "source_bvh": "soma_uniform/bvh/230713/knightly_bow_R_001__A429.bvh",
         "actor": "A429",
+        "high_value": 78, "low_value": 28,
+        "high_shape": { "height_cm": 162, "weight_kg": 70, "gender": "female" },
+        "low_shape":  { "height_cm": 162, "weight_kg": 55, "gender": "female" },
         "features": [
           { "label": "Waist pitch ROM","type": "joint_angle", "joint": "waist_pitch_joint",       "unit": "deg",   "show_rom": true },
           { "label": "L hip pitch ROM","type": "joint_angle", "joint": "left_hip_pitch_joint",    "unit": "deg",   "show_rom": true },
@@ -232,6 +259,9 @@
         "g1_csv": "data/matrix_clips/macarena.csv",
         "source_bvh": "soma_uniform/bvh/240529/macarena_001__A545_M.bvh",
         "actor": "A545",
+        "high_value": 65, "low_value": 22,
+        "high_shape": { "height_cm": 168, "weight_kg": 65, "gender": "female" },
+        "low_shape":  { "height_cm": 168, "weight_kg": 50, "gender": "female" },
         "features": [
           { "label": "Waist roll ROM", "type": "joint_angle", "joint": "waist_roll_joint",        "unit": "deg",   "show_rom": true },
           { "label": "L hip roll ROM", "type": "joint_angle", "joint": "left_hip_roll_joint",     "unit": "deg",   "show_rom": true },
@@ -250,6 +280,9 @@
         "g1_csv": "data/matrix_clips/chainsaw_cutting.csv",
         "source_bvh": "soma_uniform/bvh/230323/chainsaw_cutting_tree_horizontal_R_001__A301.bvh",
         "actor": "A301",
+        "high_value": 60, "low_value": 30,
+        "high_shape": { "height_cm": 170, "weight_kg": 75, "gender": "female" },
+        "low_shape":  { "height_cm": 170, "weight_kg": 58, "gender": "female" },
         "features": [
           { "label": "Waist yaw vel",  "type": "joint_vel",   "joint": "waist_yaw_joint",         "unit": "deg/s" },
           { "label": "R shoulder ROM","type": "joint_angle", "joint": "right_shoulder_roll_joint","unit": "deg",   "show_rom": true },
@@ -268,6 +301,9 @@
         "g1_csv": "data/matrix_clips/sweep_floor.csv",
         "source_bvh": "soma_uniform/bvh/230322/sweep_floor_back_R_001__A296.bvh",
         "actor": "A296",
+        "high_value": 70, "low_value": 26,
+        "high_shape": { "height_cm": 160, "weight_kg": 67, "gender": "female" },
+        "low_shape":  { "height_cm": 160, "weight_kg": 53, "gender": "female" },
         "features": [
           { "label": "R shoulder ROM","type": "joint_angle", "joint": "right_shoulder_pitch_joint","unit": "deg",  "show_rom": true },
           { "label": "R elbow vel",   "type": "joint_vel",   "joint": "right_elbow_joint",       "unit": "deg/s" },
@@ -286,6 +322,9 @@
         "g1_csv": "data/matrix_clips/forward_lunge.csv",
         "source_bvh": "soma_uniform/bvh/230509/forward_lunge_R_002__A359_M.bvh",
         "actor": "A359",
+        "high_value": 85, "low_value": 24,
+        "high_shape": { "height_cm": 166, "weight_kg": 72, "gender": "female" },
+        "low_shape":  { "height_cm": 166, "weight_kg": 56, "gender": "female" },
         "features": [
           { "label": "R knee ROM",    "type": "joint_angle", "joint": "right_knee_joint",        "unit": "deg", "show_rom": true },
           { "label": "R hip pitch ROM","type":"joint_angle", "joint": "right_hip_pitch_joint",   "unit": "deg", "show_rom": true },
@@ -304,6 +343,9 @@
         "g1_csv": "data/matrix_clips/walking.csv",
         "source_bvh": "soma_uniform/bvh/240918/grab_walk_ff_180_001__A548.bvh",
         "actor": "A548",
+        "high_value": 68, "low_value": 32,
+        "high_shape": { "height_cm": 170, "weight_kg": 70, "gender": "female" },
+        "low_shape":  { "height_cm": 170, "weight_kg": 54, "gender": "female" },
         "features": [
           { "label": "L hip pitch vel","type": "joint_vel",   "joint": "left_hip_pitch_joint",    "unit": "deg/s" },
           { "label": "L knee vel",    "type": "joint_vel",   "joint": "left_knee_joint",         "unit": "deg/s" },
@@ -322,6 +364,9 @@
         "g1_csv": "data/matrix_clips/jump_up_down.csv",
         "source_bvh": "soma_uniform/bvh/240327/jump_and_down_R_001__A533_M.bvh",
         "actor": "A533",
+        "high_value": 62, "low_value": 23,
+        "high_shape": { "height_cm": 163, "weight_kg": 64, "gender": "female" },
+        "low_shape":  { "height_cm": 163, "weight_kg": 51, "gender": "female" },
         "features": [
           { "label": "L ankle vel",   "type": "joint_vel",   "joint": "left_ankle_pitch_joint",  "unit": "deg/s" },
           { "label": "L knee vel",    "type": "joint_vel",   "joint": "left_knee_joint",         "unit": "deg/s" },
@@ -340,6 +385,9 @@
         "g1_csv": "data/matrix_clips/dance_retro_twist.csv",
         "source_bvh": "soma_uniform/bvh/230411/dance_retro_twist_step_R_001__A307.bvh",
         "actor": "A307",
+        "high_value": 80, "low_value": 35,
+        "high_shape": { "height_cm": 168, "weight_kg": 73, "gender": "female" },
+        "low_shape":  { "height_cm": 168, "weight_kg": 57, "gender": "female" },
         "features": [
           { "label": "Waist yaw ROM", "type": "joint_angle", "joint": "waist_yaw_joint",         "unit": "deg", "show_rom": true },
           { "label": "L hip yaw vel","type": "joint_vel",   "joint": "left_hip_yaw_joint",      "unit": "deg/s" },
