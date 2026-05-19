@@ -853,9 +853,31 @@ function loop(ts) {
     masterTime = (masterTime + dt) % masterDuration;
   } else { lastTime = null; }
 
-  for (const v of Object.values(VIEWERS)) {
-    v.applyFrameAtTime(masterTime);
-    v.renderer.render(v.scene, v.camera);
+  for (const v of Object.values(VIEWERS)) v.applyFrameAtTime(masterTime);
+
+  if (SHARED_RENDERER) {
+    const vp = panelViewports();
+    SHARED_RENDERER.setScissorTest(true);
+
+    if (VIEWERS.smpl) {
+      const c = VIEWERS.smpl.camera;
+      c.aspect = vp.smpl.w / Math.max(1, vp.smpl.h);
+      c.updateProjectionMatrix();
+      SHARED_RENDERER.setViewport(vp.smpl.x, vp.smpl.y, vp.smpl.w, vp.smpl.h);
+      SHARED_RENDERER.setScissor (vp.smpl.x, vp.smpl.y, vp.smpl.w, vp.smpl.h);
+      SHARED_RENDERER.clear();
+      SHARED_RENDERER.render(VIEWERS.smpl.scene, c);
+    }
+    if (VIEWERS.g1) {
+      const c = VIEWERS.g1.camera;
+      c.aspect = vp.g1.w / Math.max(1, vp.g1.h);
+      c.updateProjectionMatrix();
+      SHARED_RENDERER.setViewport(vp.g1.x, vp.g1.y, vp.g1.w, vp.g1.h);
+      SHARED_RENDERER.setScissor (vp.g1.x, vp.g1.y, vp.g1.w, vp.g1.h);
+      SHARED_RENDERER.clear();
+      SHARED_RENDERER.render(VIEWERS.g1.scene, c);
+    }
+    SHARED_RENDERER.setScissorTest(false);
   }
   drawPlots();
 }
