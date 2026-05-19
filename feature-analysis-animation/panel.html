@@ -595,37 +595,8 @@ function computeSMPLCentroid(data) {
   data.meanX = sx / n; data.meanZ = sz / n;
 }
 
-function createSMPLViewer(cellId, data, faces, accentHex, isHigh) {
-  const cell = document.getElementById(cellId);
-  const cnv = document.createElement('canvas'); cell.appendChild(cnv);
-  const renderer = new THREE.WebGLRenderer({ canvas: cnv, antialias: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(cell.clientWidth, cell.clientHeight);
-
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#eef2f7');
-  scene.fog = new THREE.Fog('#eef2f7', 5, 14);
-
-  const camera = new THREE.PerspectiveCamera(38, cell.clientWidth/cell.clientHeight, 0.05, 30);
-  camera.position.set(0, 1.0, 3.0);
-  camera.lookAt(0, 0.95, 0);
-  const controls = new THREE.OrbitControls(camera, cnv);
-  controls.target.set(0, 0.95, 0);
-  controls.enableDamping = true; controls.dampingFactor = 0.06;
-  controls.enableZoom = false;
-
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xc0c8d4, 1.05));
-  const sun = new THREE.DirectionalLight(0xfff4e0, 0.95);
-  sun.position.set(3, 7, 4); scene.add(sun);
-
-  const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(8, 8),
-    new THREE.MeshBasicMaterial({ color: 0xdee4ec })
-  );
-  floor.rotation.x = -Math.PI/2; scene.add(floor);
-
-  // Skin tone — slightly tinted toward the side accent so heavy/light read
-  // even before any animation kicks in.
+// One SMPL mesh inside `parentGroup`. Returns its applyFrame function.
+function buildSMPLMesh(parentGroup, data, faces, accentHex) {
   const baseSkin = new THREE.Color(0.94, 0.76, 0.58);
   const tint = new THREE.Color(accentHex);
   const skin = baseSkin.clone().lerp(tint, 0.06);
@@ -638,7 +609,7 @@ function createSMPLViewer(cellId, data, faces, accentHex, isHigh) {
     color: skin, specular: 0x111111, shininess: 25, side: THREE.DoubleSide,
   });
   const mesh = new THREE.Mesh(geo, mat);
-  scene.add(mesh);
+  parentGroup.add(mesh);
 
   // Floor alignment via 10th percentile of per-frame min-Y.
   const frameMin = new Float32Array(data.numFrames);
@@ -654,11 +625,6 @@ function createSMPLViewer(cellId, data, faces, accentHex, isHigh) {
   const sorted = [...frameMin].sort((a,b) => a - b);
   const yOff = sorted[Math.floor(sorted.length * 0.10)];
 
-  new ResizeObserver(() => {
-    const w = cell.clientWidth, h = cell.clientHeight;
-    if (w && h) { camera.aspect = w/h; camera.updateProjectionMatrix(); renderer.setSize(w, h); }
-  }).observe(cell);
-
   const arr = posAttr.array;
   const mX = data.meanX, mZ = data.meanZ;
   function applyFrame(fi) {
@@ -671,8 +637,58 @@ function createSMPLViewer(cellId, data, faces, accentHex, isHigh) {
     posAttr.needsUpdate = true;
     geo.computeVertexNormals();
   }
-  return { kind:'smpl', scene, camera, controls, renderer, applyFrame,
-           duration: data.duration, frameTime: 1/data.fps, numFrames: data.numFrames };
+  return { applyFrame, duration: data.duration, frameTime: 1/data.fps,
+           numFrames: data.numFrames };
+}
+
+// Both SMPL meshes in one scene/canvas. Same X-offset convention as G1.
+function createSMPLPair(rowId, highData, lowData, faces) {
+  const row = document.getElementById(rowId);
+  const cnv = document.createElement('canvas'); row.appendChild(cnv);
+  const renderer = new THREE.WebGLRenderer({ canvas: cnv, antialias: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(row.clientWidth, row.clientHeight);
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color('#eef2f7');
+
+  const camera = new THREE.PerspectiveCamera(32, row.clientWidth/row.clientHeight, 0.05, 30);
+  camera.position.set(0, 1.05, 4.7);
+  camera.lookAt(0, 0.95, 0);
+
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xc0c8d4, 1.05));
+  const sun = new THREE.DirectionalLight(0xfff4e0, 0.95);
+  sun.position.set(3, 7, 4); scene.add(sun);
+
+  const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(12, 12),
+    new THREE.MeshBasicMaterial({ color: 0xdee4ec })
+  );
+  floor.rotation.x = -Math.PI/2; scene.add(floor);
+
+  const X_OFFSET = 0.85;
+  const highParent = new THREE.Group();
+  highParent.position.x = -X_OFFSET;
+  scene.add(highParent);
+  const high = buildSMPLMesh(highParent, highData, faces, COLOR_HEAVY_HEX);
+
+  const lowParent = new THREE.Group();
+  lowParent.position.x = +X_OFFSET;
+  scene.add(lowParent);
+  const low = buildSMPLMesh(lowParent, lowData, faces, COLOR_LIGHT_HEX);
+
+  new ResizeObserver(() => {
+    const w = row.clientWidth, h = row.clientHeight;
+    if (w && h) { camera.aspect = w/h; camera.updateProjectionMatrix(); renderer.setSize(w, h); }
+  }).observe(row);
+
+  function applyFrameAtTime(t) {
+    const fiH = Math.min(high.numFrames - 1, Math.floor((t % high.duration) / high.frameTime));
+    const fiL = Math.min(low .numFrames - 1, Math.floor((t % low .duration) / low .frameTime));
+    high.applyFrame(fiH);
+    low .applyFrame(fiL);
+  }
+  return { kind:'smpl', scene, camera, renderer, applyFrameAtTime };
 }
 
 // ── Plot stack ────────────────────────────────────────────
