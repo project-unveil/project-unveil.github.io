@@ -801,52 +801,38 @@ function updatePointers() {
   }
   arrowSvg.appendChild(defs);
 
-  // Source: each G1 robot's pelvis projected to screen space.
-  const tmp = new THREE.Vector3();
-  function rootScreen(viewer) {
-    viewer.rootGroup.getWorldPosition(tmp);
-    return getProjectedScreen(viewer, tmp);
+  // Arrows go straight down from each SMPL cell to its matching G1 cell.
+  // Source = horizontal center of SMPL cell, just below its bottom edge.
+  // Target = horizontal center of the G1 cell directly below, just above its
+  // top edge. The G1 row's center column is the strip plot, so heavy/light
+  // G1 cells aren't perfectly under their SMPL cells — the arrow is allowed
+  // to angle slightly.
+  function arrowEnds(smplCellId, g1CellId) {
+    const sR = document.getElementById(smplCellId).getBoundingClientRect();
+    const gR = document.getElementById(g1CellId).getBoundingClientRect();
+    return {
+      from: { x: sR.left + sR.width / 2, y: sR.bottom - 6 },
+      to:   { x: gR.left + gR.width / 2, y: gR.top + 8 },
+    };
   }
-  const hRoot = rootScreen(VIEWERS.g1_heavy);
-  const lRoot = rootScreen(VIEWERS.g1_light);
-
-  // Park the "root" pill on top of each robot's highlight sphere.
-  const hLbl = document.getElementById('root-label-heavy');
-  const lLbl = document.getElementById('root-label-light');
-  if (hLbl) { hLbl.style.left = hRoot.x + 'px'; hLbl.style.top = hRoot.y + 'px'; }
-  if (lLbl) { lLbl.style.left = lRoot.x + 'px'; lLbl.style.top = lRoot.y + 'px'; }
-
-  // Target: drawStrip stashes the canvas-pixel Y of each side's dashed avg
-  // line plus the plot's left/right X edges. Convert to viewport coords by
-  // dividing out devicePixelRatio and adding the canvas's bounding-rect top.
-  const stripCanvas = document.getElementById('strip-canvas');
-  const sRect = stripCanvas.getBoundingClientRect();
-  const dpr = window.devicePixelRatio;
-  const heavyAvgY  = (drawStrip._heavyAvgY  || 0) / dpr;
-  const lightAvgY  = (drawStrip._lightAvgY  || 0) / dpr;
-  const plotLeftX  = (drawStrip._plotLeftX  || 0) / dpr;
-  const plotRightX = (drawStrip._plotRightX || 0) / dpr;
-
-  // Heavy arrow enters the strip box from the LEFT (toward the heavy G1 cell);
-  // light arrow enters from the RIGHT. Each lands a few px inside the plot
-  // area, on its colour's dashed avg line.
-  const hTarget = { x: sRect.left + plotLeftX  + 4, y: sRect.top + heavyAvgY };
-  const lTarget = { x: sRect.left + plotRightX - 4, y: sRect.top + lightAvgY };
-
-  function curve(from, to, color, markerId) {
-    const dx = to.x - from.x;
-    const c1x = from.x + dx * 0.40, c1y = from.y;
-    const c2x = from.x + dx * 0.60, c2y = to.y;
+  function drawDown(from, to, color, markerId) {
     const p = document.createElementNS(NS, 'path');
+    // Mostly-vertical cubic with control points biased downward so the curve
+    // reads as a clean down-arrow even when from.x ≠ to.x.
+    const dy = to.y - from.y;
+    const c1x = from.x, c1y = from.y + dy * 0.55;
+    const c2x = to.x,   c2y = to.y   - dy * 0.45;
     p.setAttribute('d', `M ${from.x} ${from.y} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${to.x} ${to.y}`);
     p.setAttribute('fill', 'none');
-    p.setAttribute('stroke', color); p.setAttribute('stroke-width', '2');
-    p.setAttribute('stroke-opacity', '0.80'); p.setAttribute('stroke-dasharray', '6 5');
+    p.setAttribute('stroke', color); p.setAttribute('stroke-width', '2.4');
+    p.setAttribute('stroke-opacity', '0.85'); p.setAttribute('stroke-dasharray', '7 5');
     p.setAttribute('marker-end', `url(#${markerId})`);
     arrowSvg.appendChild(p);
   }
-  curve(hRoot, hTarget, COLOR_HEAVY_HEX, 'arr-heavy');
-  curve(lRoot, lTarget, COLOR_LIGHT_HEX, 'arr-light');
+  const hE = arrowEnds('cell-smpl-heavy', 'cell-g1-heavy');
+  const lE = arrowEnds('cell-smpl-light', 'cell-g1-light');
+  drawDown(hE.from, hE.to, COLOR_HEAVY_HEX, 'arr-heavy');
+  drawDown(lE.from, lE.to, COLOR_LIGHT_HEX, 'arr-light');
 }
 
 // ── Animation loop ─────────────────────────────────────────────────────
