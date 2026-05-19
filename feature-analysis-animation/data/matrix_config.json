@@ -155,18 +155,18 @@
     "low_shape":  { "height_cm": 165, "weight_kg": 55, "gender": "female" },
     "clips": [
       {
-        "id": "idle_turn",
-        "label": "Standing turn",
-        "g1_csv": "data/matrix_clips/idle_turn.csv",
-        "source_bvh": "soma_uniform/bvh/240918/idle_turn_000_R_long_002__A548.bvh",
-        "actor": "A548",
+        "id": "step_up_box",
+        "label": "Step onto box",
+        "g1_csv": "data/matrix_clips/step_up_box.csv",
+        "source_bvh": "soma_uniform/bvh/221010/come_up_50cm_box_R_001__A045.bvh",
+        "actor": "A045",
         "features": [
-          { "label": "Waist yaw ROM",   "type": "joint_angle", "joint": "waist_yaw_joint",         "unit": "deg",   "show_rom": true },
-          { "label": "Waist roll ROM",  "type": "joint_angle", "joint": "waist_roll_joint",        "unit": "deg",   "show_rom": true },
-          { "label": "L ankle vel",     "type": "joint_vel",   "joint": "left_ankle_pitch_joint",  "unit": "deg/s" }
+          { "label": "L hip pitch ROM",  "type": "joint_angle", "joint": "left_hip_pitch_joint",   "unit": "deg",   "show_rom": true },
+          { "label": "L knee ROM",       "type": "joint_angle", "joint": "left_knee_joint",        "unit": "deg",   "show_rom": true },
+          { "label": "L ankle vel",      "type": "joint_vel",   "joint": "left_ankle_pitch_joint", "unit": "deg/s" }
         ],
-        "highlight_joint": "waist_yaw_joint",
-        "scale": { "type": "joints", "joints": ["waist_yaw_joint", "waist_roll_joint", "waist_pitch_joint"], "factor": 0.55 }
+        "highlight_joint": "left_hip_pitch_joint",
+        "scale": { "type": "joints", "joints": ["left_hip_pitch_joint", "right_hip_pitch_joint", "left_knee_joint", "right_knee_joint", "left_ankle_pitch_joint", "right_ankle_pitch_joint"], "factor": 0.6 }
       },
       {
         "id": "knightly_bow",
