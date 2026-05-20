@@ -758,8 +758,8 @@ function drawPlots() {
     const plotH = H - padT - padB;
 
     // Y range shared across heavy/light for this feature.
-    const hF = VIEWERS.g1.heavyMotion.features[i];
-    const lF = VIEWERS.g1.lightMotion.features[i];
+    const hF = VIEWERS.g1_heavy.motion.features[i];
+    const lF = VIEWERS.g1_light.motion.features[i];
     let mn, mx;
     if (spec.type === 'joint_angle') {
       const m = Math.max(Math.abs(hF.min), Math.abs(hF.max), Math.abs(lF.min), Math.abs(lF.max), 5);
