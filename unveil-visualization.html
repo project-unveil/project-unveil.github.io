@@ -1640,6 +1640,34 @@ function positionAggregateIcon() {
   el.style.top  = cy.toFixed(1) + 'px';
 }
 
+// ─── Output-text tags positioned just right of 3.1 / 3.2 rects ────────────
+function positionEncOutput() {
+  const el = document.getElementById('enc-output');
+  if (!el.classList.contains('visible')) return;
+  const r = document.getElementById('enc-rect');
+  if (!r || r.style.opacity == 0) return;
+  const rx = parseFloat(r.getAttribute('x'));
+  const ry = parseFloat(r.getAttribute('y'));
+  const rw = parseFloat(r.getAttribute('width'));
+  const rh = parseFloat(r.getAttribute('height'));
+  if (!isFinite(rx) || !isFinite(rw) || !isFinite(ry) || !isFinite(rh)) return;
+  el.style.left = (rx + rw + 8).toFixed(1) + 'px';
+  el.style.top  = (ry + rh / 2).toFixed(1) + 'px';
+}
+function positionGraphOutput() {
+  const el = document.getElementById('graph-output');
+  if (!el.classList.contains('visible')) return;
+  const r = document.getElementById('graph-rect');
+  if (!r || r.style.opacity == 0) return;
+  const rx = parseFloat(r.getAttribute('x'));
+  const ry = parseFloat(r.getAttribute('y'));
+  const rw = parseFloat(r.getAttribute('width'));
+  const rh = parseFloat(r.getAttribute('height'));
+  if (!isFinite(rx) || !isFinite(rw) || !isFinite(ry) || !isFinite(rh)) return;
+  el.style.left = (rx + rw + 8).toFixed(1) + 'px';
+  el.style.top  = (ry + rh / 2).toFixed(1) + 'px';
+}
+
 // ─── Attribute-embedding strip — y + height mirror the other rects ────────
 function positionEmbeddingStrip() {
   const strip = document.getElementById('embedding-strip');
