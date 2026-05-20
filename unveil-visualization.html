@@ -1115,6 +1115,7 @@ function setupFocusRingsAndPlates() {
 function setFocusOpacity(o) {
   document.querySelectorAll('.svg-focus-ring').forEach(r => r.style.opacity = o);
   document.querySelectorAll('.svg-leader').forEach(r => r.style.opacity = o);
+  document.getElementById('enc-vertical-dots').style.opacity = o;
   for (const J of PICKED_JOINTS) {
     const el = plates[J.body];
     if (!el) continue;
