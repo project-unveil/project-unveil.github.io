@@ -1942,22 +1942,17 @@ function getGraphOutputW() { return (document.getElementById('graph-output').off
 function positionEmbeddingStrip() {
   const strip = document.getElementById('embedding-strip');
   const r = document.getElementById('enc-rect');
-  if (!r || r.style.opacity == 0) return;
-  const ry = parseFloat(r.getAttribute('y'));
-  const rh = parseFloat(r.getAttribute('height'));
-  if (isFinite(ry)) strip.style.top    = ry.toFixed(1) + 'px';
-  if (isFinite(rh)) strip.style.height = rh.toFixed(1) + 'px';
-  // x: ALWAYS RIGHT_GAP_PX after spatial-rect's right edge
-  const sr = document.getElementById('spatial-rect');
-  const stripW = 96;
-  let leftPx;
-  if (sr && sr.style.opacity != 0) {
-    const sx = parseFloat(sr.getAttribute('x'));
-    const sw = parseFloat(sr.getAttribute('width'));
-    if (isFinite(sx) && isFinite(sw)) leftPx = sx + sw + RIGHT_GAP_PX;
+  // y/height: mirror enc-rect when available so vertical alignment matches
+  if (r && r.style.opacity != 0) {
+    const ry = parseFloat(r.getAttribute('y'));
+    const rh = parseFloat(r.getAttribute('height'));
+    if (isFinite(ry)) strip.style.top    = ry.toFixed(1) + 'px';
+    if (isFinite(rh)) strip.style.height = rh.toFixed(1) + 'px';
   }
-  if (!isFinite(leftPx)) leftPx = worldToCanvasPx(SLOT_X_EMBEDDING, 1.0, 0).x - stripW/2;
-  strip.style.left = leftPx.toFixed(1) + 'px';
+  // x: FIXED at SLOT_X_EMBEDDING world coordinate
+  const stripW = 96;
+  const cx = worldToCanvasPx(SLOT_X_EMBEDDING, 1.0, 0).x;
+  strip.style.left = (cx - stripW/2).toFixed(1) + 'px';
 }
 
 // ─── Spatiotemporal rectangle — wraps spatial G1 + ghost stack + Σ icon ───
