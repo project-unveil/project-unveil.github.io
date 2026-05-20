@@ -1511,9 +1511,8 @@ function defineStages() {
             setConns(INTRA_CONNS[limbOrder[idx]] || [], LIMBS[limbOrder[idx]].color);
             for (const c of activeConns) { c._beatIdx = idx; c._mode = 'intra'; }
           }
-          // Beat indicator: "Intra Limb <name>-<name>"
-          const lf = LIMB_FULL[limbOrder[idx]];
-          setBeat('intra', `${lf}-${lf}`);
+          // Beat indicator: "Intra Limb <name>-<name>" (colored per limb)
+          setBeat('intra', limbOrder[idx], limbOrder[idx]);
           if (within < 0.05) setCaption(`Within ${LIMB_LABEL[limbOrder[idx]]} — joints interact.`, '§3.2 intra-limb');
         } else {
           // Inter section
