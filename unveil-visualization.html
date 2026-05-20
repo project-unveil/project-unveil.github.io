@@ -1878,8 +1878,8 @@ function defineStages() {
 }
 
 // ─── Limb mesh tinting on the graph G1 ────────────────────────────────────
-// Sets emissive on every mesh in a limb so the limb visually "glows" with its
-// color. Used during 3.2 intra/inter beats instead of dashed ellipses.
+// Lerps the mesh's diffuse color toward the limb color AND adds emissive
+// glow, so the limb visibly takes on its color during the beat.
 const _tintColor = new THREE.Color();
 function tintGraphLimb(limbKey, intensity) {
   if (!g1Graph || !g1Graph.bodyMeshes) return;
@@ -1888,8 +1888,11 @@ function tintGraphLimb(limbKey, intensity) {
     const arr = g1Graph.bodyMeshes[bn];
     if (!arr) continue;
     for (const m of arr) {
+      // Cache original diffuse color the first time we touch this mesh
+      if (!m.userData.origColor) m.userData.origColor = m.material.color.clone();
+      m.material.color.copy(m.userData.origColor).lerp(_tintColor, intensity);
       m.material.emissive.copy(_tintColor);
-      m.material.emissiveIntensity = intensity;
+      m.material.emissiveIntensity = intensity * 0.55;
     }
   }
 }
@@ -1900,6 +1903,7 @@ function resetGraphTints() {
       const arr = g1Graph.bodyMeshes[bn];
       if (!arr) continue;
       for (const m of arr) {
+        if (m.userData.origColor) m.material.color.copy(m.userData.origColor);
         m.material.emissive.setScalar(0);
         m.material.emissiveIntensity = 0;
       }
