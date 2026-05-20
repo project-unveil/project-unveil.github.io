@@ -1875,12 +1875,11 @@ function positionHumanMesh() {
   if (!isFinite(cx)) return;
   const cardRight = cx + cardW / 2;
   const targetMeshLeftScreen = cardRight + RIGHT_GAP_PX;
-  // Convert that screen X back to world X using current canvas + frustum
-  const cw = canvas.clientWidth || canvas.width;
-  const fw = 13.5;
+  const cw = (canvasWrapEl && canvasWrapEl.clientWidth) || 1620;
+  const fw = 13.5;                                         // frustum width in world units
   const meshLeftWorld = (targetMeshLeftScreen / cw) * fw - fw/2;
-  // SMPL mesh half-width ≈ 0.30 world (shoulder-to-center). Pos = left + half.
-  smplGroup.object3D.position.x = meshLeftWorld + 0.30;
+  // SMPL mesh half-width ≈ 0.35 world (shoulder-to-center). Position = left + half.
+  smplGroup.object3D.position.x = meshLeftWorld + 0.35;
 }
 function populateAttributesCard() {
   if (!currentDemo) return;
