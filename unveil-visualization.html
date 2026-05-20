@@ -1417,13 +1417,23 @@ function setCaption(text, ref) {
 function setBadge(i, n) {
   document.getElementById('stage-badge').textContent = `Stage ${i} / ${n}`;
 }
-function setBeat(mode, limbsText) {
+// limbsArg can be a string (legacy) OR two limb keys (preferred — colors auto-apply)
+function setBeat(mode, limbA, limbB) {
   const bi = document.getElementById('beat-indicator');
   bi.classList.remove('intra','inter');
   if (mode) bi.classList.add(mode);
   document.getElementById('bi-mode').textContent = mode === 'intra' ? 'Intra Limb' :
                                                     mode === 'inter' ? 'Inter Limb' : '—';
-  document.getElementById('bi-limbs').textContent = limbsText || '';
+  const limbsEl = document.getElementById('bi-limbs');
+  if (limbA && LIMBS[limbA] && limbB && LIMBS[limbB]) {
+    const ca = LIMBS[limbA].color, cb = LIMBS[limbB].color;
+    limbsEl.innerHTML =
+      `<span style="color:${ca}">${LIMB_FULL[limbA]}</span>` +
+      `<span style="color:var(--ink)">-</span>` +
+      `<span style="color:${cb}">${LIMB_FULL[limbB]}</span>`;
+  } else {
+    limbsEl.textContent = limbA || '';
+  }
 }
 
 // Position the beat-indicator dynamically below the graph G1
