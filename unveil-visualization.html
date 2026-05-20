@@ -1573,11 +1573,12 @@ function updateGraphRect() {
     const encHeight = parseFloat(encR.getAttribute('height'));
     if (isFinite(encTop))    y = encTop;
     if (isFinite(encHeight)) h = encHeight;     // SAME height as 3.1
-    // STRICT 1cm gap from 3.1 — graph rect can never intersect enc rect.
+    // Gap between 3.1 and 3.2 = enc-output label width (so the output arrow
+    // exactly spans the gap with the textbox on top).
     const encLeft  = parseFloat(encR.getAttribute('x'));
     const encWidth = parseFloat(encR.getAttribute('width'));
     if (isFinite(encLeft) && isFinite(encWidth)) {
-      const minLeft = encLeft + encWidth + GAP_31_32_PX;
+      const minLeft = encLeft + encWidth + getEncOutputW();
       if (x < minLeft) x = minLeft;
     }
   }
