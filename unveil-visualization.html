@@ -2307,7 +2307,15 @@ function loop(ts) {
   positionEncOutput();        // AFTER enc rect so text glues to its right edge
   positionGraphOutput();      // AFTER graph rect so text glues to its right edge
   if (kinematicAnimStart >= 0) tickKinematicAnim(masterClock - kinematicAnimStart);
-  if (graphAnimStart     >= 0) tickGraphBeats(masterClock - graphAnimStart);
+  if (graphAnimStart     >= 0) {
+    const gt = masterClock - graphAnimStart;
+    tickGraphBeats(gt);
+    // After one full graph cycle, reveal the "Spatially Aggregated Features"
+    // output label + arrow.
+    if (gt >= GRAPH_CYCLE_DUR && !document.getElementById('graph-output').classList.contains('visible')) {
+      show('graph-output');
+    }
+  }
   if (temporalAnimStart  >= 0) tickTemporalAnim(masterClock - temporalAnimStart);
 
   if (stageIdx >= 0 && stageIdx < stages.length) {
