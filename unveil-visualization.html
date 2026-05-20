@@ -1813,7 +1813,7 @@ function positionGraphOutput() {
   _positionRectOutput('graph-output', 'graph-output-arrow', 'graph-rect', 'spatial-rect',
     worldToCanvasPx(SLOT_X.spatial - 0.5, 1.0, 0).x);
 }
-// ─── 3.3 → embedding strip arrow ─────────────────────────────────────────
+// ─── 3.3 → embedding strip arrow (animated dashed flow) ─────────────────
 function positionSpatialEmbedArrow() {
   const arrow = document.getElementById('spatial-embed-arrow');
   const sr = document.getElementById('spatial-rect');
@@ -1826,13 +1826,17 @@ function positionSpatialEmbedArrow() {
   const srW = parseFloat(sr.getAttribute('width'));
   const srH = parseFloat(sr.getAttribute('height'));
   if (!isFinite(srX) || !isFinite(srW) || !isFinite(srY) || !isFinite(srH)) return;
-  const startX = srX + srW + 8;
-  const endX   = es.offsetLeft - 8;
+  // Stay inside the 1cm strip: hug both edges with a tiny inset
+  const startX = srX + srW + 4;
+  const endX   = es.offsetLeft - 4;
   const y      = srY + srH * 0.40;
   arrow.setAttribute('x1', startX.toFixed(1));
   arrow.setAttribute('y1', y.toFixed(1));
   arrow.setAttribute('x2', endX.toFixed(1));
   arrow.setAttribute('y2', y.toFixed(1));
+  // Animate the dash pattern so it visibly flows from 3.3 → embedding
+  const off = -(masterClock * 40) % 14;          // 14 = dasharray period (9+5)
+  arrow.setAttribute('stroke-dashoffset', off.toFixed(2));
 }
 
 // ─── Attributes card — position + populate ──────────────────────────────
