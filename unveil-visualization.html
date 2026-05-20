@@ -945,64 +945,69 @@ async function buildGhosts(N = 5) {
   }
 }
 
-// ─── Picked-joint focus rings + data plates (kinematic encoding) ────────────
+// ─── Picked-joint focus ring + 2 plates (velocity + acceleration) ──────────
+// One small focus circle around the elbow, two arrows up-left + up-right to plates.
 function setupFocusRingsAndPlates() {
   const gFocus = document.getElementById('g-focus');
   gFocus.innerHTML = '';
+
+  // Inline <defs> with arrowhead markers (one per plate color)
+  const defs = svg('defs');
+  for (const p of PICKED_PLATES) {
+    const marker = svg('marker', {
+      id: `arr-${p.id}`,
+      viewBox: '0 0 10 10', refX: '9', refY: '5',
+      markerWidth: '6', markerHeight: '6', orient: 'auto',
+    });
+    marker.appendChild(svg('path', { d: 'M 0 0 L 10 5 L 0 10 z', fill: p.color }));
+    defs.appendChild(marker);
+  }
+  gFocus.appendChild(defs);
+
+  // The focus ring — small, just wraps the elbow
+  const ring = svg('circle', { class: 'svg-focus-ring', r: 14, cx: 0, cy: 0 });
+  ring.setAttribute('data-role', 'ring');
+  gFocus.appendChild(ring);
+
+  // Two leader arrows (one per plate)
+  for (const p of PICKED_PLATES) {
+    const leader = svg('line', {
+      class: 'svg-leader',
+      stroke: p.color,
+      'stroke-width': 1.6,
+      'stroke-dasharray': '5 4',
+      'marker-end': `url(#arr-${p.id})`,
+    });
+    leader.setAttribute('data-plate', p.id);
+    gFocus.appendChild(leader);
+  }
+
+  // Data plates (HTML)
   const platesHolder = document.getElementById('plates-holder');
   platesHolder.innerHTML = '';
-
-  for (const p of PICKED) {
-    // SVG: focus ring + leader line
-    const ring = svg('circle', { class:'svg-focus-ring', r: 18, cx: 0, cy: 0 });
-    const leader = svg('path',  { class:'svg-leader', d: 'M0 0' });
-    ring.setAttribute('data-body', p.body);
-    leader.setAttribute('data-body', p.body);
-    gFocus.appendChild(leader);
-    gFocus.appendChild(ring);
-
-    // Data plate (HTML)
+  for (const p of PICKED_PLATES) {
     const plate = document.createElement('div');
     plate.className = 'data-plate';
-    plate.setAttribute('data-body', p.body);
-    const featureLabel = p.feature === 'velocity' ? 'Velocity θ̇' :
-                         p.feature === 'rom'      ? 'Range of Motion' :
-                                                    'Acceleration θ̈';
-    const subLine     = p.feature === 'velocity' ? 'angular rate' :
-                         p.feature === 'rom'      ? 'min ↔ max swept' :
-                                                    '2nd derivative';
-    if (p.feature === 'rom') {
-      plate.innerHTML = `
-        <div class="dp-head"><span>${featureLabel}</span><span class="joint">${p.label}</span></div>
-        <div class="dp-sub">${subLine}</div>
-        <svg class="rom-fan" viewBox="0 0 160 50" preserveAspectRatio="none">
-          <path id="rom-bg-${p.body}" d="" fill="none" stroke="#eef0f6" stroke-width="6" stroke-linecap="round"/>
-          <path id="rom-arc-${p.body}" d="" fill="none" stroke="${p.feature==='rom'?'#9b6dbf':'#e74c3c'}" stroke-width="5" stroke-linecap="round"/>
-          <line id="rom-needle-${p.body}" x1="80" y1="42" x2="80" y2="10" stroke="#2c3e6b" stroke-width="2"/>
-          <circle cx="80" cy="42" r="3" fill="#2c3e6b"/>
-        </svg>
-      `;
-    } else {
-      plate.innerHTML = `
-        <div class="dp-head"><span>${featureLabel}</span><span class="joint">${p.label}</span></div>
-        <div class="dp-sub">${subLine}</div>
-        <canvas data-feature="${p.feature}" data-body="${p.body}"></canvas>
-      `;
-    }
+    plate.setAttribute('data-plate', p.id);
+    plate.style.borderColor = p.color;
+    plate.innerHTML = `
+      <div class="dp-head"><span style="color:${p.color}">${p.title}</span><span class="joint">${PICKED_LABEL}</span></div>
+      <div class="dp-sub">${p.sub}</div>
+      <canvas data-feature="${p.feature}"></canvas>
+    `;
     platesHolder.appendChild(plate);
-    plates[p.body] = plate;
-
-    // Sparkline buffer
-    sparkBuffers[p.body] = { vel: [], acc: [], pos: [] };
+    plates[p.id] = plate;
   }
+
+  sparkBuffers[PICKED_BODY] = { vel: [], acc: [], pos: [] };
 }
 
 function setFocusOpacity(o) {
   document.querySelectorAll('.svg-focus-ring').forEach(r => r.style.opacity = o);
-  document.querySelectorAll('.svg-leader').forEach(r => r.style.opacity = o * 0.7);
-  for (const p of PICKED) {
-    if (o > 0.05) plates[p.body].classList.add('visible');
-    else          plates[p.body].classList.remove('visible');
+  document.querySelectorAll('.svg-leader').forEach(r => r.style.opacity = o);
+  for (const p of PICKED_PLATES) {
+    if (o > 0.05) plates[p.id].classList.add('visible');
+    else          plates[p.id].classList.remove('visible');
   }
 }
 
