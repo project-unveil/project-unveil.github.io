@@ -1598,6 +1598,7 @@ function populateOperatorCard() {
 function restartWalkthrough() {
   masterClock = 0;
   stageIdx = -1;
+  walkthroughEnded = false;
   document.getElementById('replay-btn').classList.remove('visible');
   hide('embedding-panel'); hide('prediction-card');
   for (const el of document.querySelectorAll('.attr-cells')) {
