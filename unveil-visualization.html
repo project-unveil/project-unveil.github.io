@@ -165,41 +165,6 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
   text-transform: none;
 }
 
-/* Operator card */
-#operator-card {
-  position: absolute;
-  left: 16px; top: 16px;
-  background: #ffffff;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 11px 13px 9px;
-  width: 168px;
-  box-shadow: 0 8px 22px rgba(33,52,100,0.10);
-  opacity: 0;
-  transition: opacity 0.55s ease, transform 0.55s ease;
-  transform: translateX(-10px);
-  pointer-events: none;
-  z-index: 3;
-}
-#operator-card.visible { opacity: 1; transform: translateX(0); }
-#operator-card .head {
-  font-family: 'Noto Serif', serif;
-  font-size: 10.5px; font-weight: 700;
-  color: var(--primary);
-  text-transform: uppercase; letter-spacing: 0.12em;
-  margin-bottom: 6px;
-  display: flex; align-items: center;
-}
-#operator-card .head .dot { width:6px; height:6px; border-radius:50%; background: var(--accent); margin-right:7px; }
-#operator-card .row {
-  display: flex; justify-content: space-between; align-items: baseline;
-  padding: 3px 0;
-  font-size: 12px;
-  border-bottom: 1px dashed rgba(0,0,0,0.06);
-}
-#operator-card .row:last-child { border-bottom: 0; }
-#operator-card .row .k { color: var(--muted); font-size: 10.5px; }
-#operator-card .row .v { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; font-size: 12px; }
 
 /* Data plates — one box per joint, contains both vel + accel graphs */
 .data-plate {
