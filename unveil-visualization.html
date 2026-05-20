@@ -1684,12 +1684,18 @@ function setBeat(mode, limbA, limbB) {
                                                        mode === 'inter' ? 'Inter Limb' : '—';
 }
 
-// Bottom indicator: just below graph G1 (in the rect's lower area)
+// Bottom indicator: just below the graph G1's actual pelvis, so it tracks
+// the robot's horizontal motion (not pinned to slot center).
 function positionBeatIndicator() {
-  const p = worldToCanvasPx(SLOT_X.graph, -0.05, 0);
+  const floorPx = worldToCanvasPx(SLOT_X.graph, -0.05, 0);
+  let cx = floorPx.x;
+  if (g1Graph) {
+    const pelvisPx = jointScreenGraph('pelvis');
+    if (pelvisPx) cx = pelvisPx.x;
+  }
   const bi = document.getElementById('beat-indicator');
-  bi.style.left = p.x + 'px';
-  bi.style.top  = (p.y + 28) + 'px';
+  bi.style.left = cx.toFixed(1) + 'px';
+  bi.style.top  = (floorPx.y + 28).toFixed(1) + 'px';
   bi.style.bottom = 'auto';
 }
 
