@@ -493,21 +493,12 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
       <!-- 3D scene canvas -->
       <!-- (renderer appends one here) -->
 
-      <!-- Slot labels -->
+      <!-- Slot labels (below the figures) -->
       <div class="slot-label" id="lbl-human">
-        Human Operator<span class="ref">SMPL ground truth</span><span class="underline"></span>
+        <span class="underline"></span>Human Operator<span class="ref">SMPL ground truth</span>
       </div>
       <div class="slot-label" id="lbl-robot">
-        Retargeted G1<span class="ref">humanoid trajectory</span><span class="underline"></span>
-      </div>
-
-      <!-- Operator card -->
-      <div id="operator-card">
-        <div class="head"><span class="dot"></span> Operator</div>
-        <div class="row"><span class="k">Gender</span><span class="v" id="op-gender">—</span></div>
-        <div class="row"><span class="k">Age</span><span class="v" id="op-age">—</span></div>
-        <div class="row"><span class="k">Height</span><span class="v" id="op-height">—</span></div>
-        <div class="row"><span class="k">Weight</span><span class="v" id="op-weight">—</span></div>
+        <span class="underline"></span>Retargeted to Humanoid<span class="ref">G1 trajectory</span>
       </div>
 
       <!-- SVG overlay (all 2D shapes drawn over the 3D scene) -->
