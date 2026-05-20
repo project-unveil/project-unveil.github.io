@@ -1227,10 +1227,19 @@ function updateEncRect() {
 function positionSlotLabels() {
   const ph = worldToCanvasPx(SLOT_X.human, -0.05, 0);
   const pr = worldToCanvasPx(SLOT_X.robot, -0.05, 0);
-  const lh = document.getElementById('lbl-human');
-  lh.style.left = ph.x + 'px'; lh.style.top = (ph.y + 10) + 'px';
-  const lr = document.getElementById('lbl-robot');
-  lr.style.left = pr.x + 'px'; lr.style.top = (pr.y + 10) + 'px';
+  const ps = worldToCanvasPx(SLOT_X.spatial, -0.05, 0);
+  document.getElementById('lbl-human').style.cssText   += `;left:${ph.x}px;top:${ph.y+10}px;`;
+  document.getElementById('lbl-robot').style.cssText   += `;left:${pr.x}px;top:${pr.y+10}px;`;
+  document.getElementById('lbl-spatial').style.cssText += `;left:${ps.x}px;top:${ps.y+10}px;`;
+}
+
+// ─── Aggregate icon positioning — sits above the spatial slot ──────────────
+function positionAggregateIcon() {
+  // Between the ghost fan and the spatial G1 (slight left of spatial), above the figures
+  const pa = worldToCanvasPx(SLOT_X.spatial - 0.6, 2.0, 0);
+  const el = document.getElementById('aggregate-icon');
+  el.style.left = pa.x + 'px';
+  el.style.top  = pa.y + 'px';
 }
 
 // ─── Embedding strip rendering ─────────────────────────────────────────────
