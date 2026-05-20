@@ -1275,6 +1275,25 @@ function drawEmbedding(seed) {
   }
 }
 
+// ─── Short joint labels for live connection text ───────────────────────────
+const JOINT_LABELS_OVERRIDE = {
+  'pelvis': 'Pelvis',
+  'torso_link': 'Torso',
+  'waist_yaw_link': 'Waist', 'waist_roll_link': 'Waist',
+};
+function jointShortLabel(bodyName) {
+  if (JOINT_LABELS_OVERRIDE[bodyName]) return JOINT_LABELS_OVERRIDE[bodyName];
+  let s = bodyName.replace(/_link$/, '');
+  s = s.replace(/^left_/, 'L ').replace(/^right_/, 'R ');
+  s = s.replace(/_pitch|_roll|_yaw/g, '');
+  s = s.replace(/_/g, ' ');
+  return s;
+}
+function connsText() {
+  if (!activeConns.length) return '—';
+  return activeConns.map(c => `${jointShortLabel(c.a)} ↔ ${jointShortLabel(c.b)}`).join('  ·  ');
+}
+
 // ─── Caption / badge ───────────────────────────────────────────────────────
 function setCaption(text, ref) {
   document.getElementById('cap-text').textContent = text;
