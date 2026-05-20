@@ -55,7 +55,7 @@ html, body {
 }
 #page-title .sub {
   font-family: 'Source Sans 3', sans-serif;
-  font-weight: 400; font-size: 13px;
+  font-weight: 400; font-size: 15px;
   color: var(--muted); margin-left: 10px;
 }
 
@@ -87,17 +87,17 @@ html, body {
 }
 #panel-header .title {
   font-family: 'Noto Serif', serif;
-  font-weight: 700; font-size: 14px;
+  font-weight: 700; font-size: 16px;
   color: var(--primary);
 }
 #panel-header .ref {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; color: var(--muted); margin-left: 8px;
+  font-size: 13px; color: var(--muted); margin-left: 8px;
 }
 #panel-header .spacer { flex: 1; }
 #panel-header .stage-badge {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px; color: var(--muted);
+  font-size: 12.5px; color: var(--muted);
   background: var(--soft);
   padding: 3px 9px; border-radius: 99px;
   margin-right: 10px;
@@ -105,7 +105,7 @@ html, body {
 }
 #panel-header select, #panel-header button {
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 12px; font-weight: 500;
+  font-size: 14px; font-weight: 500;
   background: #ffffff; color: var(--ink);
   border: 1px solid var(--border);
   padding: 5px 10px; border-radius: 6px;
@@ -141,7 +141,7 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
   position: absolute;
   transform: translate(-50%, 0);
   font-family: 'Noto Serif', serif;
-  font-size: 13px; font-weight: 700;
+  font-size: 15px; font-weight: 700;
   color: var(--primary);
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -159,7 +159,7 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
 }
 .slot-label .ref {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; font-weight: 500;
+  font-size: 12px; font-weight: 500;
   color: var(--muted);
   display: block;
   letter-spacing: 0.06em;
@@ -186,7 +186,7 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
 .data-plate.visible { opacity: 1; }
 .data-plate .dp-head {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9.5px;
+  font-size: 11.5px;
   font-weight: 600;
   color: var(--ink);
   text-align: center;
@@ -201,7 +201,7 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
 }
 .data-plate .dp-row .dp-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9.5px;
+  font-size: 11.5px;
   font-weight: 600;
   width: 22px;
   flex-shrink: 0;
@@ -220,7 +220,7 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
   border-radius: 6px;
   padding: 4px 12px;
   font-family: 'Noto Serif', serif;
-  font-size: 11px; font-weight: 700;
+  font-size: 13px; font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   opacity: 0;
@@ -239,29 +239,41 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
 #spatial-label { border: 1px solid var(--spatial-color); color: var(--spatial-color); box-shadow: 0 4px 12px rgba(212,146,52,0.18);  }
 #enc-label.visible, #graph-label.visible, #spatial-label.visible { opacity: 1; }
 
-/* Output-of-module text — sits in the gap right of the 3.1 / 3.2 rects */
+/* Output-of-module text — sits ABOVE a dashed arrow in the gap between rects.
+   Same visual idiom as the human→robot retarget label/arrow. */
 #enc-output, #graph-output {
   position: absolute;
-  transform: translate(0, -50%);          /* anchor left-middle */
+  transform: translate(-50%, -100%);     /* anchor bottom-center */
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 10.5px;
+  font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  padding: 4px 8px 4px 8px;
+  letter-spacing: 0.02em;
+  padding: 5px 12px;
   background: #ffffff;
   border-radius: 6px;
   white-space: nowrap;
+  text-align: center;
   opacity: 0;
   transition: opacity 0.45s ease;
   pointer-events: none;
   z-index: 4;
 }
-#enc-output   { color: var(--enc-color);   border-left: 3px solid var(--enc-color);   box-shadow: 0 2px 6px rgba(155,109,191,0.16); }
-#graph-output { color: var(--graph-color); border-left: 3px solid var(--graph-color); box-shadow: 0 2px 6px rgba(44,138,168,0.16);  }
+#enc-output   { color: var(--enc-color);   border: 1px solid var(--enc-color);   box-shadow: 0 4px 12px rgba(155,109,191,0.18); }
+#graph-output { color: var(--graph-color); border: 1px solid var(--graph-color); box-shadow: 0 4px 12px rgba(44,138,168,0.18);  }
 #enc-output.visible, #graph-output.visible { opacity: 1; }
+/* Dashed arrows under the output labels */
+#enc-output-arrow, #graph-output-arrow {
+  stroke-width: 2;
+  stroke-dasharray: 9 5;
+  fill: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+#enc-output-arrow   { stroke: var(--enc-color); }
+#graph-output-arrow { stroke: var(--graph-color); }
 #enc-label .ref, #graph-label .ref, #spatial-label .ref {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
   margin-left: 6px;
   font-weight: 500;
@@ -278,7 +290,7 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
   border-radius: 6px;
   padding: 4px 10px;
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 11px; font-weight: 600;
+  font-size: 13px; font-weight: 600;
   color: var(--accent);
   letter-spacing: 0.02em;
   text-align: center;
@@ -300,7 +312,7 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
   border-radius: 99px;
   padding: 6px 14px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--ink);
   box-shadow: 0 8px 22px rgba(33,52,100,0.14);
@@ -314,7 +326,7 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
 #beat-indicator.visible { opacity: 1; }
 #beat-indicator .bi-limbs {
   font-weight: 600;
-  font-size: 11.5px;
+  font-size: 13.5px;
   color: var(--ink);
   letter-spacing: 0.02em;
 }
@@ -325,7 +337,7 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
   transform: translateX(-50%);
   font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
-  font-size: 12px;
+  font-size: 14px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   background: #ffffff;
@@ -364,7 +376,7 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
 #embedding-strip.visible { opacity: 1; transform: translateX(0); }
 #embedding-strip .em-head {
   font-family: 'Noto Serif', serif;
-  font-size: 10.5px; font-weight: 700;
+  font-size: 12.5px; font-weight: 700;
   color: var(--primary);
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -373,7 +385,7 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
 }
 #embedding-strip .em-sub {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9.5px; color: var(--muted);
+  font-size: 11.5px; color: var(--muted);
   text-align: center;
 }
 #embedding-canvas {
@@ -386,7 +398,7 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
   border: 1px solid var(--border);
 }
 #embedding-strip .em-foot {
-  font-size: 9px; color: var(--muted);
+  font-size: 11px; color: var(--muted);
   text-align: center;
   font-family: 'JetBrains Mono', monospace;
 }
@@ -416,7 +428,7 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
 }
 #aggregate-icon .ai-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 5.5px;
+  font-size: 7px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-top: 1px;
@@ -431,13 +443,13 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
   padding: 0 20px;
   border-top: 1px solid var(--border);
   background: linear-gradient(0deg, #fafbfd 0%, #ffffff 100%);
-  font-size: 13px;
+  font-size: 15px;
   color: var(--ink);
   text-align: center;
 }
 #caption-bar .ref {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; color: var(--accent);
+  font-size: 13px; color: var(--accent);
   margin-right: 10px; font-weight: 600;
 }
 #caption-bar .text { font-weight: 500; }
@@ -459,13 +471,13 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
   animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-#load-status { font-size: 12px; color: var(--muted); max-width: 360px; text-align: center; }
+#load-status { font-size: 14px; color: var(--muted); max-width: 360px; text-align: center; }
 
 #error-box {
   display: none; position: absolute; inset: 0;
   background: #fff8f8;
   align-items: center; justify-content: center;
-  color: var(--accent); font-size: 13px;
+  color: var(--accent); font-size: 15px;
   padding: 30px; text-align: center;
   z-index: 60;
   font-family: 'JetBrains Mono', monospace;
