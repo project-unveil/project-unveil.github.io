@@ -1584,12 +1584,12 @@ function updateGraphRect() {
   }
   let w = (mxX - mnX) + padX*2;
   if (mxX + padX < x + w) w = (mxX + padX) - x;
-  // STRICT 1cm gap from 3.3 — graph rect can never intersect spatial rect.
+  // Gap between 3.2 and 3.3 = graph-output label width.
   const spatR = document.getElementById('spatial-rect');
   if (spatR && spatR.style.opacity != 0) {
     const sx = parseFloat(spatR.getAttribute('x'));
     if (isFinite(sx)) {
-      const maxRight = sx - GAP_31_32_PX;
+      const maxRight = sx - getGraphOutputW();
       if (x + w > maxRight) w = Math.max(0, maxRight - x);
     }
   }
