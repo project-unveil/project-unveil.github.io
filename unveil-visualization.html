@@ -1312,8 +1312,10 @@ function renderPlateSparklines() {
   for (const J of PICKED_JOINTS) {
     const el = plates[J.body];
     if (!el) continue;
+    const posCanvas = el.querySelector('canvas[data-feature="position"]');
     const velCanvas = el.querySelector('canvas[data-feature="velocity"]');
     const accCanvas = el.querySelector('canvas[data-feature="accel"]');
+    if (posCanvas) drawSpark(posCanvas, sparkBuffers[J.body].pos, PLATE_DEFS.pos.color);
     if (velCanvas) drawSpark(velCanvas, sparkBuffers[J.body].vel, PLATE_DEFS.vel.color);
     if (accCanvas) drawSpark(accCanvas, sparkBuffers[J.body].acc, PLATE_DEFS.acc.color);
   }
