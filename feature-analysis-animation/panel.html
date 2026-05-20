@@ -227,14 +227,11 @@ async function boot() {
   // has the value at the top.
   const highV = clip.high_value ?? attrCfg.high_value;
   const lowV  = clip.low_value  ?? attrCfg.low_value;
-  // Just the numeric value + unit; the heavy/light or older/younger side is
-  // already conveyed by the chip's red/blue border colour.
-  const highTxt = `${highV} ${attrCfg.high_unit}`;
-  const lowTxt  = `${lowV} ${attrCfg.low_unit}`;
-  document.getElementById('role-g1-heavy').textContent = highTxt;
-  document.getElementById('role-g1-light').textContent = lowTxt;
-  document.getElementById('role-smpl-high').textContent = highTxt;
-  document.getElementById('role-smpl-low').textContent  = lowTxt;
+  // Just the numeric value + unit on the SMPL row; the G1 row is unlabelled
+  // (the heavy/light side is already conveyed by the red/blue chip border
+  // above each human, and the robots themselves are identical regardless).
+  document.getElementById('role-smpl-high').textContent = `${highV} ${attrCfg.high_unit}`;
+  document.getElementById('role-smpl-low' ).textContent = `${lowV} ${attrCfg.low_unit}`;
   clip.features.forEach((f, i) => {
     const lbl = document.querySelector(`.plot-row[data-idx="${i}"] .feat-label`);
     lbl.textContent = `${f.label}  (${f.unit})`;
