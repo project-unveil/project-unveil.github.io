@@ -1493,11 +1493,13 @@ function updateSpatialRect() {
   const tl = worldToCanvasPx(leftMostX - 0.42, topY, 0);
   const br = worldToCanvasPx(SLOT_X.spatial + 0.55, -0.05, 0);
   let x = tl.x, y = tl.y, w = br.x - tl.x, h = br.y - tl.y;
-  // Align TOP edge with kinematic rect (if visible) so all three rects line up
+  // Mirror enc-rect's y AND height so all three rects line up flush
   const encR = document.getElementById('enc-rect');
   if (encR && encR.style.opacity != 0) {
-    const encTop = parseFloat(encR.getAttribute('y'));
-    if (isFinite(encTop)) { h = br.y - encTop; y = encTop; }
+    const encTop    = parseFloat(encR.getAttribute('y'));
+    const encHeight = parseFloat(encR.getAttribute('height'));
+    if (isFinite(encTop))    y = encTop;
+    if (isFinite(encHeight)) h = encHeight;
   }
   r.setAttribute('x', x.toFixed(1));
   r.setAttribute('y', y.toFixed(1));
