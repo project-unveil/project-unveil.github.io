@@ -262,19 +262,22 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
   white-space: nowrap;
 }
 #beat-indicator.visible { opacity: 1; }
-#beat-indicator .mode {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 99px;
-  margin-right: 8px;
-  font-size: 9.5px;
+#beat-indicator .bi-mode {
+  font-weight: 700;
+  font-size: 11.5px;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  background: var(--soft);
-  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-right: 8px;
+  color: var(--primary);
 }
-#beat-indicator.intra .mode { background: var(--primary); color: #fff; }
-#beat-indicator.inter .mode { background: var(--accent); color: #fff; }
+#beat-indicator.intra .bi-mode { color: var(--primary); }   /* Intra Limb → blue */
+#beat-indicator.inter .bi-mode { color: var(--accent); }    /* Inter Limb → red */
+#beat-indicator .bi-limbs {
+  font-weight: 600;
+  font-size: 11.5px;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
 
 /* Attribute embedding — vertical column on far right */
 #embedding-strip {
