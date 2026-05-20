@@ -1814,16 +1814,12 @@ function defineStages() {
         if (t > 0.3) setRetargetVisible(true);
       },
     },
-    // 3: Kinematic encoding — staged appearance, 1s per step:
-    //    [0.0s] left-elbow circle appears
-    //    [1.0s] left-elbow box appears
-    //    [2.0s] all other joint circles appear
-    //    [3.0s] vertical "etc." dots appear
-    //    [4.0s] left-knee box appears
-    //    [5.0s] enc-rect appears
-    { name:'kinematic', duration: 5.6,
+    // 3: Kinematic encoding — staged appearance kicked off; the actual
+    //    animation runs in a continuous loop via tickKinematicAnim so it
+    //    keeps replaying even after 3.2/3.3/3.4 have appeared.
+    { name:'kinematic', duration: KINEMATIC_CYCLE_DUR,
       enter() {
-        // Reset every element to hidden so the update can sequence them in.
+        // Reset every element to hidden so the loop can fade them in cleanly.
         for (const bn of ENCODING_FOCUS_JOINTS) {
           const r = document.querySelector(`.svg-focus-ring[data-body="${bn}"]`);
           if (r) r.style.opacity = 0;
@@ -1834,38 +1830,10 @@ function defineStages() {
           plates[J.body].classList.remove('visible');
         }
         document.getElementById('enc-vertical-dots').style.opacity = 0;
+        setEncRectVisible(false);
+        kinematicAnimStart = masterClock;
       },
-      update(t) {
-        const eb = 'left_elbow_link';
-        const kn = 'left_knee_link';
-        const FADE = 0.45;   // each step fades in over 0.45s, then holds until next step
-        // Step 1 (t=0): left-elbow ring
-        const u1 = clamp((t - 0.0) / FADE, 0, 1);
-        const eRing = document.querySelector(`.svg-focus-ring[data-body="${eb}"]`);
-        if (eRing) eRing.style.opacity = u1;
-        // Step 2 (t=1): left-elbow box + leader
-        const u2 = clamp((t - 1.0) / FADE, 0, 1);
-        const eLeader = document.querySelector(`.svg-leader[data-body="${eb}"]`);
-        if (eLeader) eLeader.style.opacity = u2;
-        if (u2 > 0.05) plates[eb].classList.add('visible'); else plates[eb].classList.remove('visible');
-        // Step 3 (t=2): all OTHER joint rings
-        const u3 = clamp((t - 2.0) / FADE, 0, 1);
-        for (const bn of ENCODING_FOCUS_JOINTS) {
-          if (bn === eb) continue;
-          const r = document.querySelector(`.svg-focus-ring[data-body="${bn}"]`);
-          if (r) r.style.opacity = u3;
-        }
-        // Step 4 (t=3): vertical "etc." dots
-        const u4 = clamp((t - 3.0) / FADE, 0, 1);
-        document.getElementById('enc-vertical-dots').style.opacity = u4;
-        // Step 5 (t=4): left-knee box + leader
-        const u5 = clamp((t - 4.0) / FADE, 0, 1);
-        const kLeader = document.querySelector(`.svg-leader[data-body="${kn}"]`);
-        if (kLeader) kLeader.style.opacity = u5;
-        if (u5 > 0.05) plates[kn].classList.add('visible'); else plates[kn].classList.remove('visible');
-        // Step 6 (t=5): kinematic-encoding rect
-        if (t > 5.0) setEncRectVisible(true);
-      },
+      update(){},
     },
     // 4: Graph convolution — duration = one full intra+inter cycle, so 3.3
     //    only starts after every limb beat has been shown at least once.
