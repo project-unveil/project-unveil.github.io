@@ -1253,7 +1253,7 @@ function setConns(pairs, color) {
   clearConns();
   const g = document.getElementById('g-conns');
   for (const [a, b] of pairs) {
-    const line = svg('line', { class:'svg-conn', stroke: color, 'stroke-dasharray': '8 6' });
+    const line = svg('line', { class:'svg-conn', stroke: color });
     g.appendChild(line);
     activeConns.push({ a, b, color, line, startedAt: masterClock });
   }
