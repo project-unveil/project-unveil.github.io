@@ -1474,6 +1474,16 @@ function updateGraphRect() {
   }
   let w = (mxX - mnX) + padX*2;
   if (mxX + padX < x + w) w = (mxX + padX) - x;   // re-derive width if x got clamped
+  // ENFORCE 1cm gap on the RIGHT side too — graph rect can't bleed into 3.3
+  // (uses spatial-rect's PREVIOUS frame x; 1-frame lag is invisible at 60 fps)
+  const spatR = document.getElementById('spatial-rect');
+  if (spatR && spatR.style.opacity != 0) {
+    const sx = parseFloat(spatR.getAttribute('x'));
+    if (isFinite(sx)) {
+      const maxRight = sx - GAP_31_32_PX;
+      if (x + w > maxRight) w = Math.max(0, maxRight - x);
+    }
+  }
   r.setAttribute('x', x.toFixed(1));
   r.setAttribute('y', y.toFixed(1));
   r.setAttribute('width', Math.max(0, w).toFixed(1));
