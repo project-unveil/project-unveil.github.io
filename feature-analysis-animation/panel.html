@@ -262,11 +262,15 @@ async function boot() {
 
   setStatus('Building robots…');
   setupSharedRenderer();
-  VIEWERS.g1 = await buildG1Scene(heavyMotion, lightMotion, clip.highlight_joint);
+  // Four separate scenes, one per body — each gets its own quadrant viewport
+  // in the loop. Sharing one WebGL context keeps total contexts per panel = 1.
+  VIEWERS.g1_heavy = await buildG1SoloScene(heavyMotion, COLOR_HEAVY_HEX, clip.highlight_joint);
+  VIEWERS.g1_light = await buildG1SoloScene(lightMotion, COLOR_LIGHT_HEX, clip.highlight_joint);
 
   if (smplData) {
     document.getElementById('root').classList.add('has-smpl');
-    VIEWERS.smpl = buildSMPLScene(smplData.high, smplData.low, smplData.faces);
+    VIEWERS.smpl_high = buildSMPLSoloScene(smplData.high, smplData.faces, COLOR_HEAVY_HEX);
+    VIEWERS.smpl_low  = buildSMPLSoloScene(smplData.low,  smplData.faces, COLOR_LIGHT_HEX);
   }
 
   setupPlots();
