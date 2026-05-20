@@ -1437,15 +1437,15 @@ function defineStages() {
       },
       update(){}
     },
-    // 2: G1 retargeting (G1 fades in just right of human; SMPL keeps animating)
+    // 2: G1 retargeting (G1 fades in just right of human; arrow shows retargeting)
     { name:'robot', duration: 3.5,
       enter() {
         setCaption('Motion retargeting projects the operator onto the G1 — body shape is discarded.', '§1 retargeting');
-        show('lbl-robot');
       },
       update(t) {
         const u = clamp(t / 1.6, 0, 1);
         g1Main.setOpacity(u);
+        if (t > 0.8) setRetargetVisible(true);
       },
     },
     // 3: Kinematic encoding — focus rings + leader lines + data plates → then enc box around G1
