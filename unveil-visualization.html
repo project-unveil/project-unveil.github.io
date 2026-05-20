@@ -757,9 +757,11 @@ function buildSMPL(vd, faces) {
   const posAttr = new THREE.BufferAttribute(new Float32Array(numVerts*3), 3);
   geo.setAttribute('position', posAttr);
   geo.setIndex(new THREE.BufferAttribute(faces, 1));
-  const mat = new THREE.MeshStandardMaterial({
-    color: new THREE.Color(0.96, 0.78, 0.62),
-    roughness: 0.62, metalness: 0.0,
+  // Phong gives a more natural skin look than Standard on this scene
+  const mat = new THREE.MeshPhongMaterial({
+    color: new THREE.Color(0.94, 0.71, 0.55),
+    specular: 0x442211,
+    shininess: 18,
     transparent: true, opacity: 1.0, side: THREE.DoubleSide,
   });
   const mesh = new THREE.Mesh(geo, mat);
