@@ -494,17 +494,23 @@
   <div class="container">
     <h2 class="section-heading fade-in">How does it work?</h2>
 
-  </div>
+    <!-- Framework / method figure -->
+    <figure class="pdf-figure-wrap">
+      <canvas data-pdf="./assets/img/framework.pdf"
+              class="pdf-canvas" aria-label="UNVEIL framework diagram"
+              id="canvas-framework"></canvas>
+      <p class="pdf-fallback" id="fallback-framework">
+        <a href="./assets/img/framework.pdf" target="_blank">View framework figure (PDF)</a>
+      </p>
+    </figure>
 
-  <!-- Interactive walkthrough — full-bleed so the iframe gets the same 96vw
-       width the visualization uses standalone, regardless of the parent
-       .container's max-width. -->
-  <div class="walkthrough-wrap fade-in"
-       style="margin-top:2rem;width:100vw;position:relative;left:50%;transform:translateX(-50%);display:flex;justify-content:center;">
-    <iframe src="./unveil-visualization.html"
-            loading="lazy"
-            title="UNVEIL framework — interactive walkthrough"
-            style="width:96vw;max-width:1700px;height:760px;border:1px solid #e0e5ee;border-radius:14px;background:#ffffff;box-shadow:0 18px 44px rgba(33,52,100,0.08);display:block;"></iframe>
+    <p class="teaser-caption fade-in" style="margin-top:1.25rem;">
+      <strong><span class="unveil-kw">UNVEIL</span> overview.</strong>
+      A retargeted humanoid trajectory is encoded into per-joint motion features, processed by two
+      hierarchical spatial graph convolutions (intra-limb, limb-torso), aggregated across time with
+      <em>N</em> spatiotemporal layers into a trajectory embedding that is decoded by task-specific
+      heads into operator attributes.
+    </p>
   </div>
 </section>
 
