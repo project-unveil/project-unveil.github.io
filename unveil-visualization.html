@@ -1481,13 +1481,6 @@ async function switchDemo(demo) {
   }
 }
 function capitalize(s){return s ? s[0].toUpperCase()+s.slice(1) : s;}
-function populateOperatorCard() {
-  const gt = currentDemo.groundTruth;
-  document.getElementById('op-gender').textContent = capitalize(gt.gender);
-  document.getElementById('op-age').textContent    = `${gt.age} yr`;
-  document.getElementById('op-height').textContent = `${gt.height} cm`;
-  document.getElementById('op-weight').textContent = `${gt.weight} kg`;
-}
 
 // ─── Main loop ──────────────────────────────────────────────────────────────
 function loop(ts) {
