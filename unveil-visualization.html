@@ -506,7 +506,8 @@ const DEFAULT_DEMO = 'hiphop';
 const BIN_VERSION  = '2026-05-19a';
 const withV = u => u + (u.includes('?') ? '&' : '?') + 'v=' + BIN_VERSION;
 
-const SLOT_X = { human: -5.6, robot: -3.9 };
+const SLOT_X = { human: -6.0, robot: -4.3, spatial: 3.5 };
+const GHOST_SPREAD = 0.42;   // world units between ghost figures (in x)
 
 const LIMBS = {
   torso: { color: '#8e8e93', bodies: ['pelvis','waist_yaw_link','waist_roll_link','torso_link'] },
