@@ -705,10 +705,18 @@ const INTER_BEATS = [
 // Picked joints — each gets a small focus ring + one combined box (vel + accel inside)
 // dx/dy = pixel offset from joint to box center; each joint's box can go in any direction
 // Picked joints — get a combined box (vel + accel) to the right of the body.
-// Tiny rings are drawn on ALL G1 joints; only these two have plates + arrows.
 const PICKED_JOINTS = [
   { body:'right_elbow_link', joint:'right_elbow_joint', label:'Right elbow', dx: 170, dy: -50 },
   { body:'right_knee_link',  joint:'right_knee_joint',  label:'Right knee',  dx: 170, dy:  50 },
+];
+// Tiny dots shown ONLY on these representative joints — one per limb segment.
+// Hand: shoulder, elbow, wrist. Leg: hip (top of thigh), knee, ankle. Plus one waist.
+const ENCODING_FOCUS_JOINTS = [
+  'left_shoulder_pitch_link',  'left_elbow_link',  'left_wrist_pitch_link',
+  'right_shoulder_pitch_link', 'right_elbow_link', 'right_wrist_pitch_link',
+  'torso_link',
+  'left_hip_pitch_link',       'left_knee_link',   'left_ankle_pitch_link',
+  'right_hip_pitch_link',      'right_knee_link',  'right_ankle_pitch_link',
 ];
 // Per-graph colors (used inside each box)
 const PLATE_DEFS = {
