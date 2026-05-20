@@ -1527,7 +1527,7 @@ function defineStages() {
             setConns(beat.conns, beat.color);
             for (const c of activeConns) { c._beatIdx = idx; c._mode = 'inter'; }
           }
-          setBeat('inter', `${LIMB_FULL[beat.limbs[0]]}-${LIMB_FULL[beat.limbs[1]]}`);
+          setBeat('inter', beat.limbs[0], beat.limbs[1]);
           if (within < 0.05) setCaption(`${beat.label} — joints across limbs interact.`, '§3.2 inter-limb');
         }
       },
