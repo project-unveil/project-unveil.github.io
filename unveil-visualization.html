@@ -1437,6 +1437,7 @@ function loop(ts) {
   if (g1Motion) {
     const fG1 = (masterClock * g1Motion.fps) % g1Motion.numFrames;
     g1Main.applyFrame(g1Motion, fG1);
+    if (g1Aggregate) g1Aggregate.applyFrame(g1Motion, fG1);
     for (const g of g1Ghosts) g.robot.applyFrame(g1Motion, fG1 - g.lagFrames);
 
     // Maintain sparkline buffers from stage 3 onward (so plates show data when revealed)
