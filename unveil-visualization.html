@@ -2553,17 +2553,28 @@ function loop(ts) {
   positionSpatialEmbedArrow();// AFTER spatial rect + embedding strip
   positionEmbedAttrArrow();   // AFTER embedding strip + attributes card
   positionAttrHumanArrow();   // AFTER attributes card + human-rect
-  if (kinematicAnimStart >= 0) tickKinematicAnim(masterClock - kinematicAnimStart);
+  if (kinematicAnimStart >= 0) {
+    const kt = masterClock - kinematicAnimStart;
+    tickKinematicAnim(kt);
+    // Lock 3.1's rect to its accumulated max-bounds after one cycle —
+    // rect stops "moving" but the robot inside keeps animating.
+    if (kt >= KINEMATIC_CYCLE_DUR && !encRectLocked) encRectLocked = true;
+  }
   if (graphAnimStart     >= 0) {
     const gt = masterClock - graphAnimStart;
     tickGraphBeats(gt);
-    // After one full graph cycle, reveal the "Spatially Aggregated Features"
-    // output label + arrow.
     if (gt >= GRAPH_CYCLE_DUR && !document.getElementById('graph-output').classList.contains('visible')) {
       show('graph-output');
     }
+    // Lock 3.2's rect after one full beat cycle.
+    if (gt >= GRAPH_CYCLE_DUR && !graphRectLocked) graphRectLocked = true;
   }
-  if (temporalAnimStart  >= 0) tickTemporalAnim(masterClock - temporalAnimStart);
+  if (temporalAnimStart  >= 0) {
+    const tt = masterClock - temporalAnimStart;
+    tickTemporalAnim(tt);
+    // Lock 3.3's rect after one full temporal cycle.
+    if (tt >= TEMPORAL_CYCLE_DUR && !spatialRectLocked) spatialRectLocked = true;
+  }
 
   if (stageIdx >= 0 && stageIdx < stages.length) {
     const t = masterClock - stageStart;
