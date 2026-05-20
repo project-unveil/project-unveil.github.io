@@ -1537,13 +1537,64 @@ function updateGraphRect() {
   label.style.top  = (y - 6).toFixed(1) + 'px';
 }
 
-// ─── Aggregate icon positioning — sits above the spatial slot ──────────────
+// ─── Aggregate icon positioning ─────────────────────────────────────────────
+// X: midpoint between leftmost visible ghost and the aggregate G1 (so the icon
+//    rides with the robots wherever they move).
+// Y: just below the spatial rect's top edge.
+// Both clamped to keep the icon entirely inside the spatial rect.
+const ICON_HALF = 32;   // CSS width/height = 64
 function positionAggregateIcon() {
-  // Between the ghost fan and the spatial G1 (slight left of spatial), above the figures
-  const pa = worldToCanvasPx(SLOT_X.spatial - 0.6, 2.0, 0);
+  // 1) Compute center X from visible robots' pelvis screen positions
+  let leftPx = null, rightPx = null;
+  if (g1Aggregate && g1Aggregate.opacityRef.value > 0.1) {
+    const p = jointScreenOf(g1Aggregate, 'pelvis');
+    if (p) rightPx = p.x;
+  }
+  for (const g of g1Ghosts) {
+    if (g.robot.opacityRef.value > 0.1) {
+      const p = jointScreenOf(g.robot, 'pelvis');
+      if (p && (leftPx === null || p.x < leftPx)) leftPx = p.x;
+    }
+  }
+  let cx;
+  if (leftPx !== null && rightPx !== null) cx = (leftPx + rightPx) / 2;
+  else if (leftPx !== null)                cx = leftPx;
+  else if (rightPx !== null)               cx = rightPx;
+  else                                     cx = worldToCanvasPx(SLOT_X.spatial - 0.5, 2.0, 0).x;
+
+  // 2) Compute Y from the spatial rect's top edge (or world fallback)
+  const r = document.getElementById('spatial-rect');
+  let cy;
+  if (r && r.style.opacity != 0) {
+    const ry = parseFloat(r.getAttribute('y'));
+    cy = isFinite(ry) ? ry + ICON_HALF + 14 : worldToCanvasPx(SLOT_X.spatial, 2.0, 0).y;
+  } else {
+    cy = worldToCanvasPx(SLOT_X.spatial, 2.0, 0).y;
+  }
+
+  // 3) Clamp icon to stay inside the spatial rect
+  if (r && r.style.opacity != 0) {
+    const rx = parseFloat(r.getAttribute('x'));
+    const ry = parseFloat(r.getAttribute('y'));
+    const rw = parseFloat(r.getAttribute('width'));
+    const rh = parseFloat(r.getAttribute('height'));
+    if (isFinite(rx) && isFinite(rw)) {
+      const minCx = rx + ICON_HALF + 8;
+      const maxCx = rx + rw - ICON_HALF - 8;
+      if (cx < minCx) cx = minCx;
+      if (cx > maxCx) cx = maxCx;
+    }
+    if (isFinite(ry) && isFinite(rh)) {
+      const minCy = ry + ICON_HALF + 8;
+      const maxCy = ry + rh - ICON_HALF - 8;
+      if (cy < minCy) cy = minCy;
+      if (cy > maxCy) cy = maxCy;
+    }
+  }
+
   const el = document.getElementById('aggregate-icon');
-  el.style.left = pa.x + 'px';
-  el.style.top  = pa.y + 'px';
+  el.style.left = cx.toFixed(1) + 'px';
+  el.style.top  = cy.toFixed(1) + 'px';
 }
 
 // ─── Spatiotemporal rectangle — wraps spatial G1 + ghost stack + Σ icon ───
