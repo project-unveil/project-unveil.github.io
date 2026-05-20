@@ -1488,161 +1488,149 @@ function positionBeatIndicator() {
 // ─── Stages ────────────────────────────────────────────────────────────────
 function defineStages() {
   stages = [
-    // 1: Human (SMPL appears on left — brief, ~1s then G1 joins)
-    { name:'human', duration: 2.0,
+    // All stage durations are 1s — adjacent modules appear 1s apart.
+    // Animations that take longer (limb beats, ghost collapse) keep running
+    // in continuous ticks (see tickGraphBeats / tickTemporalAnim).
+
+    // 1: Human (SMPL appears + boundary rect)
+    { name:'human', duration: 1.0,
       enter() {
         setCaption('A human operator performs hip-hop.', '§1');
         show('lbl-human');
+        setHumanRectVisible(true);
         smplGroup.setOpacity(1.0);
       },
       update(){}
     },
-    // 2: G1 retargeting (G1 fades in just right of human; arrow shows retargeting)
-    { name:'robot', duration: 3.5,
+    // 2: G1 retargeting (G1 fades in + retargeting arrow appears)
+    { name:'robot', duration: 1.0,
       enter() {
         setCaption('Motion retargeting projects the operator onto the G1 — body shape is discarded.', '§1 retargeting');
       },
       update(t) {
-        const u = clamp(t / 1.6, 0, 1);
-        g1Main.setOpacity(u);
-        if (t > 0.8) setRetargetVisible(true);
+        g1Main.setOpacity(clamp(t / 0.9, 0, 1));
+        if (t > 0.3) setRetargetVisible(true);
       },
     },
-    // 3: Kinematic encoding — focus rings + leader lines + data plates → then enc box around G1
-    { name:'kinematic', duration: 9.0,
+    // 3: Kinematic encoding — focus rings + plates + enc rect, all in ~1s
+    { name:'kinematic', duration: 1.0,
       enter() {
-        setCaption('A per-joint temporal convolution captures velocity, acceleration, and range of motion.', '§3.1 Kinematic Encoding');
-        // sparkline / ROM buffers
-        for (const p of PICKED) sparkBuffers[p.body] = { vel:[], acc:[], pos:[] };
+        setCaption('A per-joint temporal convolution captures velocity and acceleration.', '§3.1 Kinematic Encoding');
       },
       update(t) {
-        // 0..2s: rings + plates fade in
-        // 2..4s: enc box draws around G1
-        const ringO = clamp(t / 1.4, 0, 1);
-        setFocusOpacity(ringO);
-        if (t > 2.4) setEncRectVisible(true);
+        setFocusOpacity(clamp(t / 0.5, 0, 1));
+        if (t > 0.55) setEncRectVisible(true);
       },
     },
-    // 4: Graph convolution — slow limb-by-limb intra, then inter (on the GRAPH G1)
-    { name:'graph', duration: 28.0,
+    // 4: Graph convolution — just kicks off the continuous beat tick.
+    //    The actual limb beats are driven by tickGraphBeats so they keep
+    //    looping even after stage 5 has started.
+    { name:'graph', duration: 1.0,
       enter() {
-        setCaption('Hierarchy H₁ — each limb’s joints interact.', '§3.2 Spatial Graph Conv');
+        setCaption('Hierarchical spatial graph convolution — joints interact within and across limbs.', '§3.2');
         setGraphRectVisible(true);
         document.getElementById('beat-indicator').classList.add('visible');
         clearConns();
+        graphAnimStart = masterClock;
       },
-      update(t) {
-        // Fade in the dedicated graph G1 over the first ~1.2s
-        if (g1Graph) g1Graph.setOpacity(clamp(t / 1.2, 0, 1));
-
-        const limbOrder = ['torso','la','ra','ll','rl'];
-        const INTRA_BEAT_DUR = 2.8;
-        const INTRA_DUR = limbOrder.length * INTRA_BEAT_DUR;
-        const INTER_BEAT_DUR = 3.0;
-        // Intra section
-        if (t < INTRA_DUR) {
-          const idx = clamp(Math.floor(t / INTRA_BEAT_DUR), 0, limbOrder.length - 1);
-          const within = (t - idx * INTRA_BEAT_DUR) / INTRA_BEAT_DUR;
-          // Hide all ellipses, show only the current one
-          for (const k of limbOrder) setLimbEllipseVisible(k, false);
-          setLimbEllipseVisible(limbOrder[idx], true, LIMBS[limbOrder[idx]].color);
-          // Refresh connection lines at the start of each beat
-          if (within < 0.03 && (!activeConns.length || activeConns[0]._beatIdx !== idx || activeConns[0]._mode !== 'intra')) {
-            setConns(INTRA_CONNS[limbOrder[idx]] || [], LIMBS[limbOrder[idx]].color);
-            for (const c of activeConns) { c._beatIdx = idx; c._mode = 'intra'; }
-          }
-          // Beat indicator: "Intra Limb <name>-<name>" (colored per limb)
-          setBeat('intra', limbOrder[idx], limbOrder[idx]);
-          if (within < 0.05) setCaption(`Within ${LIMB_LABEL[limbOrder[idx]]} — joints interact.`, '§3.2 intra-limb');
-        } else {
-          // Inter section
-          const t2 = t - INTRA_DUR;
-          const idx = clamp(Math.floor(t2 / INTER_BEAT_DUR), 0, INTER_BEATS.length - 1);
-          const within = (t2 - idx * INTER_BEAT_DUR) / INTER_BEAT_DUR;
-          const beat = INTER_BEATS[idx];
-          // Hide all ellipses, show only the active two
-          for (const k of Object.keys(LIMBS)) setLimbEllipseVisible(k, false);
-          for (const l of beat.limbs) setLimbEllipseVisible(l, true, beat.color);
-          if (within < 0.03 && (!activeConns.length || activeConns[0]._beatIdx !== idx || activeConns[0]._mode !== 'inter')) {
-            setConns(beat.conns, beat.color);
-            for (const c of activeConns) { c._beatIdx = idx; c._mode = 'inter'; }
-          }
-          setBeat('inter', beat.limbs[0], beat.limbs[1]);
-          if (within < 0.05) setCaption(`${beat.label} — joints across limbs interact.`, '§3.2 inter-limb');
-        }
-      },
-      exit() {
-        // Keep ellipses + lines faintly visible? No — fade out
-        for (const k of Object.keys(LIMBS)) setLimbEllipseVisible(k, false);
-        clearConns();
-        document.getElementById('beat-indicator').classList.remove('visible');
-      },
+      update(){},
     },
-    // 5: Spatiotemporal aggregation — in dedicated right slot.
-    //    (a) ghosts fade in slowly, fanned to the left of the spatial G1
-    //    (b) Σ aggregate icon appears
-    //    (c) ghosts collapse into the spatial G1 (single robot remains)
-    { name:'temporal', duration: 11.0,
+    // 5: Spatiotemporal aggregation — kicks off the continuous temporal tick.
+    { name:'temporal', duration: 1.0,
       enter() {
         setCaption('Spatiotemporal aggregation — past frames collapse into one trajectory.', '§3.3');
         show('lbl-spatial');
-        // Reset ghost positions
         for (const g of g1Ghosts) g.robot.object3D.position.x = g.baseX;
+        temporalAnimStart = masterClock;
       },
-      update(t) {
-        if (t < 4.5) {
-          // (a) staggered slow fade-in
-          hide('aggregate-icon');
-          g1Aggregate.setOpacity(0);
-          for (let k = 0; k < g1Ghosts.length; k++) {
-            const start = k * 0.7;
-            const u = clamp((t - start) / 0.9, 0, 1);
-            const decay = 0.85 - k * 0.10;
-            g1Ghosts[k].robot.setOpacity(u * decay);
-            g1Ghosts[k].robot.object3D.position.x = g1Ghosts[k].baseX;
-          }
-        } else if (t < 6.5) {
-          // (b) hold ghosts; aggregate icon appears
-          for (let k = 0; k < g1Ghosts.length; k++) {
-            const decay = 0.85 - k * 0.10;
-            g1Ghosts[k].robot.setOpacity(decay);
-            g1Ghosts[k].robot.object3D.position.x = g1Ghosts[k].baseX;
-          }
-          show('aggregate-icon');
-          g1Aggregate.setOpacity(0);
-        } else if (t < 9.0) {
-          // (c) collapse — ghosts slide toward spatial slot + fade out, aggregate G1 fades in
-          const u = clamp((t - 6.5) / 2.3, 0, 1);
-          const eased = u * u;
-          for (let k = 0; k < g1Ghosts.length; k++) {
-            const decay = 0.85 - k * 0.10;
-            g1Ghosts[k].robot.object3D.position.x = lerp(g1Ghosts[k].baseX, SLOT_X.spatial, eased);
-            g1Ghosts[k].robot.setOpacity(Math.max(0, (1 - eased) * decay));
-          }
-          g1Aggregate.setOpacity(easeInOut(u));
-          // Icon shrinks/fades as the collapse completes
-          const ic = document.getElementById('aggregate-icon');
-          ic.style.opacity = String(1 - eased * 0.6);
-        } else {
-          // (d) hold — only the aggregate G1 remains
-          for (const g of g1Ghosts) g.robot.setOpacity(0);
-          g1Aggregate.setOpacity(1.0);
-          hide('aggregate-icon');
-        }
-      },
-      // intentionally no exit() — leave the aggregate G1 visible into stage 6
+      update(){},
     },
-    // 6: Attribute embedding — 1D vector strip on right; nothing else
-    { name:'embedding', duration: 6.0,
+    // 6: Attribute embedding strip
+    { name:'embedding', duration: 1.0,
       enter() {
         setCaption('Trajectory embedding Z ∈ ℝ²⁵⁶ — Attribute Embedding §3.4', '§3.4');
       },
       update(t) {
-        const u = clamp((t - 0.3) / 0.8, 0, 1);
-        if (u >= 1) show('embedding-strip');
+        if (t > 0.25) show('embedding-strip');
       },
     },
   ];
+}
+
+// ─── Continuous limb-beat tick (runs after stage 4 starts; loops forever) ──
+function tickGraphBeats(localT) {
+  // One-shot fade-in of graph G1
+  if (g1Graph) g1Graph.setOpacity(clamp(localT / 1.0, 0, 1));
+
+  const limbOrder = ['torso','la','ra','ll','rl'];
+  const INTRA_BEAT_DUR = 2.8;
+  const INTRA_DUR      = limbOrder.length * INTRA_BEAT_DUR;
+  const INTER_BEAT_DUR = 3.0;
+  const INTER_DUR      = INTER_BEATS.length * INTER_BEAT_DUR;
+  const CYCLE_DUR      = INTRA_DUR + INTER_DUR;
+
+  const t = ((localT % CYCLE_DUR) + CYCLE_DUR) % CYCLE_DUR;
+  if (t < INTRA_DUR) {
+    const idx = clamp(Math.floor(t / INTRA_BEAT_DUR), 0, limbOrder.length - 1);
+    const within = (t - idx * INTRA_BEAT_DUR) / INTRA_BEAT_DUR;
+    for (const k of limbOrder) setLimbEllipseVisible(k, false);
+    setLimbEllipseVisible(limbOrder[idx], true, LIMBS[limbOrder[idx]].color);
+    if (within < 0.03 && (!activeConns.length || activeConns[0]._beatIdx !== idx || activeConns[0]._mode !== 'intra')) {
+      setConns(INTRA_CONNS[limbOrder[idx]] || [], LIMBS[limbOrder[idx]].color);
+      for (const c of activeConns) { c._beatIdx = idx; c._mode = 'intra'; }
+    }
+    setBeat('intra', limbOrder[idx], limbOrder[idx]);
+  } else {
+    const t2 = t - INTRA_DUR;
+    const idx = clamp(Math.floor(t2 / INTER_BEAT_DUR), 0, INTER_BEATS.length - 1);
+    const within = (t2 - idx * INTER_BEAT_DUR) / INTER_BEAT_DUR;
+    const beat = INTER_BEATS[idx];
+    for (const k of Object.keys(LIMBS)) setLimbEllipseVisible(k, false);
+    for (const l of beat.limbs) setLimbEllipseVisible(l, true, beat.color);
+    if (within < 0.03 && (!activeConns.length || activeConns[0]._beatIdx !== idx || activeConns[0]._mode !== 'inter')) {
+      setConns(beat.conns, beat.color);
+      for (const c of activeConns) { c._beatIdx = idx; c._mode = 'inter'; }
+    }
+    setBeat('inter', beat.limbs[0], beat.limbs[1]);
+  }
+}
+
+// ─── Continuous temporal tick (runs after stage 5 starts; holds final state) ──
+function tickTemporalAnim(t) {
+  if (t < 4.5) {
+    hide('aggregate-icon');
+    g1Aggregate.setOpacity(0);
+    for (let k = 0; k < g1Ghosts.length; k++) {
+      const start = k * 0.7;
+      const u = clamp((t - start) / 0.9, 0, 1);
+      const decay = 0.85 - k * 0.10;
+      g1Ghosts[k].robot.setOpacity(u * decay);
+      g1Ghosts[k].robot.object3D.position.x = g1Ghosts[k].baseX;
+    }
+  } else if (t < 6.5) {
+    for (let k = 0; k < g1Ghosts.length; k++) {
+      const decay = 0.85 - k * 0.10;
+      g1Ghosts[k].robot.setOpacity(decay);
+      g1Ghosts[k].robot.object3D.position.x = g1Ghosts[k].baseX;
+    }
+    show('aggregate-icon');
+    g1Aggregate.setOpacity(0);
+  } else if (t < 9.0) {
+    const u = clamp((t - 6.5) / 2.3, 0, 1);
+    const eased = u * u;
+    for (let k = 0; k < g1Ghosts.length; k++) {
+      const decay = 0.85 - k * 0.10;
+      g1Ghosts[k].robot.object3D.position.x = lerp(g1Ghosts[k].baseX, SLOT_X.spatial, eased);
+      g1Ghosts[k].robot.setOpacity(Math.max(0, (1 - eased) * decay));
+    }
+    g1Aggregate.setOpacity(easeInOut(u));
+    const ic = document.getElementById('aggregate-icon');
+    ic.style.opacity = String(1 - eased * 0.6);
+  } else {
+    for (const g of g1Ghosts) g.robot.setOpacity(0);
+    g1Aggregate.setOpacity(1.0);
+    hide('aggregate-icon');
+  }
 }
 
 function transitionToStage(i) {
