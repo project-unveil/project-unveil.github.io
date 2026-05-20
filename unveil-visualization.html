@@ -1270,6 +1270,7 @@ function setupFocusRingsAndPlates() {
     plate.setAttribute('data-body', J.body);
     plate.innerHTML = `
       <div class="dp-head">${J.label}</div>
+      <div class="dp-row"><span class="dp-label" style="color:${PLATE_DEFS.pos.color}">${PLATE_DEFS.pos.label}</span><canvas data-feature="position"></canvas></div>
       <div class="dp-row"><span class="dp-label" style="color:${PLATE_DEFS.vel.color}">${PLATE_DEFS.vel.label}</span><canvas data-feature="velocity"></canvas></div>
       <div class="dp-row"><span class="dp-label" style="color:${PLATE_DEFS.acc.color}">${PLATE_DEFS.acc.label}</span><canvas data-feature="accel"></canvas></div>
     `;
