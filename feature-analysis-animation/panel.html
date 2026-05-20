@@ -537,40 +537,36 @@ async function buildG1Robot(parentGroup, accentHex, highlightJoint) {
   return { rootGroup, bodyGroups, glow };
 }
 
-// G1 scene + camera (no renderer; the shared renderer is owned by the panel).
-async function buildG1Scene(heavyMotion, lightMotion, highlightJoint) {
+// One scene with one G1 robot at world origin. Camera framed tightly on it.
+// We build TWO of these per panel (one for heavy, one for light) so each
+// body fills its own viewport instead of sharing a wide row with the other.
+async function buildG1SoloScene(motion, accentHex, highlightJoint) {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#f3f6fa');
 
-  // Aspect set later by the panel renderer (depends on viewport size).
-  const camera = new THREE.PerspectiveCamera(34, 1, 0.05, 30);
-  camera.position.set(0, 1.05, 4.6);
+  // Aspect set per-frame by the renderer (depends on viewport size).
+  // FOV 35° at d=3.0 m → 1.89 m vertical visible, body ~1.8 m → ~95% fill.
+  const camera = new THREE.PerspectiveCamera(35, 1, 0.05, 30);
+  camera.position.set(0, 1.05, 3.0);
   camera.lookAt(0, 0.85, 0);
 
   scene.add(new THREE.HemisphereLight(0xffffff, 0xc0c8d4, 1.05));
   const sun = new THREE.DirectionalLight(0xfff4e0, 1.0);
   sun.position.set(3, 7, 4); scene.add(sun);
 
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(12, 12),
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(8, 8),
                                new THREE.MeshBasicMaterial({ color: 0xe2e7ee }));
   floor.rotation.x = -Math.PI/2; scene.add(floor);
 
-  const X_OFFSET = 0.85;
-  const heavyParent = new THREE.Group();
-  heavyParent.position.x = -X_OFFSET;
-  scene.add(heavyParent);
-  const heavyWorld = new THREE.Group(); heavyWorld.rotation.x = -Math.PI/2;
-  heavyParent.add(heavyWorld);
-  const heavy = await buildG1Robot(heavyWorld, COLOR_HEAVY_HEX, highlightJoint);
+  const robotWorld = new THREE.Group();
+  robotWorld.rotation.x = -Math.PI/2;
+  scene.add(robotWorld);
 
-  const lightParent = new THREE.Group();
-  lightParent.position.x = +X_OFFSET;
-  scene.add(lightParent);
-  const lightWorld = new THREE.Group(); lightWorld.rotation.x = -Math.PI/2;
-  lightParent.add(lightWorld);
-  const light = await buildG1Robot(lightWorld, COLOR_LIGHT_HEX, highlightJoint);
+  const robot = await buildG1Robot(robotWorld, accentHex, highlightJoint);
 
-  function applyOne(robot, motion, fi) {
+  function applyFrameAtTime(t) {
+    const fi = Math.min(motion.numFrames - 1,
+                        Math.floor((t % motion.duration) / motion.frameTime));
     robot.rootGroup.position.set(
       motion.rootPos[fi*3]   - motion.meanX,
       motion.rootPos[fi*3+1] - motion.meanY,
@@ -588,15 +584,7 @@ async function buildG1Scene(heavyMotion, lightMotion, highlightJoint) {
     const phase = (performance.now() * 0.003) % (Math.PI * 2);
     robot.glow.scale.setScalar(1 + 0.20 * Math.sin(phase));
   }
-  function applyFrameAtTime(t) {
-    const fiH = Math.min(heavyMotion.numFrames - 1, Math.floor((t % heavyMotion.duration) / heavyMotion.frameTime));
-    const fiL = Math.min(lightMotion.numFrames - 1, Math.floor((t % lightMotion.duration) / lightMotion.frameTime));
-    applyOne(heavy, heavyMotion, fiH);
-    applyOne(light, lightMotion, fiL);
-  }
-  // Expose the motions on the returned object so drawPlots can read each
-  // motion's per-feature time series.
-  return { scene, camera, applyFrameAtTime, heavyMotion, lightMotion };
+  return { scene, camera, applyFrameAtTime, motion };
 }
 
 // ── SMPL (optional, loaded if matching .bin files exist) ─────
