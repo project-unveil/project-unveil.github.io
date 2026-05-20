@@ -1915,10 +1915,17 @@ function positionEmbeddingStrip() {
   const rh = parseFloat(r.getAttribute('height'));
   if (isFinite(ry)) strip.style.top    = ry.toFixed(1) + 'px';
   if (isFinite(rh)) strip.style.height = rh.toFixed(1) + 'px';
-  // Anchor horizontal position to a fixed world x (between 3.3 and attributes)
-  const cx = worldToCanvasPx(SLOT_X_EMBEDDING, 1.0, 0).x;
+  // x: ALWAYS RIGHT_GAP_PX after spatial-rect's right edge
+  const sr = document.getElementById('spatial-rect');
   const stripW = 96;
-  strip.style.left = (cx - stripW / 2).toFixed(1) + 'px';
+  let leftPx;
+  if (sr && sr.style.opacity != 0) {
+    const sx = parseFloat(sr.getAttribute('x'));
+    const sw = parseFloat(sr.getAttribute('width'));
+    if (isFinite(sx) && isFinite(sw)) leftPx = sx + sw + RIGHT_GAP_PX;
+  }
+  if (!isFinite(leftPx)) leftPx = worldToCanvasPx(SLOT_X_EMBEDDING, 1.0, 0).x - stripW/2;
+  strip.style.left = leftPx.toFixed(1) + 'px';
 }
 
 // ─── Spatiotemporal rectangle — wraps spatial G1 + ghost stack + Σ icon ───
