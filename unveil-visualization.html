@@ -1657,6 +1657,14 @@ function restartWalkthrough() {
   hide('retarget-label');
   setRetargetVisible(false);
   setGraphRectVisible(false);
+  setHumanRectVisible(false);
+  setEncRectVisible(false);
+  setFocusOpacity(0);
+  for (const k of Object.keys(LIMBS)) setLimbEllipseVisible(k, false);
+  clearConns();
+  document.getElementById('beat-indicator').classList.remove('visible');
+  graphAnimStart = -1;
+  temporalAnimStart = -1;
   if (g1Aggregate) g1Aggregate.setOpacity(0);
   if (g1Graph)     g1Graph.setOpacity(0);
   setEncRectVisible(false);
