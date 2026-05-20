@@ -134,10 +134,10 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
   overflow: visible;
 }
 
-/* Slot labels positioned by JS each frame */
+/* Slot labels — positioned BELOW the figures (anchor = top-center) */
 .slot-label {
   position: absolute;
-  transform: translate(-50%, -100%);
+  transform: translate(-50%, 0);
   font-family: 'Noto Serif', serif;
   font-size: 13px; font-weight: 700;
   color: var(--primary);
@@ -150,6 +150,11 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
   text-align: center;
 }
 .slot-label.visible { opacity: 1; }
+.slot-label .underline {
+  display: block; width: 30px; height: 2px;
+  background: var(--accent);
+  margin: 0 auto 5px; border-radius: 1px;
+}
 .slot-label .ref {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px; font-weight: 500;
@@ -158,11 +163,6 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
   letter-spacing: 0.06em;
   margin-top: 2px;
   text-transform: none;
-}
-.slot-label .underline {
-  display: block; width: 30px; height: 2px;
-  background: var(--accent);
-  margin: 5px auto 0; border-radius: 1px;
 }
 
 /* Operator card */
