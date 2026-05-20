@@ -212,16 +212,14 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
 }
 
 /* Kinematic encoding label (over the transparent box) */
-#enc-label {
+#enc-label, #graph-label {
   position: absolute;
   transform: translate(-50%, -100%);
   background: #ffffff;
-  border: 1px solid var(--enc-color);
   border-radius: 6px;
   padding: 4px 12px;
   font-family: 'Noto Serif', serif;
   font-size: 11px; font-weight: 700;
-  color: var(--enc-color);
   text-transform: uppercase;
   letter-spacing: 0.12em;
   opacity: 0;
@@ -229,10 +227,11 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
   pointer-events: none;
   z-index: 3;
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(155,109,191,0.18);
 }
-#enc-label.visible { opacity: 1; }
-#enc-label .ref {
+#enc-label   { border: 1px solid var(--enc-color);   color: var(--enc-color);   box-shadow: 0 4px 12px rgba(155,109,191,0.18); }
+#graph-label { border: 1px solid var(--graph-color); color: var(--graph-color); box-shadow: 0 4px 12px rgba(44,138,168,0.18); }
+#enc-label.visible, #graph-label.visible { opacity: 1; }
+#enc-label .ref, #graph-label .ref {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
   color: var(--muted);
@@ -241,6 +240,27 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
   text-transform: none;
   letter-spacing: 0;
 }
+
+/* Retarget arrow label (between human and G1) */
+#retarget-label {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  background: #ffffff;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 3px 11px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 11px; font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: 3;
+  box-shadow: 0 4px 12px rgba(231,76,60,0.18);
+}
+#retarget-label.visible { opacity: 1; }
 
 /* Beat indicator (graph conv) — positioned dynamically below graph G1 */
 #beat-indicator {
