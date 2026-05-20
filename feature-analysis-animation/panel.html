@@ -174,7 +174,9 @@ if (!CLIP_ID) { showError('panel.html: missing ?clip=<id> URL param'); throw new
 
 const G1_MODEL_URL  = '../g1_engine/model/g1_model.json';
 const G1_MESH_BASE  = '../g1_engine/meshes';
-const MATRIX_CONFIG_URL = './data/matrix_config.json';
+// Cache-bust the config fetch so config edits land in every iframe on next
+// reload (matrix.html does the same for its own copy of the fetch).
+const MATRIX_CONFIG_URL = './data/matrix_config.json?v=' + Date.now();
 const MAX_FRAMES_G1 = 600;
 // Must match generate_smpl_matrix.py --max-input-frames (currently 600 @ 120fps
 // → 5 s slab). The G1 CSV loader slices to the SAME middle slab so the SMPL
