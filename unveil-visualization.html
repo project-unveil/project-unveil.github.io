@@ -598,14 +598,27 @@ const INTER_BEATS = [
     conns: [['right_elbow_link','right_knee_link']] },
 ];
 
-// Single picked joint for kinematic-encoding zoom-in — two plates (velocity + accel)
-const PICKED_BODY  = 'right_elbow_link';
-const PICKED_JOINT = 'right_elbow_joint';
-const PICKED_LABEL = 'Right elbow';
-const PICKED_PLATES = [
-  { id: 'vel', feature: 'velocity', title: 'Velocity θ̇',     sub: 'angular rate',     color: '#9b6dbf', side: 'left'  },
-  { id: 'acc', feature: 'accel',    title: 'Acceleration θ̈', sub: '2nd derivative',   color: '#e74c3c', side: 'right' },
+// Multiple picked joints — each gets a small focus ring + 2 small plates (vel + accel)
+// dx/dy are pixel offsets from the joint to the plate center (per-joint arrow directions)
+const PICKED_JOINTS = [
+  { body:'right_elbow_link', joint:'right_elbow_joint', label:'R elbow', plates:[
+      { id:'vel', dx:  150, dy: -68 },
+      { id:'acc', dx:  150, dy:  18 },
+  ]},
+  { body:'right_knee_link', joint:'right_knee_joint', label:'R knee', plates:[
+      { id:'vel', dx:  150, dy: -22 },
+      { id:'acc', dx:  150, dy:  64 },
+  ]},
+  { body:'torso_link', joint:'waist_pitch_joint', label:'Waist', plates:[
+      { id:'vel', dx: -78, dy: -132 },
+      { id:'acc', dx:  78, dy: -132 },
+  ]},
 ];
+// Shared plate-type definitions (color + title)
+const PLATE_DEFS = {
+  vel: { feature: 'velocity', title: 'Vel θ̇', color: '#9b6dbf' },
+  acc: { feature: 'accel',    title: 'Acc θ̈', color: '#e74c3c' },
+};
 
 const CSV_TO_JOINT = {
   left_hip_pitch_joint_dof:'left_hip_pitch_joint', left_hip_roll_joint_dof:'left_hip_roll_joint', left_hip_yaw_joint_dof:'left_hip_yaw_joint',
