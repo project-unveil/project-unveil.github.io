@@ -1570,25 +1570,26 @@ const _smplBBox = new THREE.Box3();
 function updateHumanRect() {
   const r = document.getElementById('human-rect');
   if (r.style.opacity == 0) return;
-  let xMinW = SLOT_X.human - HUMAN_RECT_W/2;
-  let xMaxW = SLOT_X.human + HUMAN_RECT_W/2;
-  if (smplGroup && smplGroup.mesh) {
-    smplGroup.mesh.geometry.computeBoundingBox();
-    const bb = smplGroup.mesh.geometry.boundingBox;
-    if (bb) {
-      smplGroup.mesh.updateWorldMatrix(true, false);
-      _smplBBox.copy(bb).applyMatrix4(smplGroup.mesh.matrixWorld);
-      const PAD = 0.12;
-      xMinW = _smplBBox.min.x - PAD;
-      xMaxW = _smplBBox.max.x + PAD;
-    }
+  // FIXED bounds: right edge flush with the panel's right side (small inset),
+  // height/y mirrored from the enc-rect so all four rects line up flush.
+  const canvasW = (canvasWrapEl && canvasWrapEl.clientWidth) || 1620;
+  const RIGHT_INSET = 4;             // tiny gap from the canvas-wrap right edge
+  const HUMAN_RECT_PX_W = 150;       // fixed width — covers SMPL mesh extent
+  const rectRight = canvasW - RIGHT_INSET;
+  const rectLeft  = rectRight - HUMAN_RECT_PX_W;
+  // y / height mirror enc-rect so the human-rect aligns with the other three
+  let y = 50, h = 200;
+  const encR = document.getElementById('enc-rect');
+  if (encR && encR.style.opacity != 0) {
+    const encTop    = parseFloat(encR.getAttribute('y'));
+    const encHeight = parseFloat(encR.getAttribute('height'));
+    if (isFinite(encTop))    y = encTop;
+    if (isFinite(encHeight)) h = encHeight;
   }
-  const tl = worldToCanvasPx(xMinW, HUMAN_RECT_TOP_Y, 0);
-  const br = worldToCanvasPx(xMaxW, HUMAN_RECT_BOT_Y, 0);
-  r.setAttribute('x', tl.x.toFixed(1));
-  r.setAttribute('y', tl.y.toFixed(1));
-  r.setAttribute('width',  (br.x - tl.x).toFixed(1));
-  r.setAttribute('height', (br.y - tl.y).toFixed(1));
+  r.setAttribute('x', rectLeft.toFixed(1));
+  r.setAttribute('y', y.toFixed(1));
+  r.setAttribute('width',  HUMAN_RECT_PX_W.toFixed(1));
+  r.setAttribute('height', h.toFixed(1));
 }
 
 // Retargeting arrow no longer used in the reversed pipeline — keep stubs so
