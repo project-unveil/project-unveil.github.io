@@ -229,8 +229,10 @@ async function boot() {
   // has the value at the top.
   const highV = clip.high_value ?? attrCfg.high_value;
   const lowV  = clip.low_value  ?? attrCfg.low_value;
-  const highTxt = `${attrCfg.high_label} · ${highV} ${attrCfg.high_unit}`;
-  const lowTxt  = `${attrCfg.low_label} · ${lowV} ${attrCfg.low_unit}`;
+  // Just the numeric value + unit; the heavy/light or older/younger side is
+  // already conveyed by the chip's red/blue border colour.
+  const highTxt = `${highV} ${attrCfg.high_unit}`;
+  const lowTxt  = `${lowV} ${attrCfg.low_unit}`;
   document.getElementById('role-g1-heavy').textContent = highTxt;
   document.getElementById('role-g1-light').textContent = lowTxt;
   document.getElementById('role-smpl-high').textContent = highTxt;
