@@ -27,6 +27,7 @@
   --c-ra:       #f39c12;
   --c-ll:       #27ae60;
   --c-rl:       #2980b9;
+  --enc-color:  #9b6dbf;     /* kinematic encoding outline */
 }
 
 html, body {
@@ -38,34 +39,24 @@ html, body {
 }
 
 #page-wrap {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
   padding: 18px 24px;
-  background:
-    radial-gradient(circle at 50% 0%, #f5f7fb 0%, #ffffff 60%);
+  background: radial-gradient(circle at 50% 0%, #f4f6fb 0%, #ffffff 60%);
 }
-
 #page-title {
   font-family: 'Noto Serif', serif;
-  font-weight: 700;
-  font-size: 19px;
+  font-weight: 700; font-size: 19px;
   color: var(--primary);
   margin-bottom: 10px;
-  letter-spacing: 0.01em;
 }
 #page-title .sub {
   font-family: 'Source Sans 3', sans-serif;
-  font-weight: 400;
-  font-size: 13px;
-  color: var(--muted);
-  margin-left: 10px;
+  font-weight: 400; font-size: 13px;
+  color: var(--muted); margin-left: 10px;
 }
 
-/* ── The big rectangular parent panel ─────────────────────────────────── */
 #panel {
   position: relative;
   width: min(96vw, 1640px);
@@ -73,99 +64,82 @@ html, body {
   background: #ffffff;
   border: 1px solid var(--border);
   border-radius: 16px;
-  box-shadow:
-    0 30px 80px rgba(33,52,100,0.08),
-    0 6px 18px rgba(33,52,100,0.06);
+  box-shadow: 0 30px 80px rgba(33,52,100,0.08), 0 6px 18px rgba(33,52,100,0.06);
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  display: flex; flex-direction: column;
 }
 
-/* ── Panel header (within panel) ──────────────────────────────────────── */
 #panel-header {
   flex-shrink: 0;
   height: 50px;
-  display: flex;
-  align-items: center;
+  display: flex; align-items: center;
   padding: 0 18px;
   border-bottom: 1px solid var(--border);
   background: linear-gradient(180deg, #fafbfd 0%, #ffffff 100%);
   z-index: 4;
 }
 #panel-header .dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  margin-right: 10px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent); margin-right: 10px;
   box-shadow: 0 0 0 3px rgba(231,76,60,0.18);
 }
 #panel-header .title {
   font-family: 'Noto Serif', serif;
-  font-weight: 700;
-  font-size: 14px;
+  font-weight: 700; font-size: 14px;
   color: var(--primary);
-  letter-spacing: 0.02em;
 }
 #panel-header .ref {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--muted);
-  margin-left: 8px;
+  font-size: 11px; color: var(--muted); margin-left: 8px;
 }
 #panel-header .spacer { flex: 1; }
 #panel-header .stage-badge {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  color: var(--muted);
+  font-size: 10.5px; color: var(--muted);
   background: var(--soft);
-  padding: 3px 9px;
-  border-radius: 99px;
+  padding: 3px 9px; border-radius: 99px;
   margin-right: 10px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: 0.06em; text-transform: uppercase;
 }
 #panel-header select, #panel-header button {
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  background: #ffffff;
-  color: var(--ink);
+  font-size: 12px; font-weight: 500;
+  background: #ffffff; color: var(--ink);
   border: 1px solid var(--border);
-  padding: 5px 10px;
-  border-radius: 6px;
+  padding: 5px 10px; border-radius: 6px;
   cursor: pointer;
-  letter-spacing: 0.01em;
 }
 #panel-header select:hover, #panel-header button:hover {
-  border-color: var(--primary);
-  color: var(--primary);
+  border-color: var(--primary); color: var(--primary);
 }
-#panel-header #replay-btn {
-  background: var(--primary);
-  color: #fff;
-  border-color: var(--primary);
-  margin-left: 8px;
-  display: none;
+#replay-btn {
+  background: var(--primary); color: #fff; border-color: var(--primary);
+  margin-left: 8px; display: none;
 }
-#panel-header #replay-btn.visible { display: inline-block; }
-#panel-header #replay-btn:hover { background: var(--accent); border-color: var(--accent); color:#fff; }
+#replay-btn.visible { display: inline-block; }
+#replay-btn:hover { background: var(--accent); border-color: var(--accent); color:#fff; }
 
-/* ── Canvas wrap (the scene) ──────────────────────────────────────────── */
 #canvas-wrap {
-  flex: 1;
-  position: relative;
-  background: #ffffff;
-  overflow: hidden;
+  flex: 1; position: relative;
+  background: #ffffff; overflow: hidden;
 }
-canvas { display: block; width: 100% !important; height: 100% !important; }
+canvas { display: block; }
+canvas#three-canvas { width: 100% !important; height: 100% !important; }
 
-/* ── Slot labels (positioned in canvas coords; updated by JS) ─────────── */
+/* SVG overlay drawn on top of canvas, covers full wrap */
+#svg-overlay {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+/* Slot labels positioned by JS each frame */
 .slot-label {
   position: absolute;
   transform: translate(-50%, -100%);
   font-family: 'Noto Serif', serif;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 13px; font-weight: 700;
   color: var(--primary);
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -173,12 +147,12 @@ canvas { display: block; width: 100% !important; height: 100% !important; }
   pointer-events: none;
   transition: opacity 0.55s ease;
   white-space: nowrap;
+  text-align: center;
 }
 .slot-label.visible { opacity: 1; }
 .slot-label .ref {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  font-weight: 500;
+  font-size: 10px; font-weight: 500;
   color: var(--muted);
   display: block;
   letter-spacing: 0.06em;
@@ -186,17 +160,15 @@ canvas { display: block; width: 100% !important; height: 100% !important; }
   text-transform: none;
 }
 .slot-label .underline {
-  display: block;
-  width: 30px;
-  height: 2px;
+  display: block; width: 30px; height: 2px;
   background: var(--accent);
-  margin: 5px auto 0;
-  border-radius: 1px;
+  margin: 5px auto 0; border-radius: 1px;
 }
 
-/* ── Operator/Prediction cards ────────────────────────────────────────── */
-.attr-card {
+/* Operator card */
+#operator-card {
   position: absolute;
+  left: 16px; top: 16px;
   background: #ffffff;
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -205,282 +177,223 @@ canvas { display: block; width: 100% !important; height: 100% !important; }
   box-shadow: 0 8px 22px rgba(33,52,100,0.10);
   opacity: 0;
   transition: opacity 0.55s ease, transform 0.55s ease;
+  transform: translateX(-10px);
   pointer-events: none;
+  z-index: 3;
 }
-.attr-card .head {
+#operator-card.visible { opacity: 1; transform: translateX(0); }
+#operator-card .head {
   font-family: 'Noto Serif', serif;
-  font-size: 10.5px;
-  font-weight: 700;
+  font-size: 10.5px; font-weight: 700;
   color: var(--primary);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
+  text-transform: uppercase; letter-spacing: 0.12em;
   margin-bottom: 6px;
   display: flex; align-items: center;
 }
-.attr-card .head .dot { width:6px; height:6px; border-radius:50%; background: var(--accent); margin-right:7px; }
-.attr-card .row {
+#operator-card .head .dot { width:6px; height:6px; border-radius:50%; background: var(--accent); margin-right:7px; }
+#operator-card .row {
   display: flex; justify-content: space-between; align-items: baseline;
   padding: 3px 0;
   font-size: 12px;
   border-bottom: 1px dashed rgba(0,0,0,0.06);
 }
-.attr-card .row:last-child { border-bottom: 0; }
-.attr-card .row .k { color: var(--muted); font-size: 10.5px; }
-.attr-card .row .v { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; font-size: 12px; }
-.attr-card .row .v.match { color: #1f8a4e; }
-.attr-card.visible { opacity: 1; }
+#operator-card .row:last-child { border-bottom: 0; }
+#operator-card .row .k { color: var(--muted); font-size: 10.5px; }
+#operator-card .row .v { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; font-size: 12px; }
 
-#operator-card { transform: translateX(-10px); }
-#operator-card.visible { transform: translateX(0); }
-#prediction-card .head .dot { background: var(--primary); }
-#prediction-card { transform: translateX(10px); }
-#prediction-card.visible { transform: translateX(0); }
-
-/* ── Kinematic encoding block (over G1 station) ───────────────────────── */
-#kinematic-block {
+/* Data plates (kinematic encoding zoom-in callouts) */
+.data-plate {
   position: absolute;
+  transform: translate(-50%, -50%);
   background: #ffffff;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  box-shadow: 0 10px 28px rgba(33,52,100,0.12);
-  width: 280px;
-  padding: 12px 14px 10px;
+  border: 1px solid var(--enc-color);
+  border-radius: 10px;
+  padding: 8px 11px 9px;
+  width: 168px;
+  box-shadow: 0 8px 22px rgba(155,109,191,0.18);
   opacity: 0;
-  transform: translate(-50%, -10px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition: opacity 0.55s ease;
   pointer-events: none;
   z-index: 3;
 }
-#kinematic-block.visible { opacity: 1; transform: translate(-50%, 0); }
-#kinematic-block .ke-head {
+.data-plate.visible { opacity: 1; }
+.data-plate .dp-head {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  color: var(--enc-color);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 5px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.data-plate .dp-head .joint {
+  color: var(--ink); font-weight: 600;
+  font-size: 9.5px;
+}
+.data-plate .dp-sub {
+  font-size: 10.5px; color: var(--muted);
+  margin-bottom: 4px;
+  font-style: italic;
+}
+.data-plate canvas {
+  width: 100%; height: 34px; display: block;
+}
+.data-plate svg.rom-fan {
+  width: 100%; height: 50px; display: block;
+}
+
+/* Kinematic encoding label (over the transparent box) */
+#enc-label {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  background: #ffffff;
+  border: 1px solid var(--enc-color);
+  border-radius: 6px;
+  padding: 4px 12px;
   font-family: 'Noto Serif', serif;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--primary);
+  font-size: 11px; font-weight: 700;
+  color: var(--enc-color);
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  margin-bottom: 4px;
-  display: flex; align-items: center; justify-content: space-between;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: 3;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(155,109,191,0.18);
 }
-#kinematic-block .ke-head .ref {
+#enc-label.visible { opacity: 1; }
+#enc-label .ref {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
   color: var(--muted);
+  margin-left: 6px;
   font-weight: 500;
   text-transform: none;
   letter-spacing: 0;
 }
-#kinematic-block .ke-sub {
-  font-size: 11px;
-  color: var(--muted);
-  margin-bottom: 8px;
-}
-#kinematic-block .ke-row {
-  display: flex; align-items: center; gap: 8px;
-  margin: 4px 0;
-}
-#kinematic-block .ke-row .lab {
-  width: 56px; font-size: 10.5px; color: var(--muted);
-  font-family: 'JetBrains Mono', monospace;
-  font-variant-numeric: tabular-nums;
-}
-#kinematic-block .ke-row .lab .strong {
-  color: var(--primary); font-weight: 600;
-}
-#kinematic-block .ke-row canvas {
-  flex: 1; height: 24px; display: block;
-}
 
-/* Arrow pointing from kinematic block down to the G1 */
-#kinematic-block::after {
-  content: '';
+/* Beat indicator (graph conv) */
+#beat-indicator {
   position: absolute;
   left: 50%;
-  bottom: -8px;
-  width: 14px; height: 14px;
-  background: #ffffff;
-  border-right: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  transform: translateX(-50%) rotate(45deg);
-}
-
-/* ── Hierarchy beat indicator (over hierarchy slot) ───────────────────── */
-#hierarchy-block {
-  position: absolute;
+  bottom: 18px;
+  transform: translateX(-50%) translateY(12px);
   background: #ffffff;
   border: 1px solid var(--border);
-  border-radius: 12px;
-  box-shadow: 0 10px 28px rgba(33,52,100,0.12);
-  width: 240px;
-  padding: 12px 14px;
-  opacity: 0;
-  transform: translate(-50%, -10px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-  pointer-events: none;
-}
-#hierarchy-block.visible { opacity: 1; transform: translate(-50%, 0); }
-#hierarchy-block .hb-head {
-  font-family: 'Noto Serif', serif;
+  border-radius: 99px;
+  padding: 6px 16px;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  font-weight: 700;
-  color: var(--primary);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  display: flex; align-items: center; justify-content: space-between;
-}
-#hierarchy-block .hb-head .ref {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  color: var(--muted);
   font-weight: 500;
-  text-transform: none;
-  letter-spacing: 0;
-}
-#hierarchy-block .hb-mode {
-  margin-top: 6px;
-  display: flex; gap: 6px;
-}
-.hb-tab {
-  flex: 1;
-  text-align: center;
-  font-size: 10.5px;
-  font-family: 'JetBrains Mono', monospace;
-  padding: 5px 0;
-  border-radius: 6px;
-  background: var(--soft);
-  color: var(--muted);
+  color: var(--ink);
+  box-shadow: 0 8px 22px rgba(33,52,100,0.14);
+  opacity: 0;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: none;
+  z-index: 4;
   letter-spacing: 0.04em;
 }
-.hb-tab.active {
-  background: var(--primary);
-  color: #fff;
-}
-#hierarchy-block .hb-beat {
-  margin-top: 8px;
-  font-size: 11px;
-  color: var(--ink);
-  font-family: 'JetBrains Mono', monospace;
-  min-height: 16px;
-}
-#hierarchy-block .hb-beat .pill {
+#beat-indicator.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+#beat-indicator .mode {
   display: inline-block;
-  padding: 2px 7px;
+  padding: 2px 8px;
   border-radius: 99px;
+  margin-right: 8px;
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   background: var(--soft);
-  color: var(--ink);
-  margin-right: 4px;
-  font-size: 10.5px;
-  border: 1px solid var(--border);
+  color: var(--muted);
 }
-#hierarchy-block .hb-beat .pill.on {
-  background: var(--accent);
-  color: #ffffff;
-  border-color: var(--accent);
-}
+#beat-indicator.intra .mode { background: var(--primary); color: #fff; }
+#beat-indicator.inter .mode { background: var(--accent); color: #fff; }
 
-#hierarchy-block .hb-legend {
-  margin-top: 8px;
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 2px 8px;
-  font-size: 10px;
-  color: var(--ink);
-  font-family: 'Source Sans 3', sans-serif;
-}
-#hierarchy-block .hb-legend .lg {
-  display: flex; align-items: center; gap: 5px;
-}
-#hierarchy-block .hb-legend .sw {
-  width: 9px; height: 9px; border-radius: 2px;
-}
-
-/* ── Embedding/prediction reveal panel ────────────────────────────────── */
-#embedding-panel {
+/* Embedding strip on right */
+#embedding-strip {
   position: absolute;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  width: min(86%, 860px);
+  right: 28px;
+  top: 50%;
+  transform: translateY(-50%) translateX(20px);
+  width: 250px;
   background: #ffffff;
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 12px 16px;
-  box-shadow: 0 14px 32px rgba(33,52,100,0.14);
+  padding: 16px 14px 18px;
+  box-shadow: 0 12px 32px rgba(33,52,100,0.14);
   opacity: 0;
-  transition: opacity 0.55s ease, transform 0.55s ease;
+  transition: opacity 0.6s ease, transform 0.6s ease;
   pointer-events: none;
   z-index: 4;
 }
-#embedding-panel.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
-#embedding-panel .ep-head {
+#embedding-strip.visible { opacity: 1; transform: translateY(-50%) translateX(0); }
+#embedding-strip .em-head {
   font-family: 'Noto Serif', serif;
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 11px; font-weight: 700;
   color: var(--primary);
   text-transform: uppercase;
   letter-spacing: 0.12em;
   margin-bottom: 4px;
+  text-align: center;
 }
-#z-canvas {
-  width: 100%; height: 18px;
-  display: block;
-  border-radius: 3px;
-  background: #f4f6fb;
-  margin-bottom: 8px;
-}
-#embedding-panel .attr-strips {
-  display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 6px 18px;
-}
-.attr-strip { display: flex; flex-direction: column; gap: 3px; }
-.attr-strip .top {
-  display: flex; justify-content: space-between; align-items: baseline;
-}
-.attr-strip .lbl {
+#embedding-strip .em-sub {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9.5px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-size: 10px; color: var(--muted);
+  margin-bottom: 10px;
+  text-align: center;
 }
-.attr-strip .pred {
-  font-weight: 700;
-  color: var(--primary);
-  font-size: 12.5px;
+#embedding-canvas {
+  width: 100%; height: 30px; display: block;
+  border-radius: 4px;
+  background: #f4f6fb;
+}
+#embedding-strip .em-foot {
+  margin-top: 8px;
+  font-size: 10px; color: var(--muted);
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
   font-variant-numeric: tabular-nums;
 }
-.attr-strip canvas {
-  width: 100%; height: 10px;
-  display: block;
-  border-radius: 2px;
-  background: #f4f6fb;
-}
 
-/* ── Caption bar (bottom) ─────────────────────────────────────────────── */
+/* Ghost-count indicator (small, near G1) */
+#ghost-indicator {
+  position: absolute;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  color: var(--muted);
+  background: rgba(255,255,255,0.85);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 3px 10px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 3;
+  white-space: nowrap;
+}
+#ghost-indicator.visible { opacity: 1; }
+#ghost-indicator .arrow { color: var(--accent); margin-right: 4px; }
+
+/* Caption */
 #caption-bar {
   flex-shrink: 0;
-  height: 40px;
-  display: flex; align-items: center;
-  justify-content: center;
+  height: 42px;
+  display: flex; align-items: center; justify-content: center;
   padding: 0 20px;
   border-top: 1px solid var(--border);
   background: linear-gradient(0deg, #fafbfd 0%, #ffffff 100%);
   font-size: 13px;
   color: var(--ink);
-  font-family: 'Source Sans 3', sans-serif;
   text-align: center;
 }
 #caption-bar .ref {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--accent);
-  margin-right: 10px;
-  font-weight: 600;
+  font-size: 11px; color: var(--accent);
+  margin-right: 10px; font-weight: 600;
 }
-#caption-bar .text {
-  font-weight: 500;
-}
+#caption-bar .text { font-weight: 500; }
 
-/* ── Loading overlay ──────────────────────────────────────────────────── */
+/* Loading / error */
 #loading {
   position: absolute; inset: 0;
   background: #ffffff;
@@ -497,7 +410,7 @@ canvas { display: block; width: 100% !important; height: 100% !important; }
   animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-#load-status { font-size: 12px; color: var(--muted); max-width: 360px; text-align: center; letter-spacing: 0.02em; }
+#load-status { font-size: 12px; color: var(--muted); max-width: 360px; text-align: center; }
 
 #error-box {
   display: none; position: absolute; inset: 0;
@@ -509,11 +422,49 @@ canvas { display: block; width: 100% !important; height: 100% !important; }
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* ── Hierarchy joint pulses (subtle) ──────────────────────────────────── */
-@keyframes joint-pulse {
-  0%   { transform: scale(1); }
-  50%  { transform: scale(1.5); }
-  100% { transform: scale(1); }
+/* SVG element styles */
+.svg-ellipse {
+  fill: none;
+  stroke-width: 1.8;
+  stroke-dasharray: 6 4;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.svg-conn {
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  fill: none;
+  opacity: 0;
+  stroke-dasharray: 8 6;
+}
+.svg-focus-ring {
+  fill: none;
+  stroke: var(--enc-color);
+  stroke-width: 1.5;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.svg-leader {
+  stroke: var(--enc-color);
+  stroke-width: 1.2;
+  stroke-dasharray: 3 3;
+  fill: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+#enc-rect {
+  fill: none;
+  stroke: var(--enc-color);
+  stroke-width: 1.6;
+  stroke-dasharray: 9 5;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  rx: 14;
+  ry: 14;
+}
+.joint-dot {
+  fill: var(--accent);
+  opacity: 0;
 }
 </style>
 </head>
@@ -527,7 +478,7 @@ canvas { display: block; width: 100% !important; height: 100% !important; }
   <div id="panel">
     <div id="panel-header">
       <span class="dot"></span>
-      <span class="title">Operator → G1 → UNVEIL → Predicted Attributes</span>
+      <span class="title">Operator → G1 → Kinematic features → Graph conv → Aggregation → Embedding</span>
       <span class="ref">NeurIPS 2026</span>
       <span class="spacer"></span>
       <span class="stage-badge" id="stage-badge">Stage 1 / 6</span>
@@ -536,19 +487,19 @@ canvas { display: block; width: 100% !important; height: 100% !important; }
     </div>
 
     <div id="canvas-wrap">
-      <!-- Slot labels: positioned by JS each frame -->
+      <!-- 3D scene canvas -->
+      <!-- (renderer appends one here) -->
+
+      <!-- Slot labels -->
       <div class="slot-label" id="lbl-human">
         Human Operator<span class="ref">SMPL ground truth</span><span class="underline"></span>
       </div>
       <div class="slot-label" id="lbl-robot">
         Retargeted G1<span class="ref">humanoid trajectory</span><span class="underline"></span>
       </div>
-      <div class="slot-label" id="lbl-hierarchy">
-        Spatial Graph Conv<span class="ref">§3.2 H₁ ∪ H₂</span><span class="underline"></span>
-      </div>
 
-      <!-- Operator card (top-left) -->
-      <div id="operator-card" class="attr-card">
+      <!-- Operator card -->
+      <div id="operator-card">
         <div class="head"><span class="dot"></span> Operator</div>
         <div class="row"><span class="k">Gender</span><span class="v" id="op-gender">—</span></div>
         <div class="row"><span class="k">Age</span><span class="v" id="op-age">—</span></div>
@@ -556,69 +507,40 @@ canvas { display: block; width: 100% !important; height: 100% !important; }
         <div class="row"><span class="k">Weight</span><span class="v" id="op-weight">—</span></div>
       </div>
 
-      <!-- Prediction card (top-right) -->
-      <div id="prediction-card" class="attr-card">
-        <div class="head"><span class="dot"></span> UNVEIL Prediction</div>
-        <div class="row"><span class="k">Gender</span><span class="v" id="pr-gender">—</span></div>
-        <div class="row"><span class="k">Age</span><span class="v" id="pr-age">—</span></div>
-        <div class="row"><span class="k">Height</span><span class="v" id="pr-height">—</span></div>
-        <div class="row"><span class="k">Weight</span><span class="v" id="pr-weight">—</span></div>
+      <!-- SVG overlay (all 2D shapes drawn over the 3D scene) -->
+      <svg id="svg-overlay">
+        <!-- Kinematic encoding rectangle (around G1) -->
+        <rect id="enc-rect" x="0" y="0" width="0" height="0"/>
+        <!-- Focus rings + leader lines for picked joints -->
+        <g id="g-focus"></g>
+        <!-- Limb ellipses + animated cross-edges -->
+        <g id="g-limbs"></g>
+        <g id="g-conns"></g>
+      </svg>
+
+      <!-- Kinematic encoding label (positioned above the rectangle) -->
+      <div id="enc-label">Kinematic Encoding <span class="ref">§3.1</span></div>
+
+      <!-- Data plates (created by JS) -->
+      <div id="plates-holder"></div>
+
+      <!-- Beat indicator for graph conv -->
+      <div id="beat-indicator">
+        <span class="mode" id="bi-mode">—</span>
+        <span class="text" id="bi-text">—</span>
       </div>
 
-      <!-- Kinematic encoding block (positioned above G1 slot) -->
-      <div id="kinematic-block">
-        <div class="ke-head">
-          <span>Kinematic Encoding</span>
-          <span class="ref">§3.1</span>
-        </div>
-        <div class="ke-sub">Per-joint temporal conv → velocity & acceleration <em>(right elbow)</em></div>
-        <div class="ke-row"><span class="lab"><span class="strong">θ</span> pos</span><canvas id="sp-pos"></canvas></div>
-        <div class="ke-row"><span class="lab"><span class="strong">θ̇</span> vel</span><canvas id="sp-vel"></canvas></div>
-        <div class="ke-row"><span class="lab"><span class="strong">θ̈</span> acc</span><canvas id="sp-acc"></canvas></div>
+      <!-- Ghost indicator -->
+      <div id="ghost-indicator">
+        <span class="arrow">←</span><span id="gi-text">past frames</span>
       </div>
 
-      <!-- Hierarchy block (positioned above hierarchy slot) -->
-      <div id="hierarchy-block">
-        <div class="hb-head">
-          <span>Kinematic Hierarchies</span>
-          <span class="ref">§3.2</span>
-        </div>
-        <div class="hb-mode">
-          <div class="hb-tab" id="hb-tab-intra">H₁ · intra-limb</div>
-          <div class="hb-tab" id="hb-tab-inter">H₂ · inter-limb</div>
-        </div>
-        <div class="hb-beat" id="hb-beat">—</div>
-        <div class="hb-legend">
-          <div class="lg"><span class="sw" style="background:var(--c-torso)"></span>Torso</div>
-          <div class="lg"><span class="sw" style="background:var(--c-la)"></span>Left arm</div>
-          <div class="lg"><span class="sw" style="background:var(--c-ra)"></span>Right arm</div>
-          <div class="lg"><span class="sw" style="background:var(--c-ll)"></span>Left leg</div>
-          <div class="lg"><span class="sw" style="background:var(--c-rl)"></span>Right leg</div>
-        </div>
-      </div>
-
-      <!-- Embedding reveal -->
-      <div id="embedding-panel">
-        <div class="ep-head">Trajectory Embedding Z ∈ ℝ²⁵⁶ → Per-attribute Heads</div>
-        <canvas id="z-canvas"></canvas>
-        <div class="attr-strips">
-          <div class="attr-strip">
-            <div class="top"><span class="lbl">Gender</span><span class="pred" id="as-gender">—</span></div>
-            <canvas class="attr-cells" data-attr="gender"></canvas>
-          </div>
-          <div class="attr-strip">
-            <div class="top"><span class="lbl">Age</span><span class="pred" id="as-age">—</span></div>
-            <canvas class="attr-cells" data-attr="age"></canvas>
-          </div>
-          <div class="attr-strip">
-            <div class="top"><span class="lbl">Height</span><span class="pred" id="as-height">—</span></div>
-            <canvas class="attr-cells" data-attr="height"></canvas>
-          </div>
-          <div class="attr-strip">
-            <div class="top"><span class="lbl">Weight</span><span class="pred" id="as-weight">—</span></div>
-            <canvas class="attr-cells" data-attr="weight"></canvas>
-          </div>
-        </div>
+      <!-- Attribute embedding (right) -->
+      <div id="embedding-strip">
+        <div class="em-head">Attribute Embedding</div>
+        <div class="em-sub">Z ∈ ℝ²⁵⁶ · §3.4</div>
+        <canvas id="embedding-canvas"></canvas>
+        <div class="em-foot">256-dim trajectory embedding</div>
       </div>
 
       <div id="loading">
@@ -649,33 +571,45 @@ const DEFAULT_DEMO = 'hiphop';
 const BIN_VERSION  = '2026-05-19a';
 const withV = u => u + (u.includes('?') ? '&' : '?') + 'v=' + BIN_VERSION;
 
-// Station x-positions in world coords
-const SLOT_X = {
-  human:     -5.3,
-  robot:     -1.6,
-  hierarchy:  4.5,
-};
-const HUMAN_YAW = 0;        // SMPL faces +Z by default; rotate if needed
-const ROBOT_YAW = 0;
+const SLOT_X = { human: -4.8, robot: -0.4 };
 
 const LIMBS = {
-  torso: { color: 0x8e8e93, bodies: ['pelvis','waist_yaw_link','waist_roll_link','torso_link'] },
-  la:    { color: 0xe74c3c, bodies: ['left_shoulder_pitch_link','left_shoulder_roll_link','left_shoulder_yaw_link','left_elbow_link','left_wrist_roll_link','left_wrist_pitch_link','left_wrist_yaw_link'] },
-  ra:    { color: 0xf39c12, bodies: ['right_shoulder_pitch_link','right_shoulder_roll_link','right_shoulder_yaw_link','right_elbow_link','right_wrist_roll_link','right_wrist_pitch_link','right_wrist_yaw_link'] },
-  ll:    { color: 0x27ae60, bodies: ['left_hip_pitch_link','left_hip_roll_link','left_hip_yaw_link','left_knee_link','left_ankle_pitch_link','left_ankle_roll_link'] },
-  rl:    { color: 0x2980b9, bodies: ['right_hip_pitch_link','right_hip_roll_link','right_hip_yaw_link','right_knee_link','right_ankle_pitch_link','right_ankle_roll_link'] },
+  torso: { color: '#8e8e93', bodies: ['pelvis','waist_yaw_link','waist_roll_link','torso_link'] },
+  la:    { color: '#e74c3c', bodies: ['left_shoulder_pitch_link','left_shoulder_roll_link','left_shoulder_yaw_link','left_elbow_link','left_wrist_roll_link','left_wrist_pitch_link','left_wrist_yaw_link'] },
+  ra:    { color: '#f39c12', bodies: ['right_shoulder_pitch_link','right_shoulder_roll_link','right_shoulder_yaw_link','right_elbow_link','right_wrist_roll_link','right_wrist_pitch_link','right_wrist_yaw_link'] },
+  ll:    { color: '#27ae60', bodies: ['left_hip_pitch_link','left_hip_roll_link','left_hip_yaw_link','left_knee_link','left_ankle_pitch_link','left_ankle_roll_link'] },
+  rl:    { color: '#2980b9', bodies: ['right_hip_pitch_link','right_hip_roll_link','right_hip_yaw_link','right_knee_link','right_ankle_pitch_link','right_ankle_roll_link'] },
 };
-const LIMB_OF = {};
-for (const [k, v] of Object.entries(LIMBS)) {
-  for (const b of v.bodies) LIMB_OF[b] = k;
-}
+const LIMB_LABEL = { torso: 'Torso / Waist', la: 'Left arm', ra: 'Right arm', ll: 'Left leg', rl: 'Right leg' };
 
-// Picked joints for the kinematic-encoding halo overlay on the *main* G1
-const PICKED_JOINTS = [
-  { body: 'right_shoulder_yaw_link', color: 0xf39c12 },
-  { body: 'right_elbow_link',         color: 0xf39c12 },
-  { body: 'right_wrist_pitch_link',   color: 0xf39c12 },
-  { body: 'torso_link',               color: 0x8e8e93 },
+// Intra-limb connections to animate per limb (1-2 specific joint pairs)
+const INTRA_CONNS = {
+  torso: [['pelvis', 'torso_link']],
+  la:    [['left_shoulder_pitch_link','left_elbow_link'], ['left_elbow_link','left_wrist_pitch_link']],
+  ra:    [['right_shoulder_pitch_link','right_elbow_link'], ['right_elbow_link','right_wrist_pitch_link']],
+  ll:    [['left_hip_pitch_link','left_knee_link'], ['left_knee_link','left_ankle_pitch_link']],
+  rl:    [['right_hip_pitch_link','right_knee_link'], ['right_knee_link','right_ankle_pitch_link']],
+};
+
+// Inter-limb beats (literal limb-to-limb, per user direction)
+const INTER_BEATS = [
+  { key:'la-ra', limbs:['la','ra'], color:'#c94c8d', label:'L arm ↔ R arm',
+    conns: [['left_shoulder_pitch_link','right_shoulder_pitch_link'],
+            ['left_wrist_pitch_link','right_wrist_pitch_link']] },
+  { key:'ll-rl', limbs:['ll','rl'], color:'#5cb39b', label:'L leg ↔ R leg',
+    conns: [['left_hip_pitch_link','right_hip_pitch_link'],
+            ['left_ankle_pitch_link','right_ankle_pitch_link']] },
+  { key:'la-ll', limbs:['la','ll'], color:'#9b59b6', label:'L arm ↔ L leg',
+    conns: [['left_elbow_link','left_knee_link']] },
+  { key:'ra-rl', limbs:['ra','rl'], color:'#ff7e5f', label:'R arm ↔ R leg',
+    conns: [['right_elbow_link','right_knee_link']] },
+];
+
+// Picked joints for kinematic-encoding zoom-in
+const PICKED = [
+  { body: 'right_shoulder_yaw_link', label: 'Right shoulder', feature: 'velocity' },
+  { body: 'right_elbow_link',        label: 'Right elbow',    feature: 'rom' },
+  { body: 'right_wrist_pitch_link',  label: 'Right wrist',    feature: 'accel' },
 ];
 
 const CSV_TO_JOINT = {
@@ -694,40 +628,55 @@ const CSV_TO_JOINT = {
   right_wrist_roll_joint_dof:'right_wrist_roll_joint', right_wrist_pitch_joint_dof:'right_wrist_pitch_joint', right_wrist_yaw_joint_dof:'right_wrist_yaw_joint',
 };
 
-// ─── State ───────────────────────────────────────────────────────────────────
+// Body name → joint name (used for ROM/velocity/accel signals)
+const BODY_TO_JOINT = {
+  'right_shoulder_yaw_link': 'right_shoulder_yaw_joint',
+  'right_elbow_link':        'right_elbow_joint',
+  'right_wrist_pitch_link':  'right_wrist_pitch_joint',
+};
+
+// ─── State ──────────────────────────────────────────────────────────────────
 let renderer, scene, camera;
 let canvasW = 0, canvasH = 0;
-let canvasWrapEl;
+let canvasWrapEl, svgEl;
 let modelData;
 let g1Motion, smplData, smplFaces;
 let demosConfig, currentDemo;
 let g1Main, smplGroup;
 let g1Ghosts = [];
 let stlGeomCache = {};
-let pickedHalos = [];
-let pickedTrails = [];
-let pickedArrows = [];
-let hierSkel;             // hierarchy mini-skeleton
-let limbBeatActive = {};   // map limbKey → opacity 0..1 for intra-limb visual
-let sparkBuffers = { pos: [], vel: [], acc: [] };
 let masterClock = 0;
-let stageIdx = -1;
-let stageStart = 0;
+let stageIdx = -1, stageStart = 0;
 let stages = [];
 let walkthroughEnded = false;
 let lastTS = null;
 
+// Sparkline buffers per picked joint
+const sparkBuffers = {};   // jointName → { vel: [], acc: [], pos: [] }
+const romCache = {};       // jointName → { min, max }
+
+// SVG element refs
+let svgEnc, svgLimbs = {}, svgConns = [];
+let plates = {};           // body → plate DOM
+
 // ─── Helpers ────────────────────────────────────────────────────────────────
 const lerp = (a,b,t)=>a+(b-a)*t;
-const smoothstep = t=>t*t*(3-2*t);
 const clamp = (x,lo,hi)=>Math.max(lo,Math.min(hi,x));
+const easeInOut = t=>t*t*(3-2*t);
 function fetchJSON(u){return fetch(u).then(r=>{if(!r.ok)throw new Error(r.status+' '+u);return r.json();});}
 function setStatus(m){const e=document.getElementById('load-status');if(e)e.textContent=m;}
 function showLoading(m){document.getElementById('loading').style.display='flex';setStatus(m||'Loading…');}
 function hideLoading(){document.getElementById('loading').style.display='none';}
 function showError(m){const e=document.getElementById('error-box');e.style.display='flex';e.textContent='Error: '+m;}
+function svg(tag, attrs={}) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [k,v] of Object.entries(attrs)) el.setAttribute(k, v);
+  return el;
+}
+function show(id){ document.getElementById(id).classList.add('visible'); }
+function hide(id){ document.getElementById(id).classList.remove('visible'); }
 
-// ─── G1 motion CSV loader ───────────────────────────────────────────────────
+// ─── G1 motion loader ───────────────────────────────────────────────────────
 async function loadG1Motion(url, maxFrames=600) {
   const text = await fetch(url).then(r => { if (!r.ok) throw new Error(`CSV not found: ${url}`); return r.text(); });
   const parsed = Papa.parse(text, { header:true, skipEmptyLines:true, dynamicTyping:true });
@@ -758,8 +707,6 @@ async function loadG1Motion(url, maxFrames=600) {
   }
   return md;
 }
-
-// ─── SMPL binary loaders ────────────────────────────────────────────────────
 async function loadVertsBin(url) {
   const buf = await fetch(url).then(r => { if(!r.ok) throw new Error(r.status+' '+url); return r.arrayBuffer(); });
   const dv = new DataView(buf);
@@ -772,7 +719,7 @@ async function loadFacesBin(url) {
   return new Uint32Array(buf, 4, n*3);
 }
 
-// ─── G1 robot builder ───────────────────────────────────────────────────────
+// ─── G1 builder ─────────────────────────────────────────────────────────────
 const stlLoader = new THREE.STLLoader();
 function loadSTL(name) {
   if (stlGeomCache[name] !== undefined) return Promise.resolve(stlGeomCache[name]);
@@ -784,7 +731,6 @@ function loadSTL(name) {
     );
   });
 }
-
 function makeG1Material(rgba, meshName, opacityRef) {
   let color, metalness, roughness;
   if (meshName === 'head_link')          { color = new THREE.Color(0x0c0f14); metalness = 0.45; roughness = 0.30; }
@@ -794,7 +740,6 @@ function makeG1Material(rgba, meshName, opacityRef) {
   opacityRef.materials.push(mat);
   return mat;
 }
-
 async function buildG1Robot({opacityRef={value:1.0, materials:[]}}={}) {
   const root = new THREE.Group();
   const yaw  = new THREE.Group();
@@ -802,11 +747,8 @@ async function buildG1Robot({opacityRef={value:1.0, materials:[]}}={}) {
   const robotWorld = new THREE.Group();
   robotWorld.rotation.x = -Math.PI/2;
   yaw.add(robotWorld);
-
   const bodies = modelData.bodies;
-  const groupMap = {};
-  const bodyGroups = {};
-
+  const groupMap = {}, bodyGroups = {};
   for (const b of bodies) {
     const outer = new THREE.Group();
     outer.position.set(...b.pos);
@@ -837,7 +779,6 @@ async function buildG1Robot({opacityRef={value:1.0, materials:[]}}={}) {
     }
   }
   await Promise.all(jobs);
-
   const _ax = new THREE.Vector3(); const _q = new THREE.Quaternion();
   function applyFrame(motion, fIdx) {
     if (!rootOuter) return;
@@ -864,10 +805,10 @@ async function buildG1Robot({opacityRef={value:1.0, materials:[]}}={}) {
     opacityRef.value = a;
     for (const m of opacityRef.materials) { m.opacity = a; m.transparent = a < 1; m.depthWrite = a >= 0.95; }
   }
-  return { object3D: root, yawGroup: yaw, bodyGroups, applyFrame, getBodyWorldPos, setOpacity, opacityRef };
+  return { object3D: root, bodyGroups, applyFrame, getBodyWorldPos, setOpacity, opacityRef };
 }
 
-// ─── SMPL human ─────────────────────────────────────────────────────────────
+// ─── SMPL builder ───────────────────────────────────────────────────────────
 function buildSMPL(vd, faces) {
   const numVerts = vd.numVerts, numFrames = vd.numFrames;
   const geo = new THREE.BufferGeometry();
@@ -881,27 +822,20 @@ function buildSMPL(vd, faces) {
   });
   const mesh = new THREE.Mesh(geo, mat);
   mesh.castShadow = true;
-
   posAttr.array.set(vd.verts.subarray(0, numVerts*3));
   posAttr.needsUpdate = true;
   geo.computeVertexNormals();
-
-  // floor-align (10th percentile of frame-min Y)
   const frameMin = new Float32Array(numFrames);
   for (let fi = 0; fi < numFrames; fi++) {
     const base = fi*numVerts*3; let mn = Infinity;
-    for (let j = 1; j < numVerts*3; j += 3) {
-      const y = vd.verts[base+j]; if (y < mn) mn = y;
-    }
+    for (let j = 1; j < numVerts*3; j += 3) { const y = vd.verts[base+j]; if (y < mn) mn = y; }
     frameMin[fi] = mn;
   }
   const sorted = Array.from(frameMin).sort((a,b)=>a-b);
   const p10 = sorted[Math.floor(numFrames*0.10)];
   mesh.position.y = -p10;
-
   const wrap = new THREE.Group();
   wrap.add(mesh);
-
   function applyFrame(fIdx) {
     const N = numFrames;
     const fi = (((fIdx % N) + N) % N) | 0;
@@ -913,323 +847,11 @@ function buildSMPL(vd, faces) {
   return { object3D: wrap, mesh, mat, applyFrame, setOpacity, numFrames, numVerts };
 }
 
-// ─── Hierarchy mini-skeleton ────────────────────────────────────────────────
-// A standalone group that visualizes the G1 as spheres+lines, with per-limb
-// coloring and dynamic edge overlays for intra/inter-limb beats.
-function buildHierarchySkeleton() {
-  const group = new THREE.Group();
-
-  // Collect actuated body list (29 hinge joints + root pelvis = 30)
-  const bodyNames = modelData.bodies.map(b => b.name);
-
-  // Joint balls
-  const balls = {};
-  const ballGeo = new THREE.SphereGeometry(0.046, 14, 10);
-  for (const bn of bodyNames) {
-    const limbKey = LIMB_OF[bn] || 'torso';
-    const baseColor = LIMBS[limbKey].color;
-    const mat = new THREE.MeshStandardMaterial({
-      color: baseColor, roughness: 0.45, metalness: 0.05,
-      transparent: true, opacity: 0.85, emissive: new THREE.Color(baseColor), emissiveIntensity: 0.0,
-    });
-    const m = new THREE.Mesh(ballGeo, mat);
-    m.userData = { bodyName: bn, limbKey, baseColor };
-    group.add(m);
-    balls[bn] = m;
-  }
-
-  // Skeleton edges (parent-child) — drawn faintly always
-  const treeMat = new THREE.LineBasicMaterial({ color: 0xbac1d0, transparent: true, opacity: 0.55 });
-  const treeLines = [];
-  for (const b of modelData.bodies) {
-    if (!b.parent) continue;
-    const a = b.parent, c = b.name;
-    if (!balls[a] || !balls[c]) continue;
-    const lg = new THREE.BufferGeometry();
-    lg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
-    const line = new THREE.Line(lg, treeMat.clone());
-    line.userData = { a, c, isTree:true };
-    group.add(line);
-    treeLines.push(line);
-  }
-
-  // Intra-limb subgraph edges (complete graph within each limb) — initially hidden
-  const intraEdges = {};   // limbKey -> array of {a, b, line}
-  for (const [limbKey, L] of Object.entries(LIMBS)) {
-    intraEdges[limbKey] = [];
-    const bs = L.bodies;
-    for (let i = 0; i < bs.length; i++) {
-      for (let j = i+1; j < bs.length; j++) {
-        if (!balls[bs[i]] || !balls[bs[j]]) continue;
-        const lg = new THREE.BufferGeometry();
-        lg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
-        const mat = new THREE.LineBasicMaterial({ color: L.color, transparent: true, opacity: 0.0 });
-        const line = new THREE.Line(lg, mat);
-        line.userData = { a: bs[i], c: bs[j] };
-        group.add(line);
-        intraEdges[limbKey].push({ a: bs[i], c: bs[j], line });
-      }
-    }
-  }
-
-  // Inter-limb edges — connect joints across limbs. Defined per-pair so we can highlight pairs.
-  const interEdges = {};
-  function addCrossPair(key, color, pairs) {
-    interEdges[key] = [];
-    for (const [a, c] of pairs) {
-      if (!balls[a] || !balls[c]) continue;
-      const lg = new THREE.BufferGeometry();
-      lg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
-      const mat = new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.0 });
-      const line = new THREE.Line(lg, mat);
-      line.userData = { a, c };
-      group.add(line);
-      interEdges[key].push({ a, c, line });
-    }
-  }
-  // Bilateral arm-to-arm pairs (shoulder ↔ shoulder, elbow ↔ elbow, wrist ↔ wrist)
-  addCrossPair('la-ra', 0xc94c8d, [
-    ['left_shoulder_pitch_link','right_shoulder_pitch_link'],
-    ['left_elbow_link','right_elbow_link'],
-    ['left_wrist_pitch_link','right_wrist_pitch_link'],
-  ]);
-  // Bilateral leg-to-leg
-  addCrossPair('ll-rl', 0x5cb39b, [
-    ['left_hip_pitch_link','right_hip_pitch_link'],
-    ['left_knee_link','right_knee_link'],
-    ['left_ankle_pitch_link','right_ankle_pitch_link'],
-  ]);
-  // Left-side arm-to-leg
-  addCrossPair('la-ll', 0x9b59b6, [
-    ['left_shoulder_pitch_link','left_hip_pitch_link'],
-    ['left_elbow_link','left_knee_link'],
-    ['left_wrist_pitch_link','left_ankle_pitch_link'],
-  ]);
-  // Right-side arm-to-leg
-  addCrossPair('ra-rl', 0xff9a8b, [
-    ['right_shoulder_pitch_link','right_hip_pitch_link'],
-    ['right_elbow_link','right_knee_link'],
-    ['right_wrist_pitch_link','right_ankle_pitch_link'],
-  ]);
-
-  // helpers
-  const _wp = new THREE.Vector3();
-  const skelOffset = new THREE.Vector3(0, 0, 0);   // set externally
-  function setOrigin(x, y, z) { group.position.set(x, y, z); }
-  function setScale(s) { group.scale.setScalar(s); }
-
-  function updateFromMain(mainGetWorldPos, originBaseline) {
-    // Re-position spheres at main-G1 joints, then offset them
-    for (const bn of bodyNames) {
-      const p = mainGetWorldPos(bn, _wp);
-      if (!p) continue;
-      // Subtract baseline so the skeleton is centered at our group's local origin
-      balls[bn].position.set(p.x - originBaseline.x, p.y - originBaseline.y, p.z - originBaseline.z);
-    }
-    // Update edge endpoints from sphere positions
-    function syncLine(line) {
-      const a = balls[line.userData.a], c = balls[line.userData.c];
-      if (!a || !c) return;
-      const arr = line.geometry.attributes.position.array;
-      arr[0] = a.position.x; arr[1] = a.position.y; arr[2] = a.position.z;
-      arr[3] = c.position.x; arr[4] = c.position.y; arr[5] = c.position.z;
-      line.geometry.attributes.position.needsUpdate = true;
-    }
-    for (const l of treeLines) syncLine(l);
-    for (const k of Object.keys(intraEdges)) for (const e of intraEdges[k]) syncLine(e.line);
-    for (const k of Object.keys(interEdges)) for (const e of interEdges[k]) syncLine(e.line);
-  }
-
-  function setIntraOpacity(limbKey, o) {
-    if (!intraEdges[limbKey]) return;
-    for (const e of intraEdges[limbKey]) e.line.material.opacity = o;
-  }
-  function setInterOpacity(pairKey, o) {
-    if (!interEdges[pairKey]) return;
-    for (const e of interEdges[pairKey]) e.line.material.opacity = o;
-  }
-  function setLimbEmissive(limbKey, intensity) {
-    for (const bn of LIMBS[limbKey].bodies) {
-      const m = balls[bn]; if (!m) continue;
-      m.material.emissiveIntensity = intensity;
-      m.scale.setScalar(1 + intensity * 0.4);
-    }
-  }
-  function resetLimbEmissive() {
-    for (const k of Object.keys(LIMBS)) setLimbEmissive(k, 0);
-  }
-  function clearAllEdges() {
-    for (const k of Object.keys(intraEdges)) setIntraOpacity(k, 0);
-    for (const k of Object.keys(interEdges)) setInterOpacity(k, 0);
-  }
-
-  return {
-    object3D: group, balls,
-    setOrigin, setScale, updateFromMain,
-    setIntraOpacity, setInterOpacity, setLimbEmissive, resetLimbEmissive, clearAllEdges,
-  };
-}
-
-// ─── Picked-joint halos / trails / arrows (live on main G1) ─────────────────
-function buildPickedAccessories() {
-  const haloGeo = new THREE.RingGeometry(0.07, 0.10, 32);
-  for (const p of PICKED_JOINTS) {
-    const halo = new THREE.Mesh(haloGeo, new THREE.MeshBasicMaterial({
-      color: p.color, transparent:true, opacity:0.0, side: THREE.DoubleSide, depthWrite:false,
-    }));
-    halo.userData = { bodyName: p.body };
-    pickedHalos.push(halo); scene.add(halo);
-
-    const TLEN = 28;
-    const buf = new Float32Array(TLEN*3);
-    const cbuf = new Float32Array(TLEN*3);
-    const tg = new THREE.BufferGeometry();
-    tg.setAttribute('position', new THREE.BufferAttribute(buf, 3));
-    tg.setAttribute('color', new THREE.BufferAttribute(cbuf, 3));
-    const tm = new THREE.LineBasicMaterial({ vertexColors:true, transparent:true, opacity:0.0, depthWrite:false });
-    const line = new THREE.Line(tg, tm);
-    pickedTrails.push({ body:p.body, line, buf, cbuf, len:TLEN, history:[], color:p.color });
-    scene.add(line);
-
-    const arr = new THREE.ArrowHelper(new THREE.Vector3(0,1,0), new THREE.Vector3(0,0,0), 0.001, 0xe74c3c, 0.05, 0.03);
-    arr.line.material.transparent = true; arr.line.material.opacity = 0;
-    arr.cone.material.transparent = true; arr.cone.material.opacity = 0;
-    pickedArrows.push({ body:p.body, arrow: arr });
-    scene.add(arr);
-  }
-}
-function setPickedOpacity(o) {
-  for (const h of pickedHalos) h.material.opacity = o * 0.85;
-  for (const t of pickedTrails) t.line.material.opacity = o;
-  for (const a of pickedArrows) { a.arrow.line.material.opacity = o; a.arrow.cone.material.opacity = o; }
-}
-const _ppw = new THREE.Vector3();
-function updatePickedAccessories() {
-  for (const h of pickedHalos) {
-    const p = g1Main.getBodyWorldPos(h.userData.bodyName, _ppw);
-    if (p) { h.position.copy(p); h.lookAt(camera.position); }
-  }
-  for (const t of pickedTrails) {
-    const p = g1Main.getBodyWorldPos(t.body, _ppw);
-    if (!p) continue;
-    t.history.push([p.x, p.y, p.z]);
-    if (t.history.length > t.len) t.history.shift();
-    const c = new THREE.Color(t.color);
-    for (let i = 0; i < t.len; i++) {
-      const src = t.history[Math.min(i, t.history.length - 1)] || [p.x, p.y, p.z];
-      t.buf[i*3]   = src[0]; t.buf[i*3+1] = src[1]; t.buf[i*3+2] = src[2];
-      const a = i / (t.len - 1);
-      t.cbuf[i*3]   = c.r * a; t.cbuf[i*3+1] = c.g * a; t.cbuf[i*3+2] = c.b * a;
-    }
-    t.line.geometry.attributes.position.needsUpdate = true;
-    t.line.geometry.attributes.color.needsUpdate = true;
-  }
-  for (const a of pickedArrows) {
-    const p = g1Main.getBodyWorldPos(a.body, _ppw);
-    if (!p) continue;
-    a.arrow.position.copy(p);
-    const trail = pickedTrails.find(t => t.body === a.body);
-    if (trail && trail.history.length >= 2) {
-      const cur = trail.history[trail.history.length - 1];
-      const prv = trail.history[trail.history.length - 2];
-      const v = new THREE.Vector3(cur[0]-prv[0], cur[1]-prv[1], cur[2]-prv[2]);
-      const len = v.length();
-      if (v.lengthSq() > 1e-8) a.arrow.setDirection(v.clone().normalize());
-      a.arrow.setLength(clamp(len * 60, 0.05, 0.5), 0.07, 0.04);
-    }
-  }
-}
-function clearTrails() { for (const t of pickedTrails) t.history.length = 0; }
-
-// ─── Sparklines for kinematic-encoding block ────────────────────────────────
-const SPARK_LEN = 90;
-function pushSparkSample(jointName, fIdx) {
-  const m = g1Motion;
-  const N = m.numFrames;
-  const wrap = i => ((i % N) + N) % N;
-  const arr = m.joints[jointName];
-  const fi = wrap(fIdx | 0);
-  const fp = wrap(fi - 1);
-  const fpp = wrap(fi - 2);
-  sparkBuffers.pos.push(arr[fi]);                       if (sparkBuffers.pos.length > SPARK_LEN) sparkBuffers.pos.shift();
-  sparkBuffers.vel.push(arr[fi] - arr[fp]);              if (sparkBuffers.vel.length > SPARK_LEN) sparkBuffers.vel.shift();
-  sparkBuffers.acc.push(arr[fi] - 2*arr[fp] + arr[fpp]); if (sparkBuffers.acc.length > SPARK_LEN) sparkBuffers.acc.shift();
-}
-function resetSparks(){ sparkBuffers.pos=[]; sparkBuffers.vel=[]; sparkBuffers.acc=[]; }
-function drawSpark(canvas, buf, color) {
-  const w = canvas.width = canvas.clientWidth * (window.devicePixelRatio || 1);
-  const h = canvas.height = canvas.clientHeight * (window.devicePixelRatio || 1);
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0,0,w,h);
-  if (buf.length < 2) return;
-  let mn = Infinity, mx = -Infinity;
-  for (const v of buf) { if (v<mn)mn=v; if (v>mx)mx=v; }
-  if (mx - mn < 1e-6) { mn -= 0.01; mx += 0.01; }
-  // baseline
-  ctx.strokeStyle = '#e9ecf3'; ctx.lineWidth = 1 * (window.devicePixelRatio || 1);
-  ctx.beginPath(); ctx.moveTo(0, h/2); ctx.lineTo(w, h/2); ctx.stroke();
-  // sparkline
-  ctx.strokeStyle = color; ctx.lineWidth = 1.6 * (window.devicePixelRatio || 1);
-  ctx.beginPath();
-  for (let i = 0; i < buf.length; i++) {
-    const x = (i / (SPARK_LEN - 1)) * w;
-    const y = h - ((buf[i] - mn) / (mx - mn)) * (h - 4) - 2;
-    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-  }
-  ctx.stroke();
-  if (buf.length > 0) {
-    const xT = ((buf.length - 1) / (SPARK_LEN - 1)) * w;
-    const yT = h - ((buf[buf.length-1] - mn)/(mx-mn))*(h-4) - 2;
-    ctx.fillStyle = color;
-    ctx.beginPath(); ctx.arc(xT, yT, 2.6 * (window.devicePixelRatio || 1), 0, Math.PI*2); ctx.fill();
-  }
-}
-function renderSparks() {
-  drawSpark(document.getElementById('sp-pos'), sparkBuffers.pos, '#2c3e6b');
-  drawSpark(document.getElementById('sp-vel'), sparkBuffers.vel, '#e74c3c');
-  drawSpark(document.getElementById('sp-acc'), sparkBuffers.acc, '#f39c12');
-}
-
-// ─── Embedding panel ────────────────────────────────────────────────────────
-const Z_CELLS = 256;
-const ATTR_CELLS = 64;
-function drawZVector(seed) {
-  const c = document.getElementById('z-canvas');
-  const w = c.width = c.clientWidth * (window.devicePixelRatio || 1);
-  const h = c.height = c.clientHeight * (window.devicePixelRatio || 1);
-  const ctx = c.getContext('2d');
-  ctx.clearRect(0,0,w,h);
-  const cw = w / Z_CELLS;
-  for (let i = 0; i < Z_CELLS; i++) {
-    const v = 0.5 * Math.abs(Math.sin(i*0.713 + seed*0.012))
-            + 0.5 * Math.abs(Math.cos(i*0.281 + seed*0.0078));
-    const r = Math.round(44 + v*200);
-    const g = Math.round(62 + v*80);
-    const b = Math.round(107 + v*80);
-    ctx.fillStyle = `rgb(${r},${g},${b})`;
-    ctx.fillRect(i*cw, 0, Math.ceil(cw+0.5), h);
-  }
-}
-function drawAttrStrip(canvas, attr, seed) {
-  const w = canvas.width = canvas.clientWidth * (window.devicePixelRatio || 1);
-  const h = canvas.height = canvas.clientHeight * (window.devicePixelRatio || 1);
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0,0,w,h);
-  const cw = w / ATTR_CELLS;
-  const offs = { gender:1.0, age:11.3, height:23.7, weight:37.1 }[attr] || 0;
-  for (let i = 0; i < ATTR_CELLS; i++) {
-    const v = Math.abs(Math.sin(i*0.45 + offs + seed*0.011));
-    const r = Math.round(44 + v*200);
-    const g = Math.round(62 + v*90);
-    const b = Math.round(107 + v*90);
-    ctx.fillStyle = `rgb(${r},${g},${b})`;
-    ctx.fillRect(i*cw, 0, Math.ceil(cw+0.5), h);
-  }
-}
-
-// ─── Scene setup (orthographic camera) ──────────────────────────────────────
+// ─── Scene setup ────────────────────────────────────────────────────────────
 function setupScene() {
   canvasWrapEl = document.getElementById('canvas-wrap');
+  svgEl = document.getElementById('svg-overlay');
+
   renderer = new THREE.WebGLRenderer({ antialias:true, alpha:false });
   renderer.setPixelRatio(window.devicePixelRatio);
   canvasW = canvasWrapEl.clientWidth; canvasH = canvasWrapEl.clientHeight;
@@ -1239,13 +861,13 @@ function setupScene() {
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.18;
-  canvasWrapEl.appendChild(renderer.domElement);
+  renderer.domElement.id = 'three-canvas';
+  canvasWrapEl.insertBefore(renderer.domElement, canvasWrapEl.firstChild);
 
   scene = new THREE.Scene();
   scene.background = new THREE.Color('#ffffff');
 
-  // Orthographic camera with fixed horizontal frustum
-  const frustumW = 13.5;   // world units across the canvas
+  const frustumW = 13.5;
   const aspect = canvasW / canvasH;
   const frustumH = frustumW / aspect;
   camera = new THREE.OrthographicCamera(
@@ -1255,7 +877,6 @@ function setupScene() {
   camera.position.set(0, 1.0, 10);
   camera.lookAt(0, 1.0, 0);
 
-  // Lights
   scene.add(new THREE.HemisphereLight(0xffffff, 0xeef0f6, 0.85));
   const key = new THREE.DirectionalLight(0xffffff, 0.9);
   key.position.set(3, 8, 5);
@@ -1272,86 +893,413 @@ function setupScene() {
   rim.position.set(0, 4, -6);
   scene.add(rim);
 
-  // Floor — soft gradient strip (subtle)
-  const floorTex = makeFloorTexture();
   const floor = new THREE.Mesh(
     new THREE.PlaneGeometry(40, 8),
-    new THREE.MeshStandardMaterial({ map: floorTex, roughness: 0.95, metalness: 0.0, transparent: true })
+    new THREE.MeshStandardMaterial({ color: 0xf6f7fa, roughness: 0.95, metalness: 0.0 })
   );
   floor.rotation.x = -Math.PI / 2;
   floor.position.y = 0;
   floor.receiveShadow = true;
   scene.add(floor);
 
+  // SVG overlay viewBox
+  svgEl.setAttribute('viewBox', `0 0 ${canvasW} ${canvasH}`);
+  svgEl.setAttribute('preserveAspectRatio', 'none');
+
   window.addEventListener('resize', onResize);
 }
-
-function makeFloorTexture() {
-  const px = 1024;
-  const c = document.createElement('canvas'); c.width = c.height = px;
-  const ctx = c.getContext('2d');
-  // very subtle stripe gradient
-  ctx.fillStyle = '#fafbfd'; ctx.fillRect(0, 0, px, px);
-  ctx.strokeStyle = '#eef0f6'; ctx.lineWidth = 2; ctx.lineCap = 'square';
-  const div = 24, step = px/div;
-  for (let i = 0; i <= div; i++) {
-    const p = Math.round(i*step);
-    ctx.beginPath(); ctx.moveTo(p, 0); ctx.lineTo(p, px); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(0, p); ctx.lineTo(px, p); ctx.stroke();
-  }
-  const tex = new THREE.CanvasTexture(c);
-  tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
-  return tex;
-}
-
 function onResize() {
   canvasW = canvasWrapEl.clientWidth; canvasH = canvasWrapEl.clientHeight;
   const frustumW = 13.5;
   const aspect = canvasW / canvasH;
   const frustumH = frustumW / aspect;
   camera.left = -frustumW/2; camera.right = frustumW/2;
-  camera.top  =  frustumH/2 + 0.4; camera.bottom = -frustumH/2 + 0.4;
+  camera.top = frustumH/2 + 0.4; camera.bottom = -frustumH/2 + 0.4;
   camera.updateProjectionMatrix();
   renderer.setSize(canvasW, canvasH);
+  svgEl.setAttribute('viewBox', `0 0 ${canvasW} ${canvasH}`);
 }
 
-// ─── World→screen for HTML overlays ────────────────────────────────────────
+// ─── world → screen ────────────────────────────────────────────────────────
+const _v3 = new THREE.Vector3();
 function worldToCanvasPx(wx, wy, wz) {
-  const v = new THREE.Vector3(wx, wy, wz).project(camera);
-  return {
-    x: (v.x * 0.5 + 0.5) * canvasW,
-    y: (1 - (v.y * 0.5 + 0.5)) * canvasH,
-  };
+  _v3.set(wx, wy, wz).project(camera);
+  return { x: (_v3.x * 0.5 + 0.5) * canvasW, y: (1 - (_v3.y * 0.5 + 0.5)) * canvasH };
+}
+function jointScreen(bodyName) {
+  const p = g1Main.getBodyWorldPos(bodyName, _v3);
+  if (!p) return null;
+  return worldToCanvasPx(p.x, p.y, p.z);
 }
 
-function positionSlotLabel(id, wx, wy, wz, yOff = 0) {
-  const p = worldToCanvasPx(wx, wy, wz);
-  const el = document.getElementById(id);
-  el.style.left = (p.x) + 'px';
-  el.style.top  = (p.y + yOff) + 'px';
-}
-function positionAttrCard(id, side /* 'left'|'right' */) {
-  const el = document.getElementById(id);
-  if (side === 'left')  { el.style.left = '16px'; el.style.top = '16px'; el.style.right = 'auto'; }
-  else                  { el.style.right = '16px'; el.style.top = '16px'; el.style.left = 'auto'; }
-}
-function positionBlock(id, wx, wy, wz, yOff = 0) {
-  const p = worldToCanvasPx(wx, wy, wz);
-  const el = document.getElementById(id);
-  el.style.left = p.x + 'px';
-  el.style.top  = (p.y + yOff) + 'px';
-}
-
-// ─── Ghosts (spatiotemporal) ───────────────────────────────────────────────
+// ─── Ghosts ─────────────────────────────────────────────────────────────────
 async function buildGhosts(N = 5) {
   for (let k = 0; k < N; k++) {
     const opacityRef = { value: 0.0, materials: [] };
     const r = await buildG1Robot({opacityRef});
-    r.object3D.position.set(SLOT_X.robot, 0, -0.5 - k*0.45);
+    r.object3D.position.set(SLOT_X.robot, 0, -0.45 - k*0.4);
     r.object3D.scale.setScalar(1.0 - k*0.04);
     r.setOpacity(0.0);
     scene.add(r.object3D);
     g1Ghosts.push({ robot:r, lagFrames: (k+1) * 6 });
+  }
+}
+
+// ─── Picked-joint focus rings + data plates (kinematic encoding) ────────────
+function setupFocusRingsAndPlates() {
+  const gFocus = document.getElementById('g-focus');
+  gFocus.innerHTML = '';
+  const platesHolder = document.getElementById('plates-holder');
+  platesHolder.innerHTML = '';
+
+  for (const p of PICKED) {
+    // SVG: focus ring + leader line
+    const ring = svg('circle', { class:'svg-focus-ring', r: 18, cx: 0, cy: 0 });
+    const leader = svg('path',  { class:'svg-leader', d: 'M0 0' });
+    ring.setAttribute('data-body', p.body);
+    leader.setAttribute('data-body', p.body);
+    gFocus.appendChild(leader);
+    gFocus.appendChild(ring);
+
+    // Data plate (HTML)
+    const plate = document.createElement('div');
+    plate.className = 'data-plate';
+    plate.setAttribute('data-body', p.body);
+    const featureLabel = p.feature === 'velocity' ? 'Velocity θ̇' :
+                         p.feature === 'rom'      ? 'Range of Motion' :
+                                                    'Acceleration θ̈';
+    const subLine     = p.feature === 'velocity' ? 'angular rate' :
+                         p.feature === 'rom'      ? 'min ↔ max swept' :
+                                                    '2nd derivative';
+    if (p.feature === 'rom') {
+      plate.innerHTML = `
+        <div class="dp-head"><span>${featureLabel}</span><span class="joint">${p.label}</span></div>
+        <div class="dp-sub">${subLine}</div>
+        <svg class="rom-fan" viewBox="0 0 160 50" preserveAspectRatio="none">
+          <path id="rom-bg-${p.body}" d="" fill="none" stroke="#eef0f6" stroke-width="6" stroke-linecap="round"/>
+          <path id="rom-arc-${p.body}" d="" fill="none" stroke="${p.feature==='rom'?'#9b6dbf':'#e74c3c'}" stroke-width="5" stroke-linecap="round"/>
+          <line id="rom-needle-${p.body}" x1="80" y1="42" x2="80" y2="10" stroke="#2c3e6b" stroke-width="2"/>
+          <circle cx="80" cy="42" r="3" fill="#2c3e6b"/>
+        </svg>
+      `;
+    } else {
+      plate.innerHTML = `
+        <div class="dp-head"><span>${featureLabel}</span><span class="joint">${p.label}</span></div>
+        <div class="dp-sub">${subLine}</div>
+        <canvas data-feature="${p.feature}" data-body="${p.body}"></canvas>
+      `;
+    }
+    platesHolder.appendChild(plate);
+    plates[p.body] = plate;
+
+    // Sparkline buffer
+    sparkBuffers[p.body] = { vel: [], acc: [], pos: [] };
+  }
+}
+
+function setFocusOpacity(o) {
+  document.querySelectorAll('.svg-focus-ring').forEach(r => r.style.opacity = o);
+  document.querySelectorAll('.svg-leader').forEach(r => r.style.opacity = o * 0.7);
+  for (const p of PICKED) {
+    if (o > 0.05) plates[p.body].classList.add('visible');
+    else          plates[p.body].classList.remove('visible');
+  }
+}
+
+const SPARK_LEN = 70;
+function tickSparkBuffers(fIdx) {
+  for (const p of PICKED) {
+    const jName = BODY_TO_JOINT[p.body];
+    if (!jName) continue;
+    const arr = g1Motion.joints[jName];
+    const N = g1Motion.numFrames;
+    const wrap = i => ((i % N) + N) % N;
+    const fi  = wrap(fIdx | 0);
+    const fp  = wrap(fi - 1);
+    const fpp = wrap(fi - 2);
+    const buf = sparkBuffers[p.body];
+    buf.pos.push(arr[fi]);                       if (buf.pos.length > SPARK_LEN) buf.pos.shift();
+    buf.vel.push(arr[fi] - arr[fp]);             if (buf.vel.length > SPARK_LEN) buf.vel.shift();
+    buf.acc.push(arr[fi] - 2*arr[fp] + arr[fpp]);if (buf.acc.length > SPARK_LEN) buf.acc.shift();
+  }
+}
+
+function renderPlateSparklines() {
+  for (const p of PICKED) {
+    if (p.feature === 'rom') continue;
+    const canvas = plates[p.body].querySelector('canvas');
+    if (!canvas) continue;
+    const buf = sparkBuffers[p.body][p.feature === 'velocity' ? 'vel' : 'acc'];
+    drawSpark(canvas, buf, p.feature === 'velocity' ? '#9b6dbf' : '#e74c3c');
+  }
+}
+function drawSpark(canvas, buf, color) {
+  const w = canvas.width = canvas.clientWidth * (window.devicePixelRatio || 1);
+  const h = canvas.height = canvas.clientHeight * (window.devicePixelRatio || 1);
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,w,h);
+  if (buf.length < 2) return;
+  let mn = Infinity, mx = -Infinity;
+  for (const v of buf) { if (v<mn)mn=v; if (v>mx)mx=v; }
+  if (mx - mn < 1e-6) { mn -= 0.01; mx += 0.01; }
+  ctx.strokeStyle = '#e9ecf3'; ctx.lineWidth = 1 * (window.devicePixelRatio || 1);
+  ctx.beginPath(); ctx.moveTo(0, h/2); ctx.lineTo(w, h/2); ctx.stroke();
+  ctx.strokeStyle = color; ctx.lineWidth = 1.8 * (window.devicePixelRatio || 1);
+  ctx.beginPath();
+  for (let i = 0; i < buf.length; i++) {
+    const x = (i / (SPARK_LEN - 1)) * w;
+    const y = h - ((buf[i] - mn) / (mx - mn)) * (h - 4) - 2;
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  if (buf.length > 0) {
+    const xT = ((buf.length - 1) / (SPARK_LEN - 1)) * w;
+    const yT = h - ((buf[buf.length-1] - mn)/(mx-mn))*(h-4) - 2;
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(xT, yT, 2.6 * (window.devicePixelRatio || 1), 0, Math.PI*2); ctx.fill();
+  }
+}
+
+// ROM fan rendering — semicircle scaled by min/max joint angle
+function computeROM() {
+  for (const p of PICKED) {
+    if (p.feature !== 'rom') continue;
+    const jName = BODY_TO_JOINT[p.body];
+    const arr = g1Motion.joints[jName];
+    let mn = Infinity, mx = -Infinity;
+    for (const a of arr) { if (a<mn)mn=a; if (a>mx)mx=a; }
+    romCache[p.body] = { min: mn, max: mx };
+  }
+}
+function renderROMFans(fIdx) {
+  for (const p of PICKED) {
+    if (p.feature !== 'rom') continue;
+    const jName = BODY_TO_JOINT[p.body];
+    const arr = g1Motion.joints[jName];
+    const N = g1Motion.numFrames;
+    const fi = (((fIdx % N) + N) % N) | 0;
+    const cur = arr[fi];
+    const rom = romCache[p.body];
+    // Semicircle background: span -π/2 to +π/2 (full 180°)
+    // Width within fan: from -80 to +80 around center (80,42), radius 36
+    const cx = 80, cy = 42, R = 32;
+    // Background: 180° arc
+    const bg = document.getElementById('rom-bg-' + p.body);
+    bg.setAttribute('d', `M ${cx - R} ${cy} A ${R} ${R} 0 0 1 ${cx + R} ${cy}`);
+    // ROM arc: from angle mn to mx, scaled into 180°
+    function angleToCoord(a) {
+      // a in [-π, π]; map full range to [-π/2..+π/2] of the fan
+      // Use observed limb's natural range: [mn, mx] is mapped to [-π/2, +π/2]? No, we want full motion range to be visible.
+      // We'll show ROM as a SECTOR from mn to mx, on a fan that represents [-π, π] mapped to [-π/2 of view, +π/2 of view] (i.e., scale by 0.5).
+      const u = a * 0.5;     // map [-π,π] to [-π/2, π/2]
+      const x = cx + R * Math.cos(Math.PI + u);
+      const y = cy + R * Math.sin(Math.PI + u);
+      return [x, y];
+    }
+    const [x1, y1] = angleToCoord(rom.min);
+    const [x2, y2] = angleToCoord(rom.max);
+    const sweep = (rom.max - rom.min) * 0.5;
+    const largeArc = Math.abs(sweep) > Math.PI ? 1 : 0;
+    const arc = document.getElementById('rom-arc-' + p.body);
+    arc.setAttribute('d', `M ${x1.toFixed(1)} ${y1.toFixed(1)} A ${R} ${R} 0 ${largeArc} 1 ${x2.toFixed(1)} ${y2.toFixed(1)}`);
+    // Needle
+    const u = cur * 0.5;
+    const nx = cx + (R-2) * Math.cos(Math.PI + u);
+    const ny = cy + (R-2) * Math.sin(Math.PI + u);
+    const needle = document.getElementById('rom-needle-' + p.body);
+    needle.setAttribute('x1', cx); needle.setAttribute('y1', cy);
+    needle.setAttribute('x2', nx.toFixed(1)); needle.setAttribute('y2', ny.toFixed(1));
+  }
+}
+
+// ─── Limb ellipses + animated edges (SVG) ───────────────────────────────────
+function setupLimbEllipses() {
+  const gLimbs = document.getElementById('g-limbs');
+  gLimbs.innerHTML = '';
+  for (const [key, L] of Object.entries(LIMBS)) {
+    const ell = svg('ellipse', {
+      class: 'svg-ellipse',
+      stroke: L.color,
+      cx: 0, cy: 0, rx: 0, ry: 0,
+    });
+    ell.setAttribute('data-limb', key);
+    gLimbs.appendChild(ell);
+    svgLimbs[key] = ell;
+  }
+}
+function setLimbEllipseVisible(key, on, color) {
+  const ell = svgLimbs[key];
+  if (!ell) return;
+  ell.style.opacity = on ? 1 : 0;
+  if (color) ell.setAttribute('stroke', color);
+}
+function updateLimbEllipses() {
+  for (const [key, L] of Object.entries(LIMBS)) {
+    const ell = svgLimbs[key];
+    if (!ell || ell.style.opacity == 0) continue;
+    // Compute bounding box of all joint screen positions in this limb
+    let mnX=Infinity, mnY=Infinity, mxX=-Infinity, mxY=-Infinity, cnt=0;
+    for (const bn of L.bodies) {
+      const p = jointScreen(bn);
+      if (!p) continue;
+      cnt++;
+      if (p.x<mnX)mnX=p.x; if (p.x>mxX)mxX=p.x;
+      if (p.y<mnY)mnY=p.y; if (p.y>mxY)mxY=p.y;
+    }
+    if (cnt < 2) continue;
+    const pad = 16;
+    const cx = (mnX + mxX) / 2;
+    const cy = (mnY + mxY) / 2;
+    const rx = Math.max(28, (mxX - mnX)/2 + pad);
+    const ry = Math.max(34, (mxY - mnY)/2 + pad);
+    ell.setAttribute('cx', cx.toFixed(1));
+    ell.setAttribute('cy', cy.toFixed(1));
+    ell.setAttribute('rx', rx.toFixed(1));
+    ell.setAttribute('ry', ry.toFixed(1));
+  }
+}
+
+// ─── Active connections (animated SVG lines that draw between joints) ──────
+let activeConns = [];     // array of {a, b, color, line, startedAt}
+function clearConns() {
+  const g = document.getElementById('g-conns');
+  g.innerHTML = '';
+  activeConns = [];
+}
+function setConns(pairs, color) {
+  clearConns();
+  const g = document.getElementById('g-conns');
+  for (const [a, b] of pairs) {
+    const line = svg('line', { class:'svg-conn', stroke: color, 'stroke-dasharray': '8 6' });
+    g.appendChild(line);
+    activeConns.push({ a, b, color, line, startedAt: masterClock });
+  }
+}
+function updateConns() {
+  const ts = masterClock;
+  for (const c of activeConns) {
+    const pa = jointScreen(c.a), pb = jointScreen(c.b);
+    if (!pa || !pb) continue;
+    c.line.setAttribute('x1', pa.x.toFixed(1));
+    c.line.setAttribute('y1', pa.y.toFixed(1));
+    c.line.setAttribute('x2', pb.x.toFixed(1));
+    c.line.setAttribute('y2', pb.y.toFixed(1));
+    // Animate dash flow
+    const off = -((ts - c.startedAt) * 50) % 14;
+    c.line.setAttribute('stroke-dashoffset', off.toFixed(1));
+    // Fade in/out over a 2.5s lifecycle
+    const lt = ts - c.startedAt;
+    const op = Math.min(1, lt / 0.5) * (1 - Math.max(0, (lt - 2.0) / 0.5));
+    c.line.style.opacity = Math.max(0, Math.min(1, op));
+  }
+}
+
+// ─── Picked-joint focus ring + leader positioning each frame ───────────────
+function updateFocusRings() {
+  // Each picked joint: position ring at joint screen pos; position plate at a fixed offset; draw leader from ring → plate edge
+  // Plate placement: above the G1, spaced along the top
+  // We'll compute G1 bounding screen box and place plates above it.
+  let mnX=Infinity, mnY=Infinity, mxX=-Infinity, mxY=-Infinity;
+  for (const b of modelData.bodies) {
+    const p = jointScreen(b.name);
+    if (!p) continue;
+    if (p.x<mnX)mnX=p.x; if (p.x>mxX)mxX=p.x;
+    if (p.y<mnY)mnY=p.y; if (p.y>mxY)mxY=p.y;
+  }
+  const N = PICKED.length;
+  const plateY = Math.max(86, mnY - 84);
+  const plateXStart = mnX - 12;
+  const plateXEnd   = mxX + 12;
+  for (let i = 0; i < N; i++) {
+    const p = PICKED[i];
+    const js = jointScreen(p.body);
+    if (!js) continue;
+    // Ring
+    const ring = document.querySelector(`.svg-focus-ring[data-body="${p.body}"]`);
+    if (ring) {
+      ring.setAttribute('cx', js.x.toFixed(1));
+      ring.setAttribute('cy', js.y.toFixed(1));
+    }
+    // Plate
+    const plate = plates[p.body];
+    if (!plate) continue;
+    const px = plateXStart + ((plateXEnd - plateXStart) * (i + 0.5) / N);
+    const py = plateY;
+    plate.style.left = px.toFixed(1) + 'px';
+    plate.style.top  = py.toFixed(1) + 'px';
+    // Leader: from plate's bottom-center → ring
+    const leader = document.querySelector(`.svg-leader[data-body="${p.body}"]`);
+    if (leader) {
+      const fromX = px;
+      const fromY = py + 34;     // approx half-height of plate
+      const toX = js.x;
+      const toY = js.y - 18;     // top of ring
+      // Bezier curve through midpoint with slight Y bias for visual elegance
+      const mx = (fromX + toX) / 2;
+      const my = (fromY + toY) / 2 + 10;
+      leader.setAttribute('d', `M ${fromX} ${fromY} Q ${mx} ${my} ${toX} ${toY}`);
+    }
+  }
+}
+
+// ─── Kinematic encoding rectangle ───────────────────────────────────────────
+function setEncRectVisible(on) {
+  const r = document.getElementById('enc-rect');
+  r.style.opacity = on ? 0.85 : 0;
+  if (on) show('enc-label'); else hide('enc-label');
+}
+function updateEncRect() {
+  const r = document.getElementById('enc-rect');
+  if (r.style.opacity == 0) return;
+  // Compute G1's bounding screen box
+  let mnX=Infinity, mnY=Infinity, mxX=-Infinity, mxY=-Infinity;
+  for (const b of modelData.bodies) {
+    const p = jointScreen(b.name);
+    if (!p) continue;
+    if (p.x<mnX)mnX=p.x; if (p.x>mxX)mxX=p.x;
+    if (p.y<mnY)mnY=p.y; if (p.y>mxY)mxY=p.y;
+  }
+  const padX = 36, padY = 30;
+  const x = mnX - padX, y = mnY - padY;
+  const w = (mxX - mnX) + padX*2;
+  const h = (mxY - mnY) + padY*2;
+  r.setAttribute('x', x.toFixed(1));
+  r.setAttribute('y', y.toFixed(1));
+  r.setAttribute('width', Math.max(0, w).toFixed(1));
+  r.setAttribute('height', Math.max(0, h).toFixed(1));
+  // Position label at the top of the rect
+  const label = document.getElementById('enc-label');
+  label.style.left = (x + w/2).toFixed(1) + 'px';
+  label.style.top  = (y - 6).toFixed(1) + 'px';
+}
+
+// ─── Slot labels positioning ───────────────────────────────────────────────
+function positionSlotLabels() {
+  const ph = worldToCanvasPx(SLOT_X.human, 2.2, 0);
+  const pr = worldToCanvasPx(SLOT_X.robot, 2.2, 0);
+  const lh = document.getElementById('lbl-human');
+  lh.style.left = ph.x + 'px'; lh.style.top = (ph.y) + 'px';
+  const lr = document.getElementById('lbl-robot');
+  lr.style.left = pr.x + 'px'; lr.style.top = (pr.y) + 'px';
+}
+
+// ─── Embedding strip rendering ─────────────────────────────────────────────
+const Z_CELLS = 256;
+function drawEmbedding(seed) {
+  const c = document.getElementById('embedding-canvas');
+  const w = c.width = c.clientWidth * (window.devicePixelRatio || 1);
+  const h = c.height = c.clientHeight * (window.devicePixelRatio || 1);
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0,0,w,h);
+  const cw = w / Z_CELLS;
+  for (let i = 0; i < Z_CELLS; i++) {
+    const v = 0.5*Math.abs(Math.sin(i*0.713 + seed*0.012))
+            + 0.5*Math.abs(Math.cos(i*0.281 + seed*0.0078));
+    const r = Math.round(44 + v*200);
+    const g = Math.round(62 + v*80);
+    const b = Math.round(107 + v*80);
+    ctx.fillStyle = `rgb(${r},${g},${b})`;
+    ctx.fillRect(i*cw, 0, Math.ceil(cw+0.5), h);
   }
 }
 
@@ -1363,189 +1311,149 @@ function setCaption(text, ref) {
 function setBadge(i, n) {
   document.getElementById('stage-badge').textContent = `Stage ${i} / ${n}`;
 }
-function show(id){ document.getElementById(id).classList.add('visible'); }
-function hide(id){ document.getElementById(id).classList.remove('visible'); }
+function setBeat(mode, text) {
+  const bi = document.getElementById('beat-indicator');
+  bi.classList.remove('intra','inter');
+  if (mode) bi.classList.add(mode);
+  document.getElementById('bi-mode').textContent = mode === 'intra' ? 'H₁ intra-limb' :
+                                                    mode === 'inter' ? 'H₂ inter-limb' : '—';
+  document.getElementById('bi-text').textContent = text || '';
+}
 
-// ─── Stages (each persists after appearing) ────────────────────────────────
+// ─── Stages ────────────────────────────────────────────────────────────────
 function defineStages() {
   stages = [
-    // 1: Human appears
-    { name: 'human', duration: 5.0,
+    // 1: Human (SMPL appears on left, nothing else)
+    { name:'human', duration: 5.0,
       enter() {
         setCaption('A human operator performs hip-hop.', '§1');
-        smplGroup.setOpacity(1.0);
         show('lbl-human'); show('operator-card');
+        smplGroup.setOpacity(1.0);
       },
-      update(t){}
+      update(){}
     },
-    // 2: G1 appears to the right
-    { name: 'robot', duration: 5.5,
+    // 2: G1 retargeting (G1 fades in middle; SMPL stays)
+    { name:'robot', duration: 5.0,
       enter() {
-        setCaption('Motion retargeting projects the operator onto the G1 — body shape is discarded.', '§1 Retargeting');
+        setCaption('Motion retargeting projects the operator onto the G1 — body shape is discarded.', '§1 retargeting');
         show('lbl-robot');
       },
       update(t) {
-        const u = clamp(t / 2.5, 0, 1);
+        const u = clamp(t / 2.2, 0, 1);
         g1Main.setOpacity(u);
       },
     },
-    // 3: Kinematic encoding block appears above G1; halos + sparklines come on
-    { name: 'kinematic', duration: 7.0,
+    // 3: Kinematic encoding — focus rings + leader lines + data plates → then enc box around G1
+    { name:'kinematic', duration: 9.0,
       enter() {
-        setCaption('A per-joint temporal convolution captures velocity & acceleration — not just position.', '§3.1');
-        resetSparks(); clearTrails();
-        show('kinematic-block');
+        setCaption('A per-joint temporal convolution captures velocity, acceleration, and range of motion.', '§3.1 Kinematic Encoding');
+        // sparkline / ROM buffers
+        for (const p of PICKED) sparkBuffers[p.body] = { vel:[], acc:[], pos:[] };
       },
       update(t) {
-        const u = clamp(t / 1.5, 0, 1);
-        setPickedOpacity(u);
+        // 0..2s: rings + plates fade in
+        // 2..4s: enc box draws around G1
+        const ringO = clamp(t / 1.4, 0, 1);
+        setFocusOpacity(ringO);
+        if (t > 2.4) setEncRectVisible(true);
       },
     },
-    // 4: Hierarchy mini-skeleton appears + intra-limb + inter-limb beats
-    { name: 'hierarchy', duration: 19.0,
+    // 4: Graph convolution — slow limb-by-limb intra, then inter
+    { name:'graph', duration: 28.0,
       enter() {
-        setCaption('Hierarchy H₁ — joints within each limb interact.', '§3.2 intra-limb');
-        show('lbl-hierarchy'); show('hierarchy-block');
-        // Show all balls
-        hierSkel.resetLimbEmissive();
-        hierSkel.clearAllEdges();
+        setCaption('Hierarchy H₁ — each limb’s joints interact.', '§3.2 Spatial Graph Conv');
+        document.getElementById('beat-indicator').classList.add('visible');
+        clearConns();
       },
       update(t) {
         const limbOrder = ['torso','la','ra','ll','rl'];
-        const limbLabel = { torso:'Torso', la:'L arm', ra:'R arm', ll:'L leg', rl:'R leg' };
-
-        // Intra section: 0–9s, each limb gets 1.8s
-        if (t < 9) {
-          document.getElementById('hb-tab-intra').classList.add('active');
-          document.getElementById('hb-tab-inter').classList.remove('active');
-          const idx = clamp(Math.floor(t / 1.8), 0, 4);
-          const within = (t - idx*1.8) / 1.8;
-          const pulse = Math.sin(within * Math.PI) * 0.95;
-          // current limb: pulse edges + emissive on balls
-          hierSkel.clearAllEdges();
-          hierSkel.resetLimbEmissive();
-          hierSkel.setIntraOpacity(limbOrder[idx], pulse);
-          hierSkel.setLimbEmissive(limbOrder[idx], 0.7 * Math.max(0, Math.sin(within * Math.PI)));
-          // keep prior limb edges faintly visible
-          for (let p = 0; p < idx; p++) {
-            hierSkel.setIntraOpacity(limbOrder[p], 0.32);
-            hierSkel.setLimbEmissive(limbOrder[p], 0.18);
+        const INTRA_BEAT_DUR = 2.8;
+        const INTRA_DUR = limbOrder.length * INTRA_BEAT_DUR;
+        const INTER_BEAT_DUR = 3.0;
+        // Intra section
+        if (t < INTRA_DUR) {
+          const idx = clamp(Math.floor(t / INTRA_BEAT_DUR), 0, limbOrder.length - 1);
+          const within = (t - idx * INTRA_BEAT_DUR) / INTRA_BEAT_DUR;
+          // Hide all ellipses, show only the current one
+          for (const k of limbOrder) setLimbEllipseVisible(k, false);
+          setLimbEllipseVisible(limbOrder[idx], true, LIMBS[limbOrder[idx]].color);
+          // Refresh connection lines at the start of each beat
+          if (within < 0.03 && (!activeConns.length || activeConns[0]._beatIdx !== idx || activeConns[0]._mode !== 'intra')) {
+            setConns(INTRA_CONNS[limbOrder[idx]] || [], LIMBS[limbOrder[idx]].color);
+            for (const c of activeConns) { c._beatIdx = idx; c._mode = 'intra'; }
           }
-          // beat indicator text
-          const beat = document.getElementById('hb-beat');
-          let html = '';
-          for (let p = 0; p < 5; p++) {
-            html += `<span class="pill ${p===idx?'on':''}">${limbLabel[limbOrder[p]]}</span>`;
-          }
-          beat.innerHTML = html;
-          if (idx >= 0 && idx <= 4 && within < 0.1) setCaption(`Limb ${limbLabel[limbOrder[idx]]} — joints within it talk to each other.`, '§3.2 H₁ intra-limb');
-        } else if (t < 9.6) {
-          // brief transition: all intra edges dim
-          hierSkel.resetLimbEmissive();
-          hierSkel.clearAllEdges();
-          for (const k of limbOrder) hierSkel.setIntraOpacity(k, 0.18);
+          // Beat indicator
+          setBeat('intra', LIMB_LABEL[limbOrder[idx]]);
+          if (within < 0.05) setCaption(`Within ${LIMB_LABEL[limbOrder[idx]]} — joints interact.`, '§3.2 intra-limb');
         } else {
-          // Inter-limb beats: 9.6–19s, 4 beats at 2.2s each
-          document.getElementById('hb-tab-intra').classList.remove('active');
-          document.getElementById('hb-tab-inter').classList.add('active');
-          const t2 = t - 9.6;
-          const beats = [
-            { key: 'la-ra', limbs: ['la','ra'], label: 'L arm ↔ R arm' },
-            { key: 'll-rl', limbs: ['ll','rl'], label: 'L leg ↔ R leg' },
-            { key: 'la-ll', limbs: ['la','ll'], label: 'L arm ↔ L leg' },
-            { key: 'ra-rl', limbs: ['ra','rl'], label: 'R arm ↔ R leg' },
-          ];
-          const idx = clamp(Math.floor(t2 / 2.2), 0, 3);
-          const within = (t2 - idx*2.2) / 2.2;
-          const pulse = Math.sin(within * Math.PI) * 0.95;
-
-          hierSkel.clearAllEdges();
-          hierSkel.resetLimbEmissive();
-          // Highlight both limbs of current beat
-          const emissive = 0.65 * Math.max(0, Math.sin(within * Math.PI));
-          for (const l of beats[idx].limbs) hierSkel.setLimbEmissive(l, emissive);
-          hierSkel.setInterOpacity(beats[idx].key, pulse);
-
-          // Keep prior beats faintly visible
-          for (let p = 0; p < idx; p++) {
-            hierSkel.setInterOpacity(beats[p].key, 0.32);
-            for (const l of beats[p].limbs) hierSkel.setLimbEmissive(l, 0.18);
+          // Inter section
+          const t2 = t - INTRA_DUR;
+          const idx = clamp(Math.floor(t2 / INTER_BEAT_DUR), 0, INTER_BEATS.length - 1);
+          const within = (t2 - idx * INTER_BEAT_DUR) / INTER_BEAT_DUR;
+          const beat = INTER_BEATS[idx];
+          // Hide all ellipses, show only the active two
+          for (const k of Object.keys(LIMBS)) setLimbEllipseVisible(k, false);
+          for (const l of beat.limbs) setLimbEllipseVisible(l, true, beat.color);
+          if (within < 0.03 && (!activeConns.length || activeConns[0]._beatIdx !== idx || activeConns[0]._mode !== 'inter')) {
+            setConns(beat.conns, beat.color);
+            for (const c of activeConns) { c._beatIdx = idx; c._mode = 'inter'; }
           }
-          // intra edges dim baseline
-          for (const k of limbOrder) hierSkel.setIntraOpacity(k, 0.10);
-
-          // beat indicator
-          const beat = document.getElementById('hb-beat');
-          let html = '';
-          for (let p = 0; p < beats.length; p++) {
-            html += `<span class="pill ${p===idx?'on':''}">${beats[p].label}</span>`;
-          }
-          beat.innerHTML = html;
-          if (within < 0.1) setCaption(`${beats[idx].label} — joints across limbs interact.`, '§3.2 H₂ inter-limb');
+          setBeat('inter', beat.label);
+          if (within < 0.05) setCaption(`${beat.label} — joints across limbs interact.`, '§3.2 inter-limb');
         }
       },
+      exit() {
+        // Keep ellipses + lines faintly visible? No — fade out
+        for (const k of Object.keys(LIMBS)) setLimbEllipseVisible(k, false);
+        clearConns();
+        document.getElementById('beat-indicator').classList.remove('visible');
+      },
     },
-    // 5: Spatiotemporal aggregation — ghosts fade in behind G1, then gradually vanish
-    { name: 'temporal', duration: 9.0,
+    // 5: Spatiotemporal aggregation — ghosts behind G1; previous stages stay
+    { name:'temporal', duration: 9.0,
       enter() {
-        setCaption('Spatiotemporal aggregation — past frames stack behind the robot, then dissolve into the present.', '§3.3');
+        setCaption('Spatiotemporal aggregation — past frames stack behind the robot.', '§3.3');
+        document.getElementById('ghost-indicator').classList.add('visible');
       },
       update(t) {
-        // 0..2.5s: ghosts fade in
-        // 2.5..7s: hold
-        // 7..9s: ghosts fade out (collapse → present)
+        // 0..2.5s ghosts fade in; 2.5..6s hold; 6..9s slowly fade out (the "gradually vanishes")
         let phase;
         if (t < 2.5)        phase = clamp(t / 2.5, 0, 1);
-        else if (t < 7.0)   phase = 1.0;
-        else                phase = clamp(1.0 - (t - 7.0)/2.0, 0, 1);
+        else if (t < 6.0)   phase = 1.0;
+        else                phase = clamp(1.0 - (t - 6.0) / 3.0, 0, 1);
         for (let k = 0; k < g1Ghosts.length; k++) {
           const decay = 0.85 - k*0.15;
           g1Ghosts[k].robot.setOpacity(Math.max(0, phase * decay));
         }
+        // Position ghost indicator badge
+        const pr = worldToCanvasPx(SLOT_X.robot - 2.5, 1.6, 0);
+        const gi = document.getElementById('ghost-indicator');
+        gi.style.left = pr.x + 'px'; gi.style.top = pr.y + 'px';
       },
       exit() {
         for (const g of g1Ghosts) g.robot.setOpacity(0);
       },
     },
-    // 6: Embedding + predictions
-    { name: 'embedding', duration: 7.5,
+    // 6: Attribute embedding — 1D vector strip on right; nothing else
+    { name:'embedding', duration: 6.0,
       enter() {
-        setCaption('Trajectory embedding Z ∈ ℝ²⁵⁶ — task heads recover operator attributes from the robot trajectory alone.', '§3.4');
-        const pred = currentDemo.predicted;
-        document.getElementById('pr-gender').textContent = capitalize(pred.gender);
-        document.getElementById('pr-age').textContent    = `${pred.age} yr`;
-        document.getElementById('pr-height').textContent = `${pred.height} cm`;
-        document.getElementById('pr-weight').textContent = `${pred.weight} kg`;
-        document.getElementById('as-gender').textContent = capitalize(pred.gender);
-        document.getElementById('as-age').textContent    = `${pred.age} yr`;
-        document.getElementById('as-height').textContent = `${pred.height} cm`;
-        document.getElementById('as-weight').textContent = `${pred.weight} kg`;
-        const gt = currentDemo.groundTruth;
-        markMatch('pr-gender', pred.gender === gt.gender);
-        markMatch('pr-age',    Math.abs(pred.age - gt.age) <= 5);
-        markMatch('pr-height', Math.abs(pred.height - gt.height) <= 6);
-        markMatch('pr-weight', Math.abs(pred.weight - gt.weight) <= 8);
+        setCaption('Trajectory embedding Z ∈ ℝ²⁵⁶ — Attribute Embedding §3.4', '§3.4');
       },
       update(t) {
-        const u = clamp((t-0.4)/1.0, 0, 1);
-        if (u >= 1) show('embedding-panel');
-        if (u >= 0.6) show('prediction-card');
+        const u = clamp((t - 0.3) / 0.8, 0, 1);
+        if (u >= 1) show('embedding-strip');
       },
     },
   ];
 }
 
-function markMatch(id, ok){ const el=document.getElementById(id); if (ok) el.classList.add('match'); else el.classList.remove('match'); }
-function capitalize(s){ return s ? s[0].toUpperCase()+s.slice(1) : s; }
-
-// ─── Stage director ─────────────────────────────────────────────────────────
 function transitionToStage(i) {
   if (i === stageIdx) return;
   if (stageIdx >= 0 && stages[stageIdx] && stages[stageIdx].exit) stages[stageIdx].exit();
   stageIdx = i;
   stageStart = masterClock;
   if (i >= 0 && i < stages.length) {
-    setBadge(i + 1, stages.length);
+    setBadge(i+1, stages.length);
     if (stages[i].enter) stages[i].enter();
   }
 }
@@ -1554,26 +1462,26 @@ function endWalkthrough() {
   document.getElementById('replay-btn').classList.add('visible');
 }
 function restartWalkthrough() {
-  masterClock = 0;
-  stageIdx = -1;
-  walkthroughEnded = false;
+  masterClock = 0; stageIdx = -1; walkthroughEnded = false;
   document.getElementById('replay-btn').classList.remove('visible');
-  // hide everything
-  hide('lbl-human'); hide('lbl-robot'); hide('lbl-hierarchy');
-  hide('operator-card'); hide('prediction-card');
-  hide('kinematic-block'); hide('hierarchy-block'); hide('embedding-panel');
+  hide('lbl-human'); hide('lbl-robot');
+  hide('operator-card');
+  hide('enc-label');
+  hide('embedding-strip');
+  setEncRectVisible(false);
+  setFocusOpacity(0);
+  clearConns();
+  for (const k of Object.keys(LIMBS)) setLimbEllipseVisible(k, false);
+  document.getElementById('beat-indicator').classList.remove('visible');
+  document.getElementById('ghost-indicator').classList.remove('visible');
   g1Main.setOpacity(0.0);
   smplGroup.setOpacity(0.0);
   for (const g of g1Ghosts) g.robot.setOpacity(0);
-  setPickedOpacity(0);
-  hierSkel.clearAllEdges();
-  hierSkel.resetLimbEmissive();
-  // fade SMPL in over first 0.6s
   setTimeout(() => smplGroup.setOpacity(1.0), 40);
   transitionToStage(0);
 }
 
-// ─── Activity dropdown ──────────────────────────────────────────────────────
+// ─── Activity dropdown / demo switch ────────────────────────────────────────
 function buildActivityDropdown() {
   const sel = document.getElementById('activity-dropdown');
   sel.innerHTML = '';
@@ -1601,10 +1509,10 @@ async function switchDemo(demo) {
     smplData = vd;
     smplGroup = buildSMPL(vd, smplFaces);
     smplGroup.object3D.position.set(SLOT_X.human, 0, 0);
-    smplGroup.object3D.rotation.y = HUMAN_YAW;
     scene.add(smplGroup.object3D);
     currentDemo = demo;
     populateOperatorCard();
+    computeROM();
     restartWalkthrough();
   } catch (err) {
     console.error(err); showError(err.message);
@@ -1612,6 +1520,7 @@ async function switchDemo(demo) {
     hideLoading();
   }
 }
+function capitalize(s){return s ? s[0].toUpperCase()+s.slice(1) : s;}
 function populateOperatorCard() {
   const gt = currentDemo.groundTruth;
   document.getElementById('op-gender').textContent = capitalize(gt.gender);
@@ -1628,64 +1537,45 @@ function loop(ts) {
   lastTS = ts;
   masterClock += dt;
 
-  // SMPL frame
   if (smplData && smplGroup.mat.opacity > 0.01) {
     const f = (masterClock * smplData.fps) % smplData.numFrames;
     smplGroup.applyFrame(f);
   }
-
-  // G1 frames
   if (g1Motion) {
     const fG1 = (masterClock * g1Motion.fps) % g1Motion.numFrames;
     g1Main.applyFrame(g1Motion, fG1);
-    for (const g of g1Ghosts) {
-      g.robot.applyFrame(g1Motion, fG1 - g.lagFrames);
-    }
-    // Hierarchy skeleton copies main G1 joint positions
-    // Origin = main G1 root position (approx), so the skeleton sits at its slot center
-    const baseline = new THREE.Vector3(SLOT_X.robot, 0, 0);  // shift skeleton to its own slot
-    hierSkel.updateFromMain(g1Main.getBodyWorldPos, baseline);
+    for (const g of g1Ghosts) g.robot.applyFrame(g1Motion, fG1 - g.lagFrames);
 
-    // picked accessories track main G1
-    updatePickedAccessories();
-
-    // Sparklines (stage 3 onward)
+    // Maintain sparkline buffers from stage 3 onward (so plates show data when revealed)
     if (stageIdx >= 2) {
-      pushSparkSample('right_elbow_joint', fG1);
-      renderSparks();
+      tickSparkBuffers(fG1);
+      renderPlateSparklines();
+      renderROMFans(fG1);
+      updateFocusRings();
+      updateEncRect();
     }
-    // Embedding canvases
+    // Limb ellipses & connections: stage 4
+    if (stageIdx >= 3) {
+      updateLimbEllipses();
+      updateConns();
+    }
+    // Embedding strip: stage 6 or after end
     if (stageIdx >= 5 || walkthroughEnded) {
-      drawZVector(fG1);
-      for (const el of document.querySelectorAll('.attr-cells')) {
-        drawAttrStrip(el, el.dataset.attr, fG1);
-      }
+      drawEmbedding(fG1);
     }
   }
 
-  // Stage advancement
+  positionSlotLabels();
+
   if (stageIdx >= 0 && stageIdx < stages.length) {
-    const localT = masterClock - stageStart;
+    const t = masterClock - stageStart;
     const s = stages[stageIdx];
-    if (s.update) s.update(localT);
-    if (localT >= s.duration) {
-      if (stageIdx === stages.length - 1) {
-        endWalkthrough();
-        stageIdx = stages.length;   // hold
-      } else {
-        transitionToStage(stageIdx + 1);
-      }
+    if (s.update) s.update(t);
+    if (t >= s.duration) {
+      if (stageIdx === stages.length - 1) { endWalkthrough(); stageIdx = stages.length; }
+      else transitionToStage(stageIdx + 1);
     }
   }
-
-  // Position HTML overlays each frame to track world coords
-  positionSlotLabel('lbl-human',     SLOT_X.human,     2.2, 0);
-  positionSlotLabel('lbl-robot',     SLOT_X.robot,     2.2, 0);
-  positionSlotLabel('lbl-hierarchy', SLOT_X.hierarchy, 2.5, 0);
-  positionAttrCard('operator-card', 'left');
-  positionAttrCard('prediction-card', 'right');
-  positionBlock('kinematic-block',   SLOT_X.robot,     2.7, 0, -12);
-  positionBlock('hierarchy-block',   SLOT_X.hierarchy, 3.0, 0, -10);
 
   renderer.render(scene, camera);
 }
@@ -1706,33 +1596,27 @@ async function boot() {
     loadFacesBin('./assets/demos/smpl/faces.bin'),
   ]);
   g1Motion = g1m; smplData = vd; smplFaces = faces;
+  computeROM();
 
   setStatus('Building scene…');
   setupScene();
 
-  setStatus('Building SMPL…');
+  setStatus('Building SMPL human…');
   smplGroup = buildSMPL(vd, faces);
   smplGroup.object3D.position.set(SLOT_X.human, 0, 0);
-  smplGroup.object3D.rotation.y = HUMAN_YAW;
   scene.add(smplGroup.object3D);
 
   setStatus('Building G1 robot (meshes)…');
   g1Main = await buildG1Robot();
   g1Main.object3D.position.set(SLOT_X.robot, 0, 0);
-  g1Main.object3D.rotation.y = ROBOT_YAW;
   scene.add(g1Main.object3D);
 
-  setStatus('Building ghosts…');
+  setStatus('Building ghost stack…');
   await buildGhosts(5);
 
-  setStatus('Building hierarchy skeleton…');
-  hierSkel = buildHierarchySkeleton();
-  hierSkel.setOrigin(SLOT_X.hierarchy, 0.0, 0);
-  hierSkel.setScale(1.1);
-  scene.add(hierSkel.object3D);
-
   setStatus('Wiring overlays…');
-  buildPickedAccessories();
+  setupFocusRingsAndPlates();
+  setupLimbEllipses();
   populateOperatorCard();
   buildActivityDropdown();
 
