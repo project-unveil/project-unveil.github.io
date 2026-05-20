@@ -1868,6 +1868,7 @@ function loop(ts) {
   updateHumanRect();
   updateGraphRect();
   updateSpatialRect();
+  positionBeatModeTag();
   if (graphAnimStart    >= 0) tickGraphBeats(masterClock - graphAnimStart);
   if (temporalAnimStart >= 0) tickTemporalAnim(masterClock - temporalAnimStart);
 
