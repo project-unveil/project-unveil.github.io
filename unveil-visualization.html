@@ -836,7 +836,7 @@ function setupScene() {
   const aspect = canvasW / canvasH;
   const frustumH = frustumW / aspect;
   camera = new THREE.OrthographicCamera(
-    -frustumW/2, frustumW/2, frustumH/2 + 0.4, -frustumH/2 + 0.4,
+    -frustumW/2, frustumW/2, frustumH/2 - 0.7, -frustumH/2 - 0.7,
     -100, 100
   );
   camera.position.set(0, 1.0, 10);
