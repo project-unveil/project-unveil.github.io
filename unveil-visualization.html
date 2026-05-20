@@ -366,11 +366,10 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
 #beat-mode-tag.intra { color: var(--primary); border-color: var(--primary); }
 #beat-mode-tag.inter { color: var(--accent);  border-color: var(--accent);  }
 
-/* Attribute embedding — vertical column on far right; y + height are driven by JS
-   so it lines up with the other rects */
+/* Attribute embedding — vertical column. y + height + x driven by JS so it
+   sits between 3.3 and the attributes card in the reversed pipeline. */
 #embedding-strip {
   position: absolute;
-  right: 24px;
   width: 96px;
   background: #ffffff;
   border: 1px solid var(--border);
