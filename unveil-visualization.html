@@ -2409,9 +2409,9 @@ function restartWalkthrough() {
   for (const k of Object.keys(LIMBS)) setLimbEllipseVisible(k, false);
   document.getElementById('beat-indicator').classList.remove('visible');
   g1Main.setOpacity(0.0);
+  // Reversed pipeline: SMPL human is revealed at stage 8 (the very end), not start.
   smplGroup.setOpacity(0.0);
   for (const g of g1Ghosts) g.robot.setOpacity(0);
-  setTimeout(() => smplGroup.setOpacity(1.0), 40);
   transitionToStage(0);
 }
 
