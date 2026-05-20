@@ -2007,6 +2007,12 @@ function updateSpatialRect() {
     if (isFinite(encTop))    y = encTop;
     if (isFinite(encHeight)) h = encHeight;
   }
+  // Lock-after-cycle: freeze to accumulated max-bounds.
+  if (spatialRectLocked && spatialRectMaxBounds) {
+    ({ x, y, w, h } = spatialRectMaxBounds);
+  } else {
+    spatialRectMaxBounds = _accumulateMax(spatialRectMaxBounds, x, y, w, h);
+  }
   r.setAttribute('x', x.toFixed(1));
   r.setAttribute('y', y.toFixed(1));
   r.setAttribute('width',  Math.max(0, w).toFixed(1));
