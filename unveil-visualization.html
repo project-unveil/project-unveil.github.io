@@ -1317,25 +1317,59 @@ function defineStages() {
         document.getElementById('beat-indicator').classList.remove('visible');
       },
     },
-    // 5: Spatiotemporal aggregation — ghosts behind G1; previous stages stay
-    { name:'temporal', duration: 9.0,
+    // 5: Spatiotemporal aggregation — in dedicated right slot.
+    //    (a) ghosts fade in slowly, fanned to the left of the spatial G1
+    //    (b) Σ aggregate icon appears
+    //    (c) ghosts collapse into the spatial G1 (single robot remains)
+    { name:'temporal', duration: 11.0,
       enter() {
-        setCaption('Spatiotemporal aggregation — past frames stack behind the robot.', '§3.3');
+        setCaption('Spatiotemporal aggregation — past frames collapse into one trajectory.', '§3.3');
+        show('lbl-spatial');
+        // Reset ghost positions
+        for (const g of g1Ghosts) g.robot.object3D.position.x = g.baseX;
       },
       update(t) {
-        // 0..2.5s ghosts fade in; 2.5..6s hold; 6..9s slowly fade out (the "gradually vanishes")
-        let phase;
-        if (t < 2.5)        phase = clamp(t / 2.5, 0, 1);
-        else if (t < 6.0)   phase = 1.0;
-        else                phase = clamp(1.0 - (t - 6.0) / 3.0, 0, 1);
-        for (let k = 0; k < g1Ghosts.length; k++) {
-          const decay = 0.85 - k*0.15;
-          g1Ghosts[k].robot.setOpacity(Math.max(0, phase * decay));
+        if (t < 4.5) {
+          // (a) staggered slow fade-in
+          hide('aggregate-icon');
+          g1Aggregate.setOpacity(0);
+          for (let k = 0; k < g1Ghosts.length; k++) {
+            const start = k * 0.7;
+            const u = clamp((t - start) / 0.9, 0, 1);
+            const decay = 0.85 - k * 0.10;
+            g1Ghosts[k].robot.setOpacity(u * decay);
+            g1Ghosts[k].robot.object3D.position.x = g1Ghosts[k].baseX;
+          }
+        } else if (t < 6.5) {
+          // (b) hold ghosts; aggregate icon appears
+          for (let k = 0; k < g1Ghosts.length; k++) {
+            const decay = 0.85 - k * 0.10;
+            g1Ghosts[k].robot.setOpacity(decay);
+            g1Ghosts[k].robot.object3D.position.x = g1Ghosts[k].baseX;
+          }
+          show('aggregate-icon');
+          g1Aggregate.setOpacity(0);
+        } else if (t < 9.0) {
+          // (c) collapse — ghosts slide toward spatial slot + fade out, aggregate G1 fades in
+          const u = clamp((t - 6.5) / 2.3, 0, 1);
+          const eased = u * u;
+          for (let k = 0; k < g1Ghosts.length; k++) {
+            const decay = 0.85 - k * 0.10;
+            g1Ghosts[k].robot.object3D.position.x = lerp(g1Ghosts[k].baseX, SLOT_X.spatial, eased);
+            g1Ghosts[k].robot.setOpacity(Math.max(0, (1 - eased) * decay));
+          }
+          g1Aggregate.setOpacity(easeInOut(u));
+          // Icon shrinks/fades as the collapse completes
+          const ic = document.getElementById('aggregate-icon');
+          ic.style.opacity = String(1 - eased * 0.6);
+        } else {
+          // (d) hold — only the aggregate G1 remains
+          for (const g of g1Ghosts) g.robot.setOpacity(0);
+          g1Aggregate.setOpacity(1.0);
+          hide('aggregate-icon');
         }
       },
-      exit() {
-        for (const g of g1Ghosts) g.robot.setOpacity(0);
-      },
+      // intentionally no exit() — leave the aggregate G1 visible into stage 6
     },
     // 6: Attribute embedding — 1D vector strip on right; nothing else
     { name:'embedding', duration: 6.0,
