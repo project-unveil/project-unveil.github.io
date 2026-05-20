@@ -1467,7 +1467,7 @@ function defineStages() {
     { name:'graph', duration: 28.0,
       enter() {
         setCaption('Hierarchy H₁ — each limb’s joints interact.', '§3.2 Spatial Graph Conv');
-        show('lbl-graph');
+        setGraphRectVisible(true);
         document.getElementById('beat-indicator').classList.add('visible');
         clearConns();
       },
