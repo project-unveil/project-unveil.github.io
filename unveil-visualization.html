@@ -1544,13 +1544,9 @@ function setCaption(text /* ref ignored — caption-ref removed */) {
 function setBadge(i, n) {
   document.getElementById('stage-badge').textContent = `Stage ${i} / ${n}`;
 }
-// limbsArg can be a string (legacy) OR two limb keys (preferred — colors auto-apply)
 function setBeat(mode, limbA, limbB) {
+  // BOTTOM indicator: just the colored limb pair text
   const bi = document.getElementById('beat-indicator');
-  bi.classList.remove('intra','inter');
-  if (mode) bi.classList.add(mode);
-  document.getElementById('bi-mode').textContent = mode === 'intra' ? 'Intra Limb' :
-                                                    mode === 'inter' ? 'Inter Limb' : '—';
   const limbsEl = document.getElementById('bi-limbs');
   if (limbA && LIMBS[limbA] && limbB && LIMBS[limbB]) {
     const ca = LIMBS[limbA].color, cb = LIMBS[limbB].color;
@@ -1561,15 +1557,34 @@ function setBeat(mode, limbA, limbB) {
   } else {
     limbsEl.textContent = limbA || '';
   }
+  // TOP tag: "Intra Limb" / "Inter Limb" colored by mode
+  const bm = document.getElementById('beat-mode-tag');
+  bm.classList.remove('intra','inter');
+  if (mode) bm.classList.add(mode);
+  document.getElementById('bi-mode-top').textContent = mode === 'intra' ? 'Intra Limb' :
+                                                       mode === 'inter' ? 'Inter Limb' : '—';
 }
 
-// Position the beat-indicator dynamically below the graph G1
+// Bottom indicator: just below graph G1 (in the rect's lower area)
 function positionBeatIndicator() {
   const p = worldToCanvasPx(SLOT_X.graph, -0.05, 0);
   const bi = document.getElementById('beat-indicator');
   bi.style.left = p.x + 'px';
   bi.style.top  = (p.y + 60) + 'px';
   bi.style.bottom = 'auto';
+}
+
+// Top mode tag: sits just inside the top of the graph rect, centered
+function positionBeatModeTag() {
+  const r = document.getElementById('graph-rect');
+  const el = document.getElementById('beat-mode-tag');
+  if (r.style.opacity == 0) return;
+  const rx = parseFloat(r.getAttribute('x'));
+  const ry = parseFloat(r.getAttribute('y'));
+  const rw = parseFloat(r.getAttribute('width'));
+  if (!isFinite(rx) || !isFinite(ry) || !isFinite(rw)) return;
+  el.style.left = (rx + rw/2).toFixed(1) + 'px';
+  el.style.top  = (ry + 22).toFixed(1) + 'px';
 }
 
 // ─── Stages ────────────────────────────────────────────────────────────────
