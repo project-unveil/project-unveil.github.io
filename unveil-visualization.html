@@ -1370,12 +1370,20 @@ function updateEncRect() {
   // Clamp the top so the rect's own label (above it) stays inside the canvas
   const MIN_RECT_TOP_Y = 50;
   if (y < MIN_RECT_TOP_Y) { h -= (MIN_RECT_TOP_Y - y); y = MIN_RECT_TOP_Y; }
-  // Clamp: enc-rect's left edge must JUST TOUCH the retarget label's right edge
-  // (and never extend left of it, never cross the arrow).
-  const arrowEnd = getRetargetArrowEndPx();
-  const labelRight = getRetargetLabelRightPx();
-  const minLeft  = Math.max(arrowEnd.x + 14, labelRight + 4);
-  if (x < minLeft) { w -= (minLeft - x); x = minLeft; }
+  // Arrow + textbox now live at the TOP of the canvas (above all rects), so
+  // they don't compete horizontally with the rect. Only ensure the rect doesn't
+  // bleed into the human-rect area, and even that clamp yields if it would
+  // clip the robot mesh.
+  const hr = document.getElementById('human-rect');
+  if (hr && hr.style.opacity != 0) {
+    const hrX = parseFloat(hr.getAttribute('x'));
+    const hrW = parseFloat(hr.getAttribute('width'));
+    if (isFinite(hrX) && isFinite(hrW)) {
+      const minLeft = hrX + hrW + 6;
+      const safeMnX = mnX - 12;     // 12-px buffer for mesh extension past joints
+      if (x < minLeft && minLeft <= safeMnX) { w -= (minLeft - x); x = minLeft; }
+    }
+  }
   r.setAttribute('x', x.toFixed(1));
   r.setAttribute('y', y.toFixed(1));
   r.setAttribute('width', Math.max(0, w).toFixed(1));
