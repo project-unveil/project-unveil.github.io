@@ -1691,8 +1691,11 @@ function defineStages() {
       },
       update(){},
     },
-    // 5: Spatiotemporal aggregation — kicks off the continuous temporal tick.
-    { name:'temporal', duration: 1.0,
+    // 5: Spatiotemporal aggregation — duration = one full temporal cycle, so
+    //    the embedding (3.4) only appears after the ghosts have appeared, held,
+    //    and collapsed into the aggregate once. The continuous tick keeps the
+    //    cycle looping forever after that.
+    { name:'temporal', duration: TEMPORAL_CYCLE_DUR,
       enter() {
         setCaption('Spatiotemporal aggregation — past frames collapse into one trajectory.', '§3.3');
         setSpatialRectVisible(true);
