@@ -1393,7 +1393,15 @@ function getRetargetArrowEndPx() {
   return worldToCanvasPx(SLOT_X.robot - ARROW_END_OFFSET, 1.0, 0);
 }
 function positionRetargetArrow() {
-  const ph = worldToCanvasPx(SLOT_X.human + HUMAN_RECT_W/2, 1.0, 0);
+  // Arrow start = right edge of the (dynamic) human-rect, not a fixed slot offset
+  const hr = document.getElementById('human-rect');
+  const hrX = parseFloat(hr.getAttribute('x'));
+  const hrW = parseFloat(hr.getAttribute('width'));
+  const fallback = worldToCanvasPx(SLOT_X.human + HUMAN_RECT_W/2, 1.0, 0);
+  const ph = {
+    x: (isFinite(hrX) && isFinite(hrW)) ? hrX + hrW : fallback.x,
+    y: fallback.y,
+  };
   const pr = getRetargetArrowEndPx();
   const arrow = document.getElementById('retarget-arrow');
   arrow.setAttribute('x1', ph.x.toFixed(1));
