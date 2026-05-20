@@ -938,9 +938,9 @@ function buildSMPL(vd, faces) {
   geo.setIndex(new THREE.BufferAttribute(faces, 1));
   // Phong gives a more natural skin look than Standard on this scene
   const mat = new THREE.MeshPhongMaterial({
-    color: new THREE.Color(0.94, 0.71, 0.55),
-    specular: 0x442211,
-    shininess: 18,
+    color: new THREE.Color(0.68, 0.46, 0.32),     // darker skin tone
+    specular: 0x331a0d,
+    shininess: 16,
     transparent: true, opacity: 1.0, side: THREE.DoubleSide,
   });
   const mesh = new THREE.Mesh(geo, mat);
