@@ -1916,9 +1916,14 @@ function tickKinematicAnim(rawT) {
   const kLeader = document.querySelector(`.svg-leader[data-body="${kn}"]`);
   if (kLeader) kLeader.style.opacity = u5;
   if (u5 > 0.05) plates[kn].classList.add('visible'); else plates[kn].classList.remove('visible');
-  // Step 6: enc rect (t=5..C-0.6, then fade out)
-  if (t > 5.0 && fadeOut > 0.3) setEncRectVisible(true);
-  else if (t < 4.5 || fadeOut < 0.2)  setEncRectVisible(false);
+  // Step 6: enc rect — once it has appeared at the end of the first cycle,
+  // keep it visible forever (don't vanish each loop).
+  if (t > 5.0 && fadeOut > 0.3) {
+    setEncRectVisible(true);
+    encRectStuckVisible = true;
+  } else if (!encRectStuckVisible && (t < 4.5 || fadeOut < 0.2)) {
+    setEncRectVisible(false);
+  }
 }
 
 // ─── Continuous limb-beat tick (runs after stage 4 starts; loops forever) ──
