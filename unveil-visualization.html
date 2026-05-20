@@ -953,69 +953,79 @@ async function buildGhosts(N = 5) {
   }
 }
 
-// ─── Picked-joint focus ring + 2 plates (velocity + acceleration) ──────────
-// One small focus circle around the elbow, two arrows up-left + up-right to plates.
+// ─── Multi-joint focus rings + small plates ────────────────────────────────
+// For each picked joint: a small ring on the joint, two plates floating away
+// in joint-specific directions, leader arrows joining them.
+function plateKey(jointBody, plateId) { return `${jointBody}_${plateId}`; }
+
 function setupFocusRingsAndPlates() {
   const gFocus = document.getElementById('g-focus');
   gFocus.innerHTML = '';
 
-  // Inline <defs> with arrowhead markers (one per plate color)
+  // Arrowhead markers — one per plate-type (vel / acc)
   const defs = svg('defs');
-  for (const p of PICKED_PLATES) {
+  for (const pid of Object.keys(PLATE_DEFS)) {
+    const def = PLATE_DEFS[pid];
     const marker = svg('marker', {
-      id: `arr-${p.id}`,
+      id: `arr-${pid}`,
       viewBox: '0 0 10 10', refX: '9', refY: '5',
       markerWidth: '6', markerHeight: '6', orient: 'auto',
     });
-    marker.appendChild(svg('path', { d: 'M 0 0 L 10 5 L 0 10 z', fill: p.color }));
+    marker.appendChild(svg('path', { d: 'M 0 0 L 10 5 L 0 10 z', fill: def.color }));
     defs.appendChild(marker);
   }
   gFocus.appendChild(defs);
 
-  // The focus ring — small, just wraps the elbow
-  const ring = svg('circle', { class: 'svg-focus-ring', r: 14, cx: 0, cy: 0 });
-  ring.setAttribute('data-role', 'ring');
-  gFocus.appendChild(ring);
+  for (const J of PICKED_JOINTS) {
+    // Small focus ring on the joint
+    const ring = svg('circle', { class: 'svg-focus-ring', r: 12, cx: 0, cy: 0 });
+    ring.setAttribute('data-body', J.body);
+    gFocus.appendChild(ring);
 
-  // Two leader arrows (one per plate)
-  for (const p of PICKED_PLATES) {
-    const leader = svg('line', {
-      class: 'svg-leader',
-      stroke: p.color,
-      'stroke-width': 1.6,
-      'stroke-dasharray': '5 4',
-      'marker-end': `url(#arr-${p.id})`,
-    });
-    leader.setAttribute('data-plate', p.id);
-    gFocus.appendChild(leader);
+    // One leader arrow per plate
+    for (const p of J.plates) {
+      const def = PLATE_DEFS[p.id];
+      const leader = svg('line', {
+        class: 'svg-leader',
+        stroke: def.color,
+        'stroke-width': 1.4,
+        'stroke-dasharray': '5 4',
+        'marker-end': `url(#arr-${p.id})`,
+      });
+      leader.setAttribute('data-key', plateKey(J.body, p.id));
+      gFocus.appendChild(leader);
+    }
   }
 
-  // Data plates (HTML)
+  // Build plates
   const platesHolder = document.getElementById('plates-holder');
   platesHolder.innerHTML = '';
-  for (const p of PICKED_PLATES) {
-    const plate = document.createElement('div');
-    plate.className = 'data-plate';
-    plate.setAttribute('data-plate', p.id);
-    plate.style.borderColor = p.color;
-    plate.innerHTML = `
-      <div class="dp-head"><span style="color:${p.color}">${p.title}</span><span class="joint">${PICKED_LABEL}</span></div>
-      <div class="dp-sub">${p.sub}</div>
-      <canvas data-feature="${p.feature}"></canvas>
-    `;
-    platesHolder.appendChild(plate);
-    plates[p.id] = plate;
+  for (const J of PICKED_JOINTS) {
+    for (const p of J.plates) {
+      const def = PLATE_DEFS[p.id];
+      const plate = document.createElement('div');
+      plate.className = 'data-plate';
+      plate.setAttribute('data-key', plateKey(J.body, p.id));
+      plate.style.borderColor = def.color;
+      plate.innerHTML = `
+        <div class="dp-head"><span style="color:${def.color}">${def.title}</span><span class="joint">${J.label}</span></div>
+        <canvas data-body="${J.body}" data-feature="${def.feature}"></canvas>
+      `;
+      platesHolder.appendChild(plate);
+      plates[plateKey(J.body, p.id)] = plate;
+    }
+    sparkBuffers[J.body] = { vel: [], acc: [], pos: [] };
   }
-
-  sparkBuffers[PICKED_BODY] = { vel: [], acc: [], pos: [] };
 }
 
 function setFocusOpacity(o) {
   document.querySelectorAll('.svg-focus-ring').forEach(r => r.style.opacity = o);
   document.querySelectorAll('.svg-leader').forEach(r => r.style.opacity = o);
-  for (const p of PICKED_PLATES) {
-    if (o > 0.05) plates[p.id].classList.add('visible');
-    else          plates[p.id].classList.remove('visible');
+  for (const J of PICKED_JOINTS) {
+    for (const p of J.plates) {
+      const el = plates[plateKey(J.body, p.id)];
+      if (o > 0.05) el.classList.add('visible'); else el.classList.remove('visible');
+    }
   }
 }
 
