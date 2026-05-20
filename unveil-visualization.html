@@ -1013,29 +1013,25 @@ function setFocusOpacity(o) {
 
 const SPARK_LEN = 70;
 function tickSparkBuffers(fIdx) {
-  for (const p of PICKED) {
-    const jName = BODY_TO_JOINT[p.body];
-    if (!jName) continue;
-    const arr = g1Motion.joints[jName];
-    const N = g1Motion.numFrames;
-    const wrap = i => ((i % N) + N) % N;
-    const fi  = wrap(fIdx | 0);
-    const fp  = wrap(fi - 1);
-    const fpp = wrap(fi - 2);
-    const buf = sparkBuffers[p.body];
-    buf.pos.push(arr[fi]);                       if (buf.pos.length > SPARK_LEN) buf.pos.shift();
-    buf.vel.push(arr[fi] - arr[fp]);             if (buf.vel.length > SPARK_LEN) buf.vel.shift();
-    buf.acc.push(arr[fi] - 2*arr[fp] + arr[fpp]);if (buf.acc.length > SPARK_LEN) buf.acc.shift();
-  }
+  const arr = g1Motion.joints[PICKED_JOINT];
+  if (!arr) return;
+  const N = g1Motion.numFrames;
+  const wrap = i => ((i % N) + N) % N;
+  const fi  = wrap(fIdx | 0);
+  const fp  = wrap(fi - 1);
+  const fpp = wrap(fi - 2);
+  const buf = sparkBuffers[PICKED_BODY];
+  buf.pos.push(arr[fi]);                        if (buf.pos.length > SPARK_LEN) buf.pos.shift();
+  buf.vel.push(arr[fi] - arr[fp]);              if (buf.vel.length > SPARK_LEN) buf.vel.shift();
+  buf.acc.push(arr[fi] - 2*arr[fp] + arr[fpp]); if (buf.acc.length > SPARK_LEN) buf.acc.shift();
 }
 
 function renderPlateSparklines() {
-  for (const p of PICKED) {
-    if (p.feature === 'rom') continue;
-    const canvas = plates[p.body].querySelector('canvas');
+  for (const p of PICKED_PLATES) {
+    const canvas = plates[p.id].querySelector('canvas');
     if (!canvas) continue;
-    const buf = sparkBuffers[p.body][p.feature === 'velocity' ? 'vel' : 'acc'];
-    drawSpark(canvas, buf, p.feature === 'velocity' ? '#9b6dbf' : '#e74c3c');
+    const key = p.feature === 'velocity' ? 'vel' : 'acc';
+    drawSpark(canvas, sparkBuffers[PICKED_BODY][key], p.color);
   }
 }
 function drawSpark(canvas, buf, color) {
