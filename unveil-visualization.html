@@ -1838,7 +1838,6 @@ function tickTemporalAnim(rawT) {
 
   if (t < 4.5) {
     // (a) Ghosts fade in (staggered); aggregate fades OUT over first 1s
-    hide('aggregate-icon');
     g1Aggregate.setOpacity(Math.max(0, 1 - t / 1.0));
     for (let k = 0; k < g1Ghosts.length; k++) {
       const start = k * 0.7;
@@ -1848,13 +1847,12 @@ function tickTemporalAnim(rawT) {
       g1Ghosts[k].robot.object3D.position.x = g1Ghosts[k].baseX;
     }
   } else if (t < 6.5) {
-    // (b) Hold ghosts; aggregate icon appears
+    // (b) Hold ghosts
     for (let k = 0; k < g1Ghosts.length; k++) {
       const decay = 0.85 - k * 0.10;
       g1Ghosts[k].robot.setOpacity(decay);
       g1Ghosts[k].robot.object3D.position.x = g1Ghosts[k].baseX;
     }
-    show('aggregate-icon');
     g1Aggregate.setOpacity(0);
   } else if (t < 9.0) {
     // (c) Collapse — ghosts slide toward spatial slot + fade out; aggregate fades in
@@ -1866,14 +1864,21 @@ function tickTemporalAnim(rawT) {
       g1Ghosts[k].robot.setOpacity(Math.max(0, (1 - eased) * decay));
     }
     g1Aggregate.setOpacity(easeInOut(u));
-    const ic = document.getElementById('aggregate-icon');
-    ic.style.opacity = String(1 - eased * 0.6);
   } else {
-    // (d) Hold final — only aggregate G1 remains (briefly), then loop back
+    // (d) Hold final — only aggregate G1 remains, then loop back
     for (const g of g1Ghosts) g.robot.setOpacity(0);
     g1Aggregate.setOpacity(1.0);
-    hide('aggregate-icon');
   }
+
+  // Aggregate icon visibility: ONLY when ≥2 robots are visible.
+  // Count any robot whose material opacity is meaningfully nonzero.
+  let visibleRobots = 0;
+  if (g1Aggregate.opacityRef.value > 0.1) visibleRobots++;
+  for (const g of g1Ghosts) if (g.robot.opacityRef.value > 0.1) visibleRobots++;
+  const aggIcon = document.getElementById('aggregate-icon');
+  aggIcon.style.opacity = '';   // clear any inline opacity from earlier logic
+  if (visibleRobots >= 2) aggIcon.classList.add('visible');
+  else                    aggIcon.classList.remove('visible');
 }
 
 function transitionToStage(i) {
