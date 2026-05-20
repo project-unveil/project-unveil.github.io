@@ -1991,18 +1991,19 @@ function updateSpatialRect() {
     const def = worldToCanvasPx(SLOT_X.spatial, 1.0, 0);
     mnX = def.x - 60; mxX = def.x + 60;
   }
-  const padX = 40;   // bigger padding so the ghost stack never visually clips the rect
+  const padX = 55;   // generous padding so the ghost mesh never clips the rect
   let x = mnX - padX;
   let w = (mxX - mnX) + padX*2;
-  // STRICT gap between 3.2 and 3.3 = graph-output label width. Keeps the
-  // "Spatially Aggregated Features" textbox + arrow in a clean strip.
+  // 1cm gap from 3.2 — YIELDS if clamping would clip the leftmost ghost.
+  // (Ghosts inside the rect take priority over the gap with 3.2.)
   const graphR = document.getElementById('graph-rect');
   if (graphR && graphR.style.opacity != 0) {
     const gx = parseFloat(graphR.getAttribute('x'));
     const gw = parseFloat(graphR.getAttribute('width'));
     if (isFinite(gx) && isFinite(gw)) {
       const minLeft = gx + gw + getGraphOutputW();
-      if (x < minLeft) {
+      const safeMnX = mnX - 12;        // 12 px mesh-extension buffer
+      if (x < minLeft && minLeft <= safeMnX) {
         w -= (minLeft - x);
         x = minLeft;
       }
