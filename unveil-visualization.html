@@ -1471,9 +1471,9 @@ function connsText() {
 }
 
 // ─── Caption / badge ───────────────────────────────────────────────────────
-function setCaption(text, ref) {
-  document.getElementById('cap-text').textContent = text;
-  document.getElementById('cap-ref').textContent  = ref || '§';
+function setCaption(text /* ref ignored — caption-ref removed */) {
+  const el = document.getElementById('cap-text');
+  if (el) el.textContent = text || '';
 }
 function setBadge(i, n) {
   document.getElementById('stage-badge').textContent = `Stage ${i} / ${n}`;
