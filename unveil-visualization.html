@@ -1760,14 +1760,17 @@ function updateSpatialRect() {
   const padX = 40;   // bigger padding so the ghost stack never visually clips the rect
   let x = mnX - padX;
   let w = (mxX - mnX) + padX*2;
-  // Gap between 3.2 and 3.3 = graph-output label width.
+  // Gap between 3.2 and 3.3 = graph-output label width — but YIELD if the
+  // clamp would clip the leftmost visible robot in 3.3. Robots inside the rect
+  // take priority over the gap constraint.
   const graphR = document.getElementById('graph-rect');
   if (graphR && graphR.style.opacity != 0) {
     const gx = parseFloat(graphR.getAttribute('x'));
     const gw = parseFloat(graphR.getAttribute('width'));
     if (isFinite(gx) && isFinite(gw)) {
       const minLeft = gx + gw + getGraphOutputW();
-      if (x < minLeft) {
+      const safeMnX = mnX - 12;             // 12 px buffer for mesh extension
+      if (x < minLeft && minLeft <= safeMnX) {
         w -= (minLeft - x);
         x = minLeft;
       }
