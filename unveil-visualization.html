@@ -968,7 +968,7 @@ function updateLimbVisuals() {
 
 function setLimbBallsOpacity(opacityByLimb /* map limbKey → opacity */) {
   for (const m of limbBalls) {
-    const o = opacityByLimb[m.userData.limbKey] ?? 0;
+    const o = opacityByLimb[m.userData.limbKey] || 0;
     m.material.opacity = o;
   }
 }
