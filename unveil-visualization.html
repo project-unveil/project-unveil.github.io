@@ -1322,7 +1322,10 @@ function updateEncRect() {
   const padX = 22, padY = 28;
   let x = mnX - padX, y = mnY - padY;
   let w = (mxX - mnX) + padX*2;
-  const h = (mxY - mnY) + padY*2;
+  let h = (mxY - mnY) + padY*2;
+  // Clamp the top so the rect's own label (above it) stays inside the canvas
+  const MIN_RECT_TOP_Y = 50;
+  if (y < MIN_RECT_TOP_Y) { h -= (MIN_RECT_TOP_Y - y); y = MIN_RECT_TOP_Y; }
   // Clamp: enc-rect's left edge must JUST TOUCH the retarget label's right edge
   // (and never extend left of it, never cross the arrow).
   const arrowEnd = getRetargetArrowEndPx();
