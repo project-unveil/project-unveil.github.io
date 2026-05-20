@@ -1122,7 +1122,7 @@ function setConns(pairs, color) {
 function updateConns() {
   const ts = masterClock;
   for (const c of activeConns) {
-    const pa = jointScreen(c.a), pb = jointScreen(c.b);
+    const pa = jointScreenGraph(c.a), pb = jointScreenGraph(c.b);
     if (!pa || !pb) continue;
     c.line.setAttribute('x1', pa.x.toFixed(1));
     c.line.setAttribute('y1', pa.y.toFixed(1));
