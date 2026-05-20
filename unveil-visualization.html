@@ -1518,7 +1518,8 @@ function setRetargetVisible(on) {
 function getRetargetArrowEndPx() {
   return worldToCanvasPx(SLOT_X.robot - ARROW_END_OFFSET, 1.0, 0);
 }
-function positionRetargetArrow() {
+function positionRetargetArrow() { return; /* disabled in reversed pipeline */
+  // legacy body kept below for reference:
   // Arrow + textbox at chest height (between human and G1).
   const hr = document.getElementById('human-rect');
   const hrX = parseFloat(hr.getAttribute('x'));
