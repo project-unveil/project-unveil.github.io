@@ -786,14 +786,12 @@ const BIN_VERSION  = '2026-05-19a';
 const withV = u => u + (u.includes('?') ? '&' : '?') + 'v=' + BIN_VERSION;
 
 // Reversed pipeline layout: 3.1 → 3.2 → 3.3 → Embedding → Attributes → Human
-// 3.1 hugs the panel's left edge. SLOT_X.graph + spatial chosen so both
-// robots fit inside their rects even with strict 1-cm inter-rect gaps.
-// Embedding, attributes, human are positioned DYNAMICALLY each frame so they
-// always sit exactly RIGHT_GAP_PX (1cm) after the preceding element.
-const SLOT_X = { robot: -6.0, graph: -2.5, spatial: 1.5, human: 5.1 };
-// HTML overlays — fixed positions used only as a fallback before the
-// preceding rect/element exists; the actual position is computed dynamically.
-const SLOT_X_EMBEDDING  = 3.05;
+// All slot positions are FIXED. Embedding / attributes / human stay at their
+// world-x throughout the walkthrough (no dynamic shifting). The three rects
+// (enc/graph/spatial) animate ("moving") during their first cycle, then lock
+// to their max-bounds size for the rest of the walkthrough.
+const SLOT_X = { robot: -6.0, graph: -2.8, spatial: 1.5, human: 5.55 };
+const SLOT_X_EMBEDDING  = 3.10;
 const SLOT_X_ATTRIBUTES = 4.30;
 const RIGHT_GAP_PX = 38;     // 1 cm at 96 dpi
 const GHOST_SPREAD = 0.30;   // tighter so the ghost stack always fits in the spatial rect
