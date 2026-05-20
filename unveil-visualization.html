@@ -1626,10 +1626,11 @@ function defineStages() {
         if (t >= PLATE_FADE_DUR) setEncRectVisible(true);
       },
     },
-    // 4: Graph convolution — just kicks off the continuous beat tick.
-    //    The actual limb beats are driven by tickGraphBeats so they keep
-    //    looping even after stage 5 has started.
-    { name:'graph', duration: 1.0,
+    // 4: Graph convolution — duration = one full intra+inter cycle, so 3.3
+    //    only starts after every limb beat has been shown at least once.
+    //    The continuous tick (tickGraphBeats) keeps looping the beats forever
+    //    after that.
+    { name:'graph', duration: GRAPH_CYCLE_DUR,
       enter() {
         setCaption('Hierarchical spatial graph convolution — joints interact within and across limbs.', '§3.2');
         setGraphRectVisible(true);
