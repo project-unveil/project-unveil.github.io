@@ -212,24 +212,24 @@
     "value_range_note": "high: 60-85 yr, low: 20-35 yr",
     "clips": [
       {
-        "id": "step_up_box",
-        "label": "Step onto box",
-        "g1_csv": "data/matrix_clips/step_up_box.csv",
-        "source_bvh": "soma_uniform/bvh/221010/come_up_50cm_box_R_001__A045.bvh",
-        "actor": "A045",
-        "high_value": 72, "low_value": 25,
-        "high_shape": { "height_cm": 165, "weight_kg": 68, "gender": "female" },
-        "low_shape":  { "height_cm": 165, "weight_kg": 52, "gender": "female" },
+        "id": "two_hands_behind",
+        "label": "Two-hand overhead → behind",
+        "g1_csv": "data/matrix_clips/two_hands_behind.csv",
+        "source_bvh": "soma_uniform/bvh/231121/medium_big_light_two_hands_behind_high_to_behind_medium_R_001__A529.bvh",
+        "actor": "A529",
+        "high_value": 75, "low_value": 23,
+        "high_shape": { "height_cm": 167, "weight_kg": 72, "gender": "female" },
+        "low_shape":  { "height_cm": 167, "weight_kg": 55, "gender": "female" },
         "features": [
-          { "label": "L hip pitch ROM",  "type": "joint_angle", "joint": "left_hip_pitch_joint",   "unit": "deg",   "show_rom": true },
-          { "label": "L knee ROM",       "type": "joint_angle", "joint": "left_knee_joint",        "unit": "deg",   "show_rom": true },
-          { "label": "L ankle vel",      "type": "joint_vel",   "joint": "left_ankle_pitch_joint", "unit": "deg/s" }
+          { "label": "L shoulder ROM",  "type": "joint_angle", "joint": "left_shoulder_pitch_joint", "unit": "deg",   "show_rom": true },
+          { "label": "L elbow ROM",     "type": "joint_angle", "joint": "left_elbow_joint",          "unit": "deg",   "show_rom": true },
+          { "label": "Waist pitch ROM", "type": "joint_angle", "joint": "waist_pitch_joint",         "unit": "deg",   "show_rom": true }
         ],
-        "highlight_joint": "left_hip_pitch_joint",
+        "highlight_joint": "left_shoulder_pitch_joint",
         "scale": [
-          { "type": "joints", "joints": ["left_hip_pitch_joint", "right_hip_pitch_joint"], "factor": 0.45 },
-          { "type": "joints", "joints": ["left_knee_joint", "right_knee_joint"], "factor": 0.65 },
-          { "type": "joints", "joints": ["left_ankle_pitch_joint", "right_ankle_pitch_joint"], "factor": 0.80 }
+          { "type": "joints", "joints": ["left_shoulder_pitch_joint", "left_shoulder_roll_joint", "left_shoulder_yaw_joint", "right_shoulder_pitch_joint", "right_shoulder_roll_joint", "right_shoulder_yaw_joint"], "factor": 0.40 },
+          { "type": "joints", "joints": ["left_elbow_joint", "right_elbow_joint"], "factor": 0.60 },
+          { "type": "joints", "joints": ["waist_pitch_joint", "waist_roll_joint"], "factor": 0.75 }
         ]
       },
       {
