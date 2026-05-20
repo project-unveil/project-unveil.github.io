@@ -272,6 +272,15 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
 }
 #enc-output-arrow   { stroke: var(--enc-color); }
 #graph-output-arrow { stroke: var(--graph-color); }
+/* 3.3 → embedding arrow (dashed, spatial color) */
+#spatial-embed-arrow {
+  stroke: var(--spatial-color);
+  stroke-width: 2;
+  stroke-dasharray: 9 5;
+  fill: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
 #enc-label .ref, #graph-label .ref, #spatial-label .ref {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
