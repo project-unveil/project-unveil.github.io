@@ -1288,8 +1288,8 @@ function setBeat(mode, text) {
 // ─── Stages ────────────────────────────────────────────────────────────────
 function defineStages() {
   stages = [
-    // 1: Human (SMPL appears on left, nothing else)
-    { name:'human', duration: 5.0,
+    // 1: Human (SMPL appears on left — brief, ~1s then G1 joins)
+    { name:'human', duration: 2.0,
       enter() {
         setCaption('A human operator performs hip-hop.', '§1');
         show('lbl-human'); show('operator-card');
@@ -1297,14 +1297,14 @@ function defineStages() {
       },
       update(){}
     },
-    // 2: G1 retargeting (G1 fades in middle; SMPL stays)
-    { name:'robot', duration: 5.0,
+    // 2: G1 retargeting (G1 fades in just right of human; SMPL keeps animating)
+    { name:'robot', duration: 3.5,
       enter() {
         setCaption('Motion retargeting projects the operator onto the G1 — body shape is discarded.', '§1 retargeting');
         show('lbl-robot');
       },
       update(t) {
-        const u = clamp(t / 2.2, 0, 1);
+        const u = clamp(t / 1.6, 0, 1);
         g1Main.setOpacity(u);
       },
     },
