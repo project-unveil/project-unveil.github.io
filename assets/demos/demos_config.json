@@ -83,13 +83,13 @@
       "predicted": {
         "height": 168,
         "weight": 68,
-        "age": 39,
+        "age": 29,
         "gender": "female"
       },
       "groundTruth": {
         "height": 172,
         "weight": 68,
-        "age": 38,
+        "age": 28,
         "gender": "female"
       }
     },
