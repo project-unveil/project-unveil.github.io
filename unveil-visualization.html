@@ -1884,6 +1884,14 @@ function loop(ts) {
       else transitionToStage(stageIdx + 1);
     }
   }
+  } catch (err) {
+    // Don't let one frame's exception break the renderer; the canvas would
+    // otherwise be left at WebGL's default (black) clear color.
+    if (!window.__loopErrShown) {
+      console.error('[unveil] loop tick error:', err);
+      window.__loopErrShown = true;
+    }
+  }
 
   renderer.render(scene, camera);
 }
