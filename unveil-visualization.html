@@ -1894,7 +1894,7 @@ function setBeat(mode, limbA, limbB) {
   bm.classList.remove('intra','inter');
   if (mode) bm.classList.add(mode);
   document.getElementById('bi-mode-top').textContent = mode === 'intra' ? 'Intra Limb' :
-                                                       mode === 'inter' ? 'Inter Limb' : '—';
+                                                       mode === 'inter' ? 'Limb Torso' : '—';
 }
 
 // Bottom indicator: follows the graph G1's pelvis horizontally, but always
