@@ -669,6 +669,8 @@ const ARROW_END_OFFSET = 0.55;
 const PLATE_FADE_DUR = 0.5;
 // One full graph-conv beat cycle (5 intra beats × 2.8s + 4 inter beats × 3.0s)
 const GRAPH_CYCLE_DUR = 5 * 2.8 + 4 * 3.0;   // 26s
+// Kinematic-encoding loop cycle: 6 steps × 1s + 0.5s hold + 0.5s fade-out
+const KINEMATIC_CYCLE_DUR = 7.0;
 
 const LIMBS = {
   torso: { color: '#8e8e93', bodies: ['pelvis','waist_yaw_link','waist_roll_link','torso_link'] },
