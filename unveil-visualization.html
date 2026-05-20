@@ -605,11 +605,13 @@ const INTER_BEATS = [
     conns: [['right_elbow_link','right_knee_link']] },
 ];
 
-// Picked joints for kinematic-encoding zoom-in
-const PICKED = [
-  { body: 'right_shoulder_yaw_link', label: 'Right shoulder', feature: 'velocity' },
-  { body: 'right_elbow_link',        label: 'Right elbow',    feature: 'rom' },
-  { body: 'right_wrist_pitch_link',  label: 'Right wrist',    feature: 'accel' },
+// Single picked joint for kinematic-encoding zoom-in — two plates (velocity + accel)
+const PICKED_BODY  = 'right_elbow_link';
+const PICKED_JOINT = 'right_elbow_joint';
+const PICKED_LABEL = 'Right elbow';
+const PICKED_PLATES = [
+  { id: 'vel', feature: 'velocity', title: 'Velocity θ̇',     sub: 'angular rate',     color: '#9b6dbf', side: 'left'  },
+  { id: 'acc', feature: 'accel',    title: 'Acceleration θ̈', sub: '2nd derivative',   color: '#e74c3c', side: 'right' },
 ];
 
 const CSV_TO_JOINT = {
