@@ -1344,7 +1344,7 @@ function setRetargetVisible(on) {
 }
 // Arrow start = right edge of the human boundary rect; arrow end = approach to G1
 function getRetargetArrowEndPx() {
-  return worldToCanvasPx(SLOT_X.robot - 0.4, 1.0, 0);
+  return worldToCanvasPx(SLOT_X.robot - ARROW_END_OFFSET, 1.0, 0);
 }
 function positionRetargetArrow() {
   const ph = worldToCanvasPx(SLOT_X.human + HUMAN_RECT_W/2, 1.0, 0);
