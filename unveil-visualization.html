@@ -1881,6 +1881,36 @@ function defineStages() {
   ];
 }
 
+// ─── Limb mesh tinting on the graph G1 ────────────────────────────────────
+// Sets emissive on every mesh in a limb so the limb visually "glows" with its
+// color. Used during 3.2 intra/inter beats instead of dashed ellipses.
+const _tintColor = new THREE.Color();
+function tintGraphLimb(limbKey, intensity) {
+  if (!g1Graph || !g1Graph.bodyMeshes) return;
+  _tintColor.set(LIMBS[limbKey].color);
+  for (const bn of LIMBS[limbKey].bodies) {
+    const arr = g1Graph.bodyMeshes[bn];
+    if (!arr) continue;
+    for (const m of arr) {
+      m.material.emissive.copy(_tintColor);
+      m.material.emissiveIntensity = intensity;
+    }
+  }
+}
+function resetGraphTints() {
+  if (!g1Graph || !g1Graph.bodyMeshes) return;
+  for (const key of Object.keys(LIMBS)) {
+    for (const bn of LIMBS[key].bodies) {
+      const arr = g1Graph.bodyMeshes[bn];
+      if (!arr) continue;
+      for (const m of arr) {
+        m.material.emissive.setScalar(0);
+        m.material.emissiveIntensity = 0;
+      }
+    }
+  }
+}
+
 // ─── Continuous kinematic-encoding tick (loops forever) ──────────────────
 // Same 6 steps as the staged appearance, then a brief hold and a smooth
 // fade-out so the cycle restarts without flicker.
