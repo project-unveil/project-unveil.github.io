@@ -1572,7 +1572,8 @@ const HUMAN_RECT_TOP_Y = 1.95;
 const HUMAN_RECT_BOT_Y = -0.05;
 
 function setHumanRectVisible(on) {
-  document.getElementById('human-rect').style.opacity = on ? 0.85 : 0;
+  // Human rect removed — keep stub so call sites still resolve.
+  document.getElementById('human-rect').style.opacity = 0;
 }
 // Dynamic SMPL bounds — recomputed each frame so the mesh never crosses the border.
 const _smplBBox = new THREE.Box3();
