@@ -201,16 +201,16 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
 #operator-card .row .k { color: var(--muted); font-size: 10.5px; }
 #operator-card .row .v { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; font-size: 12px; }
 
-/* Data plates (kinematic encoding zoom-in callouts) */
+/* Data plates (small) */
 .data-plate {
   position: absolute;
   transform: translate(-50%, -50%);
   background: #ffffff;
   border: 1px solid var(--enc-color);
-  border-radius: 10px;
-  padding: 8px 11px 9px;
-  width: 168px;
-  box-shadow: 0 8px 22px rgba(155,109,191,0.18);
+  border-radius: 7px;
+  padding: 4px 7px 5px;
+  width: 96px;
+  box-shadow: 0 6px 14px rgba(155,109,191,0.18);
   opacity: 0;
   transition: opacity 0.55s ease;
   pointer-events: none;
@@ -219,27 +219,20 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
 .data-plate.visible { opacity: 1; }
 .data-plate .dp-head {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9.5px;
+  font-size: 8.5px;
   color: var(--enc-color);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 5px;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
   display: flex; justify-content: space-between; align-items: center;
+  line-height: 1.1;
 }
 .data-plate .dp-head .joint {
-  color: var(--ink); font-weight: 600;
-  font-size: 9.5px;
-}
-.data-plate .dp-sub {
-  font-size: 10.5px; color: var(--muted);
-  margin-bottom: 4px;
-  font-style: italic;
+  color: var(--muted); font-weight: 500;
+  font-size: 8px;
 }
 .data-plate canvas {
-  width: 100%; height: 34px; display: block;
-}
-.data-plate svg.rom-fan {
-  width: 100%; height: 50px; display: block;
+  width: 100%; height: 22px; display: block;
 }
 
 /* Kinematic encoding label (over the transparent box) */
