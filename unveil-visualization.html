@@ -912,11 +912,14 @@ function worldToCanvasPx(wx, wy, wz) {
   _v3.set(wx, wy, wz).project(camera);
   return { x: (_v3.x * 0.5 + 0.5) * canvasW, y: (1 - (_v3.y * 0.5 + 0.5)) * canvasH };
 }
-function jointScreen(bodyName) {
-  const p = g1Main.getBodyWorldPos(bodyName, _v3);
+function jointScreenOf(robot, bodyName) {
+  if (!robot) return null;
+  const p = robot.getBodyWorldPos(bodyName, _v3);
   if (!p) return null;
   return worldToCanvasPx(p.x, p.y, p.z);
 }
+function jointScreen(bodyName)      { return jointScreenOf(g1Main, bodyName); }
+function jointScreenGraph(bodyName) { return jointScreenOf(g1Graph, bodyName); }
 
 // ─── Ghosts ─────────────────────────────────────────────────────────────────
 async function buildGhosts(N = 5) {
