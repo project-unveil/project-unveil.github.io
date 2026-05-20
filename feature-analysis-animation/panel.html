@@ -684,13 +684,14 @@ function buildSMPLMesh(parentGroup, data, faces, accentHex) {
            numFrames: data.numFrames };
 }
 
-// SMPL scene + camera (renderer is shared with G1 via the panel renderer).
-function buildSMPLScene(highData, lowData, faces) {
+// One SMPL body in its own scene, framed tightly. Same per-body pattern as
+// buildG1SoloScene.
+function buildSMPLSoloScene(data, faces, accentHex) {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#eef2f7');
 
-  const camera = new THREE.PerspectiveCamera(32, 1, 0.05, 30);
-  camera.position.set(0, 1.05, 4.7);
+  const camera = new THREE.PerspectiveCamera(33, 1, 0.05, 30);
+  camera.position.set(0, 1.05, 3.0);
   camera.lookAt(0, 0.95, 0);
 
   scene.add(new THREE.HemisphereLight(0xffffff, 0xc0c8d4, 1.05));
@@ -698,27 +699,19 @@ function buildSMPLScene(highData, lowData, faces) {
   sun.position.set(3, 7, 4); scene.add(sun);
 
   const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(12, 12),
+    new THREE.PlaneGeometry(8, 8),
     new THREE.MeshBasicMaterial({ color: 0xdee4ec })
   );
   floor.rotation.x = -Math.PI/2; scene.add(floor);
 
-  const X_OFFSET = 0.85;
-  const highParent = new THREE.Group();
-  highParent.position.x = -X_OFFSET;
-  scene.add(highParent);
-  const high = buildSMPLMesh(highParent, highData, faces, COLOR_HEAVY_HEX);
-
-  const lowParent = new THREE.Group();
-  lowParent.position.x = +X_OFFSET;
-  scene.add(lowParent);
-  const low = buildSMPLMesh(lowParent, lowData, faces, COLOR_LIGHT_HEX);
+  const meshHolder = new THREE.Group();
+  scene.add(meshHolder);
+  const mesh = buildSMPLMesh(meshHolder, data, faces, accentHex);
 
   function applyFrameAtTime(t) {
-    const fiH = Math.min(high.numFrames - 1, Math.floor((t % high.duration) / high.frameTime));
-    const fiL = Math.min(low .numFrames - 1, Math.floor((t % low .duration) / low .frameTime));
-    high.applyFrame(fiH);
-    low .applyFrame(fiL);
+    const fi = Math.min(mesh.numFrames - 1,
+                        Math.floor((t % mesh.duration) / mesh.frameTime));
+    mesh.applyFrame(fi);
   }
   return { scene, camera, applyFrameAtTime };
 }
