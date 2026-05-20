@@ -684,10 +684,11 @@ const INTER_BEATS = [
 
 // Picked joints — each gets a small focus ring + one combined box (vel + accel inside)
 // dx/dy = pixel offset from joint to box center; each joint's box can go in any direction
+// Picked joints — get a combined box (vel + accel) to the right of the body.
+// Tiny rings are drawn on ALL G1 joints; only these two have plates + arrows.
 const PICKED_JOINTS = [
-  { body:'right_elbow_link', joint:'right_elbow_joint', label:'Right elbow', dx:  155, dy: -60 },
-  { body:'right_knee_link',  joint:'right_knee_joint',  label:'Right knee',  dx:  180, dy:  15 },
-  { body:'torso_link',       joint:'waist_pitch_joint', label:'Waist',       dx:    0, dy: -120 },
+  { body:'right_elbow_link', joint:'right_elbow_joint', label:'Right elbow', dx: 170, dy: -50 },
+  { body:'right_knee_link',  joint:'right_knee_joint',  label:'Right knee',  dx: 170, dy:  50 },
 ];
 // Per-graph colors (used inside each box)
 const PLATE_DEFS = {
