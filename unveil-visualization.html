@@ -1897,6 +1897,7 @@ function defineStages() {
         }
         document.getElementById('enc-vertical-dots').style.opacity = 0;
         setEncRectVisible(false);
+        show('enc-output');     // "→ Joint Features" appears with the rect's first cycle
         kinematicAnimStart = masterClock;
       },
       update(){},
