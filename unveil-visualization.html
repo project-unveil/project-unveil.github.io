@@ -1615,6 +1615,17 @@ function positionAggregateIcon() {
   el.style.top  = cy.toFixed(1) + 'px';
 }
 
+// ─── Attribute-embedding strip — y + height mirror the other rects ────────
+function positionEmbeddingStrip() {
+  const strip = document.getElementById('embedding-strip');
+  const r = document.getElementById('enc-rect');
+  if (!r || r.style.opacity == 0) return;
+  const ry = parseFloat(r.getAttribute('y'));
+  const rh = parseFloat(r.getAttribute('height'));
+  if (isFinite(ry)) strip.style.top    = ry.toFixed(1) + 'px';
+  if (isFinite(rh)) strip.style.height = rh.toFixed(1) + 'px';
+}
+
 // ─── Spatiotemporal rectangle — wraps spatial G1 + ghost stack + Σ icon ───
 function setSpatialRectVisible(on) {
   document.getElementById('spatial-rect').style.opacity = on ? 0.85 : 0;
