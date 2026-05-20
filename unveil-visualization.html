@@ -1726,6 +1726,27 @@ function positionGraphOutput() {
   _positionRectOutput('graph-output', 'graph-output-arrow', 'graph-rect', 'spatial-rect',
     worldToCanvasPx(SLOT_X.spatial - 0.5, 1.0, 0).x);
 }
+// ─── 3.3 → embedding strip arrow ─────────────────────────────────────────
+function positionSpatialEmbedArrow() {
+  const arrow = document.getElementById('spatial-embed-arrow');
+  const sr = document.getElementById('spatial-rect');
+  const es = document.getElementById('embedding-strip');
+  const show = sr && sr.style.opacity != 0 && es && es.classList.contains('visible');
+  arrow.style.opacity = show ? '0.95' : '0';
+  if (!show) return;
+  const srX = parseFloat(sr.getAttribute('x'));
+  const srY = parseFloat(sr.getAttribute('y'));
+  const srW = parseFloat(sr.getAttribute('width'));
+  const srH = parseFloat(sr.getAttribute('height'));
+  if (!isFinite(srX) || !isFinite(srW) || !isFinite(srY) || !isFinite(srH)) return;
+  const startX = srX + srW + 8;
+  const endX   = es.offsetLeft - 8;
+  const y      = srY + srH * 0.40;     // chest height of the rect
+  arrow.setAttribute('x1', startX.toFixed(1));
+  arrow.setAttribute('y1', y.toFixed(1));
+  arrow.setAttribute('x2', endX.toFixed(1));
+  arrow.setAttribute('y2', y.toFixed(1));
+}
 // Helpers to expose each output label's width (used by rect-gap clamps)
 function getEncOutputW()   { return (document.getElementById('enc-output').offsetWidth   || 130) + 14; }
 function getGraphOutputW() { return (document.getElementById('graph-output').offsetWidth || 200) + 14; }
