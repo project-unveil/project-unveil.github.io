@@ -1147,51 +1147,51 @@ function updateConns() {
   }
 }
 
-// ─── Picked-joint focus ring + leader positioning each frame ───────────────
+// Plate offsets (px) from the picked joint — one up-left, one up-right
+const PLATE_DX = 150;    // horizontal offset from joint to plate center
+const PLATE_DY = 120;    // vertical offset (upward)
+const RING_R   = 14;
+
+// ─── Picked-joint focus ring + 2 leader arrows positioning each frame ──────
 function updateFocusRings() {
-  // Each picked joint: position ring at joint screen pos; position plate at a fixed offset; draw leader from ring → plate edge
-  // Plate placement: above the G1, spaced along the top
-  // We'll compute G1 bounding screen box and place plates above it.
-  let mnX=Infinity, mnY=Infinity, mxX=-Infinity, mxY=-Infinity;
-  for (const b of modelData.bodies) {
-    const p = jointScreen(b.name);
-    if (!p) continue;
-    if (p.x<mnX)mnX=p.x; if (p.x>mxX)mxX=p.x;
-    if (p.y<mnY)mnY=p.y; if (p.y>mxY)mxY=p.y;
+  const js = jointScreen(PICKED_BODY);
+  if (!js) return;
+
+  const ring = document.querySelector('.svg-focus-ring[data-role="ring"]');
+  if (ring) {
+    ring.setAttribute('cx', js.x.toFixed(1));
+    ring.setAttribute('cy', js.y.toFixed(1));
+    ring.setAttribute('r',  RING_R);
   }
-  const N = PICKED.length;
-  const plateY = Math.max(86, mnY - 84);
-  const plateXStart = mnX - 12;
-  const plateXEnd   = mxX + 12;
-  for (let i = 0; i < N; i++) {
-    const p = PICKED[i];
-    const js = jointScreen(p.body);
-    if (!js) continue;
-    // Ring
-    const ring = document.querySelector(`.svg-focus-ring[data-body="${p.body}"]`);
-    if (ring) {
-      ring.setAttribute('cx', js.x.toFixed(1));
-      ring.setAttribute('cy', js.y.toFixed(1));
-    }
-    // Plate
-    const plate = plates[p.body];
+
+  // Place plates: vel on the left, acc on the right
+  for (const p of PICKED_PLATES) {
+    const plate = plates[p.id];
     if (!plate) continue;
-    const px = plateXStart + ((plateXEnd - plateXStart) * (i + 0.5) / N);
-    const py = plateY;
+    const dir = p.side === 'left' ? -1 : +1;
+    const px = js.x + dir * PLATE_DX;
+    const py = js.y - PLATE_DY;
     plate.style.left = px.toFixed(1) + 'px';
     plate.style.top  = py.toFixed(1) + 'px';
-    // Leader: from plate's bottom-center → ring
-    const leader = document.querySelector(`.svg-leader[data-body="${p.body}"]`);
-    if (leader) {
-      const fromX = px;
-      const fromY = py + 34;     // approx half-height of plate
-      const toX = js.x;
-      const toY = js.y - 18;     // top of ring
-      // Bezier curve through midpoint with slight Y bias for visual elegance
-      const mx = (fromX + toX) / 2;
-      const my = (fromY + toY) / 2 + 10;
-      leader.setAttribute('d', `M ${fromX} ${fromY} Q ${mx} ${my} ${toX} ${toY}`);
-    }
+
+    // Leader arrow: from rim of ring (in direction of plate) → plate's bottom-near-corner
+    const leader = document.querySelector(`.svg-leader[data-plate="${p.id}"]`);
+    if (!leader) continue;
+    // Direction from joint toward plate
+    const tx = px;
+    const ty = py + 32;                      // bottom-center of plate (plate height ~64, center then +32)
+    const dx = tx - js.x, dy = ty - js.y;
+    const len = Math.hypot(dx, dy) || 1;
+    // Start just outside the ring rim
+    const sx = js.x + (dx / len) * (RING_R + 2);
+    const sy = js.y + (dy / len) * (RING_R + 2);
+    // Stop just outside the plate bottom edge
+    const ex = tx - (dx / len) * 6;
+    const ey = ty - (dy / len) * 6;
+    leader.setAttribute('x1', sx.toFixed(1));
+    leader.setAttribute('y1', sy.toFixed(1));
+    leader.setAttribute('x2', ex.toFixed(1));
+    leader.setAttribute('y2', ey.toFixed(1));
   }
 }
 
