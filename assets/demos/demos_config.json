@@ -222,13 +222,13 @@
         "height": 172,
         "weight": 72,
         "age": 25,
-        "gender": "male"
+        "gender": "female"
       },
       "groundTruth": {
         "height": 175,
         "weight": 76,
         "age": 22,
-        "gender": "male"
+        "gender": "female"
       }
     },
     {
