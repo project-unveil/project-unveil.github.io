@@ -1698,6 +1698,12 @@ function updateGraphRect() {
       if (x + w > maxRight) w = Math.max(0, maxRight - x);
     }
   }
+  // Lock-after-cycle: freeze to accumulated max-bounds.
+  if (graphRectLocked && graphRectMaxBounds) {
+    ({ x, y, w, h } = graphRectMaxBounds);
+  } else {
+    graphRectMaxBounds = _accumulateMax(graphRectMaxBounds, x, y, w, h);
+  }
   r.setAttribute('x', x.toFixed(1));
   r.setAttribute('y', y.toFixed(1));
   r.setAttribute('width', Math.max(0, w).toFixed(1));
