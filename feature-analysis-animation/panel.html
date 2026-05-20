@@ -864,28 +864,24 @@ function loop(ts) {
   if (SHARED_RENDERER) {
     const vp = panelViewports();
     SHARED_RENDERER.setScissorTest(true);
-
-    if (VIEWERS.smpl) {
-      const c = VIEWERS.smpl.camera;
-      c.aspect = vp.smpl.w / Math.max(1, vp.smpl.h);
-      c.updateProjectionMatrix();
-      SHARED_RENDERER.setViewport(vp.smpl.x, vp.smpl.y, vp.smpl.w, vp.smpl.h);
-      SHARED_RENDERER.setScissor (vp.smpl.x, vp.smpl.y, vp.smpl.w, vp.smpl.h);
-      SHARED_RENDERER.clear();
-      SHARED_RENDERER.render(VIEWERS.smpl.scene, c);
-    }
-    if (VIEWERS.g1) {
-      const c = VIEWERS.g1.camera;
-      c.aspect = vp.g1.w / Math.max(1, vp.g1.h);
-      c.updateProjectionMatrix();
-      SHARED_RENDERER.setViewport(vp.g1.x, vp.g1.y, vp.g1.w, vp.g1.h);
-      SHARED_RENDERER.setScissor (vp.g1.x, vp.g1.y, vp.g1.w, vp.g1.h);
-      SHARED_RENDERER.clear();
-      SHARED_RENDERER.render(VIEWERS.g1.scene, c);
-    }
+    renderViewport(VIEWERS.smpl_high, vp.smplHigh);
+    renderViewport(VIEWERS.smpl_low,  vp.smplLow);
+    renderViewport(VIEWERS.g1_heavy,  vp.g1Heavy);
+    renderViewport(VIEWERS.g1_light,  vp.g1Light);
     SHARED_RENDERER.setScissorTest(false);
   }
   drawPlots();
+}
+
+function renderViewport(viewer, vp) {
+  if (!viewer) return;
+  const c = viewer.camera;
+  c.aspect = vp.w / Math.max(1, vp.h);
+  c.updateProjectionMatrix();
+  SHARED_RENDERER.setViewport(vp.x, vp.y, vp.w, vp.h);
+  SHARED_RENDERER.setScissor (vp.x, vp.y, vp.w, vp.h);
+  SHARED_RENDERER.clear();
+  SHARED_RENDERER.render(viewer.scene, c);
 }
 
 boot().catch(err => { showError(err.message); console.error(err); });
