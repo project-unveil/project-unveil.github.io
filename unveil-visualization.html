@@ -1308,7 +1308,18 @@ function setBeat(mode, text) {
   if (mode) bi.classList.add(mode);
   document.getElementById('bi-mode').textContent = mode === 'intra' ? 'H₁ intra-limb' :
                                                     mode === 'inter' ? 'H₂ inter-limb' : '—';
-  document.getElementById('bi-text').textContent = text || '';
+  // Show: limb (or limb-pair) name · live joint-pair connections
+  const conn = connsText();
+  document.getElementById('bi-text').textContent = (text || '') + (conn !== '—' ? '  ·  ' + conn : '');
+}
+
+// Position the beat-indicator dynamically below the graph G1
+function positionBeatIndicator() {
+  const p = worldToCanvasPx(SLOT_X.graph, -0.05, 0);
+  const bi = document.getElementById('beat-indicator');
+  bi.style.left = p.x + 'px';
+  bi.style.top  = (p.y + 60) + 'px';
+  bi.style.bottom = 'auto';
 }
 
 // ─── Stages ────────────────────────────────────────────────────────────────
