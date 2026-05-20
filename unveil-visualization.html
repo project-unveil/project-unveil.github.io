@@ -658,8 +658,8 @@ const DEFAULT_DEMO = 'hiphop';
 const BIN_VERSION  = '2026-05-19a';
 const withV = u => u + (u.includes('?') ? '&' : '?') + 'v=' + BIN_VERSION;
 
-const SLOT_X = { human: -6.0, robot: -3.7, graph: -0.4, spatial: 3.75 };
-const GHOST_SPREAD = 0.32;   // tighter so the ghost stack always fits in the spatial rect
+const SLOT_X = { human: -6.0, robot: -3.9, graph: 0.2, spatial: 4.1 };
+const GHOST_SPREAD = 0.30;   // tighter so the ghost stack always fits in the spatial rect
 // World units the arrow's right end stays away from G1 root — sized so the G1's
 // extreme left swing during motion just touches the arrow tip (never crosses).
 const ARROW_END_OFFSET = 0.55;
