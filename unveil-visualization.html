@@ -1840,47 +1840,25 @@ function positionSpatialEmbedArrow() {
   arrow.setAttribute('stroke-dashoffset', off.toFixed(2));
 }
 
-// ─── Attributes card — position + populate ──────────────────────────────
+// ─── Attributes card — FIXED at SLOT_X_ATTRIBUTES world coord ───────────
 function positionAttributesCard() {
   const card = document.getElementById('attributes-card');
+  const p = worldToCanvasPx(SLOT_X_ATTRIBUTES, 1.0, 0);
+  // y: align to spatial rect center (matches embedding strip's vertical pos)
   const sr = document.getElementById('spatial-rect');
-  const cardW = card.offsetWidth || 124;
-  // x: ALWAYS RIGHT_GAP_PX after embedding strip's right edge
-  const es = document.getElementById('embedding-strip');
-  let cx;
-  if (es && es.classList.contains('visible')) {
-    const esRight = es.offsetLeft + es.offsetWidth;
-    cx = esRight + RIGHT_GAP_PX + cardW / 2;
-  }
-  if (!isFinite(cx)) cx = worldToCanvasPx(SLOT_X_ATTRIBUTES, 1.0, 0).x;
-  // y: align to spatial rect center
-  let cy = worldToCanvasPx(SLOT_X_ATTRIBUTES, 1.0, 0).y;
+  let cy = p.y;
   if (sr && sr.style.opacity != 0) {
     const sy = parseFloat(sr.getAttribute('y'));
     const sh = parseFloat(sr.getAttribute('height'));
     if (isFinite(sy) && isFinite(sh)) cy = sy + sh / 2;
   }
-  card.style.left = cx.toFixed(1) + 'px';
+  card.style.left = p.x.toFixed(1) + 'px';
   card.style.top  = cy.toFixed(1) + 'px';
 }
-// ─── Dynamic human position — RIGHT_GAP_PX after attributes card ────────
+// Human stays at fixed SLOT_X.human throughout the walkthrough — no dynamic
+// shift. (Kept as a no-op so the loop call site still resolves.)
 function positionHumanMesh() {
-  if (!smplGroup) return;
-  const card = document.getElementById('attributes-card');
-  if (!card.classList.contains('visible')) {
-    smplGroup.object3D.position.x = SLOT_X.human;
-    return;
-  }
-  const cardW = card.offsetWidth || 124;
-  const cx    = parseFloat(card.style.left);
-  if (!isFinite(cx)) return;
-  const cardRight = cx + cardW / 2;
-  const targetMeshLeftScreen = cardRight + RIGHT_GAP_PX;
-  const cw = (canvasWrapEl && canvasWrapEl.clientWidth) || 1620;
-  const fw = 13.5;                                         // frustum width in world units
-  const meshLeftWorld = (targetMeshLeftScreen / cw) * fw - fw/2;
-  // SMPL mesh half-width ≈ 0.35 world (shoulder-to-center). Position = left + half.
-  smplGroup.object3D.position.x = meshLeftWorld + 0.35;
+  if (smplGroup) smplGroup.object3D.position.x = SLOT_X.human;
 }
 function populateAttributesCard() {
   if (!currentDemo) return;
