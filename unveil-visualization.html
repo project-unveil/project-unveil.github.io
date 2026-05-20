@@ -1567,7 +1567,7 @@ function positionAggregateIcon() {
   let cy;
   if (r && r.style.opacity != 0) {
     const ry = parseFloat(r.getAttribute('y'));
-    cy = isFinite(ry) ? ry + ICON_HALF + 14 : worldToCanvasPx(SLOT_X.spatial, 2.0, 0).y;
+    cy = isFinite(ry) ? ry + ICON_HALF + 6 : worldToCanvasPx(SLOT_X.spatial, 2.0, 0).y;
   } else {
     cy = worldToCanvasPx(SLOT_X.spatial, 2.0, 0).y;
   }
