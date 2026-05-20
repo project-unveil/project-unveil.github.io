@@ -1234,14 +1234,14 @@ function positionSlotLabels() {
 }
 
 // ─── Embedding strip rendering ─────────────────────────────────────────────
-const Z_CELLS = 256;
+const Z_CELLS = 64;        // visible segmented blocks (representative of full Z ∈ ℝ²⁵⁶)
 function drawEmbedding(seed) {
   const c = document.getElementById('embedding-canvas');
   const w = c.width = c.clientWidth * (window.devicePixelRatio || 1);
   const h = c.height = c.clientHeight * (window.devicePixelRatio || 1);
   const ctx = c.getContext('2d');
   ctx.clearRect(0,0,w,h);
-  const cw = w / Z_CELLS;
+  const ch = h / Z_CELLS;     // vertical layout — cells stack top-to-bottom
   for (let i = 0; i < Z_CELLS; i++) {
     const v = 0.5*Math.abs(Math.sin(i*0.713 + seed*0.012))
             + 0.5*Math.abs(Math.cos(i*0.281 + seed*0.0078));
@@ -1249,7 +1249,12 @@ function drawEmbedding(seed) {
     const g = Math.round(62 + v*80);
     const b = Math.round(107 + v*80);
     ctx.fillStyle = `rgb(${r},${g},${b})`;
-    ctx.fillRect(i*cw, 0, Math.ceil(cw+0.5), h);
+    ctx.fillRect(0, i*ch, w, Math.ceil(ch+0.5));
+  }
+  // subtle dividers between segments
+  ctx.fillStyle = 'rgba(255,255,255,0.18)';
+  for (let i = 1; i < Z_CELLS; i++) {
+    ctx.fillRect(0, i*ch - 0.5, w, 0.5);
   }
 }
 
