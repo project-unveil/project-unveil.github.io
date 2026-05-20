@@ -1771,6 +1771,10 @@ function positionEmbeddingStrip() {
   const rh = parseFloat(r.getAttribute('height'));
   if (isFinite(ry)) strip.style.top    = ry.toFixed(1) + 'px';
   if (isFinite(rh)) strip.style.height = rh.toFixed(1) + 'px';
+  // Anchor horizontal position to a fixed world x (between 3.3 and attributes)
+  const cx = worldToCanvasPx(SLOT_X_EMBEDDING, 1.0, 0).x;
+  const stripW = 96;
+  strip.style.left = (cx - stripW / 2).toFixed(1) + 'px';
 }
 
 // ─── Spatiotemporal rectangle — wraps spatial G1 + ghost stack + Σ icon ───
