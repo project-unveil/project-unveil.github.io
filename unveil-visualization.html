@@ -607,26 +607,17 @@ const INTER_BEATS = [
     conns: [['right_elbow_link','right_knee_link']] },
 ];
 
-// Multiple picked joints — each gets a small focus ring + 2 small plates (vel + accel)
-// dx/dy are pixel offsets from the joint to the plate center (per-joint arrow directions)
+// Picked joints — each gets a small focus ring + one combined box (vel + accel inside)
+// dx/dy = pixel offset from joint to box center; each joint's box can go in any direction
 const PICKED_JOINTS = [
-  { body:'right_elbow_link', joint:'right_elbow_joint', label:'R elbow', plates:[
-      { id:'vel', dx:  150, dy: -68 },
-      { id:'acc', dx:  150, dy:  18 },
-  ]},
-  { body:'right_knee_link', joint:'right_knee_joint', label:'R knee', plates:[
-      { id:'vel', dx:  150, dy: -22 },
-      { id:'acc', dx:  150, dy:  64 },
-  ]},
-  { body:'torso_link', joint:'waist_pitch_joint', label:'Waist', plates:[
-      { id:'vel', dx: -78, dy: -132 },
-      { id:'acc', dx:  78, dy: -132 },
-  ]},
+  { body:'right_elbow_link', joint:'right_elbow_joint', label:'Right elbow', dx:  155, dy: -60 },
+  { body:'right_knee_link',  joint:'right_knee_joint',  label:'Right knee',  dx:  155, dy:  55 },
+  { body:'torso_link',       joint:'waist_pitch_joint', label:'Waist',       dx:    0, dy: -165 },
 ];
-// Shared plate-type definitions (color + title)
+// Per-graph colors (used inside each box)
 const PLATE_DEFS = {
-  vel: { feature: 'velocity', title: 'Vel θ̇', color: '#9b6dbf' },
-  acc: { feature: 'accel',    title: 'Acc θ̈', color: '#e74c3c' },
+  vel: { feature: 'velocity', label: 'θ̇', color: '#9b6dbf' },
+  acc: { feature: 'accel',    label: 'θ̈', color: '#e74c3c' },
 };
 
 const CSV_TO_JOINT = {
