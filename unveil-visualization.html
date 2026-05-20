@@ -1246,9 +1246,10 @@ function updateFocusRings() {
     if (!plate) continue;
     let px = js.x + J.dx;
     const py = js.y + J.dy;
-    // Hard clamp: plate's left edge must clear the retargeting arrow's right end.
+    // Hard clamp: plate's left edge must clear the retarget label's right edge
+    // (label is the rightmost element in the human-side region).
     const arrowEndX = getRetargetArrowEndPx().x;
-    const minPlateLeft = arrowEndX + 14;
+    const minPlateLeft = Math.max(arrowEndX + 14, getRetargetLabelRightPx() + 4);
     if (px - PLATE_HALF_W < minPlateLeft) px = minPlateLeft + PLATE_HALF_W;
     plate.style.left = px.toFixed(1) + 'px';
     plate.style.top  = py.toFixed(1) + 'px';
