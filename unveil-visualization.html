@@ -1959,7 +1959,7 @@ function defineStages() {
         setGraphRectVisible(true);
         document.getElementById('beat-indicator').classList.add('visible');
         document.getElementById('beat-mode-tag').classList.add('visible');
-        show('graph-output');   // "→ Spatially Aggregated Features"
+        // graph-output is shown later, after one full beat cycle completes
         clearConns();
         graphAnimStart = masterClock;
       },
