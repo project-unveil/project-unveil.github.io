@@ -1302,15 +1302,37 @@ function positionSlotLabels() {
   document.getElementById('lbl-spatial').style.cssText += `;left:${ps.x}px;top:${ps.y+10}px;`;
 }
 
+// Human-rect bounds (world coords) — drives both the border and the retarget arrow start
+const HUMAN_RECT_W = 1.0;     // total width in world units
+const HUMAN_RECT_TOP_Y = 1.95;
+const HUMAN_RECT_BOT_Y = -0.05;
+
+function setHumanRectVisible(on) {
+  document.getElementById('human-rect').style.opacity = on ? 0.85 : 0;
+}
+function updateHumanRect() {
+  const r = document.getElementById('human-rect');
+  if (r.style.opacity == 0) return;
+  const tl = worldToCanvasPx(SLOT_X.human - HUMAN_RECT_W/2, HUMAN_RECT_TOP_Y, 0);
+  const br = worldToCanvasPx(SLOT_X.human + HUMAN_RECT_W/2, HUMAN_RECT_BOT_Y, 0);
+  r.setAttribute('x', tl.x.toFixed(1));
+  r.setAttribute('y', tl.y.toFixed(1));
+  r.setAttribute('width',  (br.x - tl.x).toFixed(1));
+  r.setAttribute('height', (br.y - tl.y).toFixed(1));
+}
+
 // ─── Retarget arrow (human → G1) ───────────────────────────────────────────
 function setRetargetVisible(on) {
   document.getElementById('retarget-arrow').style.opacity = on ? 0.9 : 0;
   if (on) show('retarget-label'); else hide('retarget-label');
 }
+// Arrow start = right edge of the human boundary rect; arrow end = approach to G1
+function getRetargetArrowEndPx() {
+  return worldToCanvasPx(SLOT_X.robot - 0.6, 1.0, 0);
+}
 function positionRetargetArrow() {
-  // Arrow from human's right side to G1's left side at chest height
-  const ph = worldToCanvasPx(SLOT_X.human + 0.6, 1.0, 0);
-  const pr = worldToCanvasPx(SLOT_X.robot - 0.6, 1.0, 0);
+  const ph = worldToCanvasPx(SLOT_X.human + HUMAN_RECT_W/2, 1.0, 0);
+  const pr = getRetargetArrowEndPx();
   const arrow = document.getElementById('retarget-arrow');
   arrow.setAttribute('x1', ph.x.toFixed(1));
   arrow.setAttribute('y1', ph.y.toFixed(1));
