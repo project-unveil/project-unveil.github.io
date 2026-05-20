@@ -1753,7 +1753,10 @@ function loop(ts) {
   positionAggregateIcon();
   positionBeatIndicator();
   positionRetargetArrow();
+  updateHumanRect();
   updateGraphRect();
+  if (graphAnimStart    >= 0) tickGraphBeats(masterClock - graphAnimStart);
+  if (temporalAnimStart >= 0) tickTemporalAnim(masterClock - temporalAnimStart);
 
   if (stageIdx >= 0 && stageIdx < stages.length) {
     const t = masterClock - stageStart;
