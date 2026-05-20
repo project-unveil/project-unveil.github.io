@@ -1058,7 +1058,7 @@ async function buildGhosts(N = 5) {
   }
 }
 
-// ─── Multi-joint focus rings + single combined plates ──────────────────────
+// ─── Tiny rings on ALL joints + combined plates for PICKED joints ──────────
 function setupFocusRingsAndPlates() {
   const gFocus = document.getElementById('g-focus');
   gFocus.innerHTML = '';
@@ -1074,13 +1074,15 @@ function setupFocusRingsAndPlates() {
   defs.appendChild(marker);
   gFocus.appendChild(defs);
 
-  for (const J of PICKED_JOINTS) {
-    // Small focus ring on the joint
-    const ring = svg('circle', { class: 'svg-focus-ring', r: 12, cx: 0, cy: 0 });
-    ring.setAttribute('data-body', J.body);
+  // Tiny dot on EVERY joint — visual signal that the encoding is applied per-joint
+  for (const b of modelData.bodies) {
+    const ring = svg('circle', { class: 'svg-focus-ring', r: 3.5, cx: 0, cy: 0 });
+    ring.setAttribute('data-body', b.name);
     gFocus.appendChild(ring);
+  }
 
-    // One leader arrow per joint → its combined plate
+  // Leader arrow for the picked joints only (joint → plate)
+  for (const J of PICKED_JOINTS) {
     const leader = svg('line', {
       class: 'svg-leader',
       stroke: '#9b6dbf',
@@ -1092,7 +1094,7 @@ function setupFocusRingsAndPlates() {
     gFocus.appendChild(leader);
   }
 
-  // Build one combined plate per joint
+  // Build one combined plate per PICKED joint (elbow + knee)
   const platesHolder = document.getElementById('plates-holder');
   platesHolder.innerHTML = '';
   for (const J of PICKED_JOINTS) {
