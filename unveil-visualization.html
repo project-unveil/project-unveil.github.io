@@ -1500,23 +1500,33 @@ function setSpatialRectVisible(on) {
 function updateSpatialRect() {
   const r = document.getElementById('spatial-rect');
   if (r.style.opacity == 0) return;
-  // LEFT EDGE: dynamically follow the leftmost VISIBLE ghost; when no ghosts
-  // are visible (collapsed state), fall back to the aggregate G1 only.
-  let leftMostX = SLOT_X.spatial;
+  // Sample joint screen positions of every VISIBLE robot in slot 3.3
+  // (aggregate G1 + visible ghosts) so the rect tracks arm swings, not just
+  // root positions.
+  let mnX = Infinity, mxX = -Infinity;
+  const visibleRobots = [];
+  if (g1Aggregate && g1Aggregate.opacityRef.value > 0.05) visibleRobots.push(g1Aggregate);
   for (const g of g1Ghosts) {
-    if (g.robot.opacityRef.value > 0.05) {
-      const x = g.robot.object3D.position.x;
-      if (x < leftMostX) leftMostX = x;
+    if (g.robot.opacityRef.value > 0.05) visibleRobots.push(g.robot);
+  }
+  for (const robot of visibleRobots) {
+    for (const b of modelData.bodies) {
+      const p = jointScreenOf(robot, b.name);
+      if (!p) continue;
+      if (p.x < mnX) mnX = p.x;
+      if (p.x > mxX) mxX = p.x;
     }
   }
-  // Include the Σ aggregate icon vertically when visible
-  const aggIcon = document.getElementById('aggregate-icon');
-  const aggOpacity = parseFloat(aggIcon.style.opacity) || (aggIcon.classList.contains('visible') ? 1 : 0);
-  const topY = aggOpacity > 0.05 ? 2.45 : 2.0;
-  const tl = worldToCanvasPx(leftMostX - 0.42, topY, 0);
-  const br = worldToCanvasPx(SLOT_X.spatial + 0.55, -0.05, 0);
-  let x = tl.x, y = tl.y, w = br.x - tl.x, h = br.y - tl.y;
+  if (!isFinite(mnX)) {
+    // Nothing visible — fall back to the spatial slot center with a small box
+    const def = worldToCanvasPx(SLOT_X.spatial, 1.0, 0);
+    mnX = def.x - 60; mxX = def.x + 60;
+  }
+  const padX = 32;
+  let x = mnX - padX;
+  let w = (mxX - mnX) + padX*2;
   // Mirror enc-rect's y AND height so all three rects line up flush
+  let y = 50, h = 200;
   const encR = document.getElementById('enc-rect');
   if (encR && encR.style.opacity != 0) {
     const encTop    = parseFloat(encR.getAttribute('y'));
