@@ -564,6 +564,7 @@ let sparkBuffers = { pos: [], vel: [], acc: [] };
 let activeStageIdx = -1;
 let pendingReboot = null;                   // demo switch
 let canvasW = 0, canvasH = 0;
+let walkthroughEnded = false;
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 async function fetchJSON(url) {
