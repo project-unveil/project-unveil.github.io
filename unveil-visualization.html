@@ -1267,12 +1267,9 @@ function updateConns() {
     c.line.setAttribute('y1', pa.y.toFixed(1));
     c.line.setAttribute('x2', pb.x.toFixed(1));
     c.line.setAttribute('y2', pb.y.toFixed(1));
-    // Animate dash flow
-    const off = -((ts - c.startedAt) * 50) % 14;
-    c.line.setAttribute('stroke-dashoffset', off.toFixed(1));
-    // Fade in/out over a 2.5s lifecycle
+    // Fade in/out over a 2.5s lifecycle (no dash animation — solid line)
     const lt = ts - c.startedAt;
-    const op = Math.min(1, lt / 0.5) * (1 - Math.max(0, (lt - 2.0) / 0.5));
+    const op = Math.min(1, lt / 0.4) * (1 - Math.max(0, (lt - 2.0) / 0.5));
     c.line.style.opacity = Math.max(0, Math.min(1, op));
   }
 }
