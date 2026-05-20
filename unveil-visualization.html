@@ -44,7 +44,9 @@ html, body {
   position: absolute; inset: 0;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  padding: 18px 24px;
+  /* Asymmetric padding: less at top, more at bottom — shifts the centered
+     panel UP so it has +1 cm more above and −2 cm less below */
+  padding: 4px 24px 118px 24px;
   background: radial-gradient(circle at 50% 0%, #f4f6fb 0%, #ffffff 60%);
 }
 #page-title {
