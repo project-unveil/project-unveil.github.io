@@ -298,26 +298,26 @@ function setupSharedRenderer() {
 }
 
 // Viewport split — must match the CSS `top: 36%; bottom: 39%` on #plots.
-// Returns canvas-pixel rects for each row (in WebGL convention: origin at
-// bottom-left, y increases upward).
+// Four quadrants: SMPL row (top half) split into high (left) / low (right),
+// G1 row (bottom half) split into heavy (left) / light (right). Per-body
+// viewports let each camera frame ONE body tightly, ~doubling on-screen size
+// vs the previous per-row layout.
 function panelViewports() {
   const cnv = document.getElementById('body-canvas');
   const W = cnv.width, H = cnv.height;
-  // CSS percentages are measured top-down; convert to WebGL bottom-up.
-  const SMPL_TOP_FRAC = 0;      // top of SMPL row in CSS-space
-  const SMPL_BOT_FRAC = 0.36;   // bottom of SMPL row = top of plots
-  const G1_TOP_FRAC   = 0.61;   // bottom of plots = top of G1 row
-  const G1_BOT_FRAC   = 1.0;
-  // In WebGL coords: y=0 at canvas bottom.
-  const smpl = {
-    x: 0, y: Math.round(H * (1 - SMPL_BOT_FRAC)),
-    w: W, h: Math.round(H * (SMPL_BOT_FRAC - SMPL_TOP_FRAC)),
+  const SMPL_BOT_FRAC = 0.36;   // bottom of SMPL row
+  const G1_TOP_FRAC   = 0.61;   // top of G1 row
+  const halfW = Math.round(W / 2);
+  const smplY = Math.round(H * (1 - SMPL_BOT_FRAC));
+  const smplH = Math.round(H * SMPL_BOT_FRAC);
+  const g1Y   = 0;
+  const g1H   = Math.round(H * (1 - G1_TOP_FRAC));
+  return {
+    smplHigh: { x: 0,     y: smplY, w: halfW,     h: smplH },
+    smplLow:  { x: halfW, y: smplY, w: W - halfW, h: smplH },
+    g1Heavy:  { x: 0,     y: g1Y,   w: halfW,     h: g1H   },
+    g1Light:  { x: halfW, y: g1Y,   w: W - halfW, h: g1H   },
   };
-  const g1 = {
-    x: 0, y: Math.round(H * (1 - G1_BOT_FRAC)),
-    w: W, h: Math.round(H * (G1_BOT_FRAC - G1_TOP_FRAC)),
-  };
-  return { smpl, g1 };
 }
 
 async function fetchJSON(url) { const r = await fetch(url); if (!r.ok) throw new Error(`${r.status} ${url}`); return r.json(); }
