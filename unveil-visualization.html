@@ -1614,8 +1614,8 @@ function loop(ts) {
   lastTS = ts;
   masterClock += dt;
 
-  // SMPL frame (only matters in stages 1+2)
-  if (smplData) {
+  // SMPL frame (only matters in stages 1+2; skip vertex/normal cost once invisible)
+  if (smplData && smplGroup.mat.opacity > 0.01) {
     const tSec = masterClock;
     const f = (tSec * smplData.fps) % smplData.numFrames;
     smplGroup.applyFrame(f);
