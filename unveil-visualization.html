@@ -1389,7 +1389,6 @@ function restartWalkthrough() {
   clearConns();
   for (const k of Object.keys(LIMBS)) setLimbEllipseVisible(k, false);
   document.getElementById('beat-indicator').classList.remove('visible');
-  document.getElementById('ghost-indicator').classList.remove('visible');
   g1Main.setOpacity(0.0);
   smplGroup.setOpacity(0.0);
   for (const g of g1Ghosts) g.robot.setOpacity(0);
