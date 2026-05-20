@@ -1229,8 +1229,12 @@ function updateFocusRings() {
     // Plate
     const plate = plates[J.body];
     if (!plate) continue;
-    const px = js.x + J.dx;
+    let px = js.x + J.dx;
     const py = js.y + J.dy;
+    // Hard clamp: plate's left edge must clear the retargeting arrow's right end.
+    const arrowEndX = getRetargetArrowEndPx().x;
+    const minPlateLeft = arrowEndX + 14;
+    if (px - PLATE_HALF_W < minPlateLeft) px = minPlateLeft + PLATE_HALF_W;
     plate.style.left = px.toFixed(1) + 'px';
     plate.style.top  = py.toFixed(1) + 'px';
 
