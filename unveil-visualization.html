@@ -1652,15 +1652,14 @@ function updateSpatialRect() {
   const padX = 40;   // bigger padding so the ghost stack never visually clips the rect
   let x = mnX - padX;
   let w = (mxX - mnX) + padX*2;
-  // 1cm gap from 3.2 — but YIELDS if it would clip the leftmost visible robot
+  // STRICT 1cm gap from 3.2 — spatial rect can never intersect graph rect.
   const graphR = document.getElementById('graph-rect');
   if (graphR && graphR.style.opacity != 0) {
     const gx = parseFloat(graphR.getAttribute('x'));
     const gw = parseFloat(graphR.getAttribute('width'));
     if (isFinite(gx) && isFinite(gw)) {
       const minLeft = gx + gw + GAP_31_32_PX;
-      const safeMnX = mnX - 12;
-      if (x < minLeft && minLeft <= safeMnX) {
+      if (x < minLeft) {
         w -= (minLeft - x);
         x = minLeft;
       }
