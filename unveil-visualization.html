@@ -1472,7 +1472,6 @@ async function switchDemo(demo) {
     smplGroup.object3D.position.set(SLOT_X.human, 0, 0);
     scene.add(smplGroup.object3D);
     currentDemo = demo;
-    populateOperatorCard();
     computeROM();
     restartWalkthrough();
   } catch (err) {
