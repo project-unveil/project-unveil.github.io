@@ -1922,13 +1922,9 @@ function positionAttrHumanArrow() {
   const cardLeft = parseFloat(card.style.left) - cardW / 2;
   const cardRight = cardLeft + cardW;
   const y = parseFloat(card.style.top);
-  // Human's left edge from the human-rect (mesh-aware bounds)
-  const hr = document.getElementById('human-rect');
-  let humanLeft;
-  if (hr && hr.style.opacity != 0) {
-    humanLeft = parseFloat(hr.getAttribute('x'));
-  }
-  if (!isFinite(humanLeft)) humanLeft = worldToCanvasPx(SLOT_X.human - HUMAN_RECT_W/2, 1.0, 0).x;
+  // Human-rect removed — anchor arrow end to the SMPL mesh's left edge
+  // (approx SLOT_X.human − 0.40 world, accounting for shoulder spread).
+  const humanLeft = worldToCanvasPx(SLOT_X.human - 0.40, 1.0, 0).x;
   arrow.setAttribute('x1', (cardRight + 8).toFixed(1));
   arrow.setAttribute('y1', y.toFixed(1));
   arrow.setAttribute('x2', (humanLeft - 8).toFixed(1));
