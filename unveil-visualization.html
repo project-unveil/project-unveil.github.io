@@ -1358,6 +1358,9 @@ function defineStages() {
         clearConns();
       },
       update(t) {
+        // Fade in the dedicated graph G1 over the first ~1.2s
+        if (g1Graph) g1Graph.setOpacity(clamp(t / 1.2, 0, 1));
+
         const limbOrder = ['torso','la','ra','ll','rl'];
         const INTRA_BEAT_DUR = 2.8;
         const INTRA_DUR = limbOrder.length * INTRA_BEAT_DUR;
