@@ -1517,14 +1517,15 @@ function defineStages() {
         if (t > 0.3) setRetargetVisible(true);
       },
     },
-    // 3: Kinematic encoding — focus rings + plates + enc rect, all in ~1s
-    { name:'kinematic', duration: 1.0,
+    // 3: Kinematic encoding — duration tied to plate fade-in so that 3.2
+    //    starts exactly when the vel/accel plots have appeared (not hard-coded 1s).
+    { name:'kinematic', duration: PLATE_FADE_DUR + 0.05,
       enter() {
         setCaption('A per-joint temporal convolution captures velocity and acceleration.', '§3.1 Kinematic Encoding');
       },
       update(t) {
-        setFocusOpacity(clamp(t / 0.5, 0, 1));
-        if (t > 0.55) setEncRectVisible(true);
+        setFocusOpacity(clamp(t / PLATE_FADE_DUR, 0, 1));
+        if (t >= PLATE_FADE_DUR) setEncRectVisible(true);
       },
     },
     // 4: Graph convolution — just kicks off the continuous beat tick.
