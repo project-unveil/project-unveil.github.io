@@ -1669,7 +1669,7 @@ function updateGraphRect() {
       if (biTop  + halfH > mxY) mxY = biTop + halfH;
     }
   }
-  const padX = 28, padY = 28;
+  const padX = 12, padY = 28;  // tight padX — rect hugs extreme L/R joint extent
   let x = mnX - padX;
   // Default y/h from natural bounds; will be overwritten by enc-rect mirror below
   let y = mnY - padY;
