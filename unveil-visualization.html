@@ -683,11 +683,19 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
         <span class="bi-limbs" id="bi-limbs">—</span>
       </div>
 
-<!-- Attribute embedding (vertical, far right) -->
+<!-- Attribute embedding (vertical, positioned dynamically) -->
       <div id="embedding-strip">
         <div class="em-head">Attribute<br>Embedding</div>
         <div class="em-sub">Z ∈ ℝ²⁵⁶</div>
         <canvas id="embedding-canvas"></canvas>
+      </div>
+      <!-- Recovered operator attributes — between embedding and human -->
+      <div id="attributes-card">
+        <div class="ac-head">Operator</div>
+        <div class="ac-row"><span class="ac-k">Gender</span><span class="ac-v" id="ac-gender">—</span></div>
+        <div class="ac-row"><span class="ac-k">Age</span>   <span class="ac-v" id="ac-age">—</span></div>
+        <div class="ac-row"><span class="ac-k">Height</span><span class="ac-v" id="ac-height">—</span></div>
+        <div class="ac-row"><span class="ac-k">Weight</span><span class="ac-v" id="ac-weight">—</span></div>
       </div>
 
       <div id="loading">
