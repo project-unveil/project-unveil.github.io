@@ -1263,31 +1263,31 @@ function updateConns() {
   }
 }
 
-const RING_R = 12;        // small focus circle radius
+const RING_R = 3.5;       // tiny dot radius (drawn on every joint)
 const PLATE_HALF_W = 65;  // half-width of a combined data-plate (matches CSS width 130)
 const PLATE_HALF_H = 40;  // approx half-height (header + 2 graph rows)
 
-// ─── Per-frame: position rings, combined plates, leader arrows ────────────
+// ─── Per-frame: position tiny rings on ALL joints + plates/arrows for picked ───
 function updateFocusRings() {
+  // 1) Position the tiny dot on EVERY G1 joint
+  for (const b of modelData.bodies) {
+    const ring = document.querySelector(`.svg-focus-ring[data-body="${b.name}"]`);
+    if (!ring) continue;
+    const js = jointScreen(b.name);
+    if (!js) continue;
+    ring.setAttribute('cx', js.x.toFixed(1));
+    ring.setAttribute('cy', js.y.toFixed(1));
+  }
+
+  // 2) Position plates + leader arrows for PICKED joints
   for (const J of PICKED_JOINTS) {
     const js = jointScreen(J.body);
     if (!js) continue;
-
-    // Ring on the joint
-    const ring = document.querySelector(`.svg-focus-ring[data-body="${J.body}"]`);
-    if (ring) {
-      ring.setAttribute('cx', js.x.toFixed(1));
-      ring.setAttribute('cy', js.y.toFixed(1));
-      ring.setAttribute('r',  RING_R);
-    }
-
-    // Plate
     const plate = plates[J.body];
     if (!plate) continue;
     let px = js.x + J.dx;
     const py = js.y + J.dy;
     // Hard clamp: plate's left edge must clear the retarget label's right edge
-    // (label is the rightmost element in the human-side region).
     const arrowEndX = getRetargetArrowEndPx().x;
     const minPlateLeft = Math.max(arrowEndX + 14, getRetargetLabelRightPx() + 4);
     if (px - PLATE_HALF_W < minPlateLeft) px = minPlateLeft + PLATE_HALF_W;
@@ -1312,6 +1312,19 @@ function updateFocusRings() {
     leader.setAttribute('y1', sy.toFixed(1));
     leader.setAttribute('x2', tx.toFixed(1));
     leader.setAttribute('y2', ty.toFixed(1));
+  }
+
+  // 3) Vertical "etc." dots between the two plates
+  const dots = document.getElementById('enc-vertical-dots');
+  if (PICKED_JOINTS.length >= 2) {
+    const p1 = plates[PICKED_JOINTS[0].body];
+    const p2 = plates[PICKED_JOINTS[1].body];
+    if (p1 && p2 && p1.style.left && p2.style.left) {
+      const cx = (parseFloat(p1.style.left) + parseFloat(p2.style.left)) / 2;
+      const cy = (parseFloat(p1.style.top)  + parseFloat(p2.style.top))  / 2;
+      dots.style.left = cx.toFixed(1) + 'px';
+      dots.style.top  = cy.toFixed(1) + 'px';
+    }
   }
 }
 
