@@ -1643,8 +1643,9 @@ function loop(ts) {
       renderSparks();
     }
 
-    // embedding pulse — only animate visible
-    if (stageIdx === 5 /* embedding */) {
+    // embedding pulse — once we reach stage 6, keep updating even after the
+    // walkthrough holds at the end (stageIdx flips to -2 then).
+    if (stageIdx === 5 || (stageIdx === -2 && walkthroughEnded)) {
       drawZVector(fG1);
       for (const el of document.querySelectorAll('.attr-cells')) {
         drawAttrStrip(el, el.dataset.attr, fG1);
