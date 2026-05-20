@@ -1081,10 +1081,10 @@ function updateLimbEllipses() {
   for (const [key, L] of Object.entries(LIMBS)) {
     const ell = svgLimbs[key];
     if (!ell || ell.style.opacity == 0) continue;
-    // Compute bounding box of all joint screen positions in this limb
+    // Compute bounding box of all joint screen positions in this limb (on the GRAPH G1)
     let mnX=Infinity, mnY=Infinity, mxX=-Infinity, mxY=-Infinity, cnt=0;
     for (const bn of L.bodies) {
-      const p = jointScreen(bn);
+      const p = jointScreenGraph(bn);
       if (!p) continue;
       cnt++;
       if (p.x<mnX)mnX=p.x; if (p.x>mxX)mxX=p.x;
