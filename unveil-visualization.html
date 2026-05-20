@@ -1974,10 +1974,9 @@ function tickGraphBeats(localT) {
   if (t < INTRA_DUR) {
     const idx = clamp(Math.floor(t / INTRA_BEAT_DUR), 0, limbOrder.length - 1);
     const within = (t - idx * INTRA_BEAT_DUR) / INTRA_BEAT_DUR;
-    // Strong tint — lerps the diffuse color most of the way to the limb color
-    const intensity = Math.sin(within * Math.PI) * 0.95;
+    // Sudden on/off — full color while the beat is active, no ramp
     resetGraphTints();
-    tintGraphLimb(limbOrder[idx], intensity);
+    tintGraphLimb(limbOrder[idx], 1.0);
     if (within < 0.03 && (!activeConns.length || activeConns[0]._beatIdx !== idx || activeConns[0]._mode !== 'intra')) {
       setConns(INTRA_CONNS[limbOrder[idx]] || [], LIMBS[limbOrder[idx]].color);
       for (const c of activeConns) { c._beatIdx = idx; c._mode = 'intra'; }
