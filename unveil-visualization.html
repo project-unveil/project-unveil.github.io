@@ -1437,30 +1437,32 @@ function getRetargetArrowEndPx() {
   return worldToCanvasPx(SLOT_X.robot - ARROW_END_OFFSET, 1.0, 0);
 }
 function positionRetargetArrow() {
-  // Arrow start = right edge of the (dynamic) human-rect, not a fixed slot offset
+  // Step 1: compute the textbox position (clamped to stay outside human-rect
+  //         and inside the available gap before 3.1)
   const hr = document.getElementById('human-rect');
   const hrX = parseFloat(hr.getAttribute('x'));
   const hrW = parseFloat(hr.getAttribute('width'));
   const fallback = worldToCanvasPx(SLOT_X.human + HUMAN_RECT_W/2, 1.0, 0);
-  const ph = {
-    x: (isFinite(hrX) && isFinite(hrW)) ? hrX + hrW : fallback.x,
-    y: fallback.y,
-  };
+  const hrRight = (isFinite(hrX) && isFinite(hrW)) ? hrX + hrW : fallback.x;
   const pr = getRetargetArrowEndPx();
-  const arrow = document.getElementById('retarget-arrow');
-  arrow.setAttribute('x1', ph.x.toFixed(1));
-  arrow.setAttribute('y1', ph.y.toFixed(1));
-  arrow.setAttribute('x2', pr.x.toFixed(1));
-  arrow.setAttribute('y2', pr.y.toFixed(1));
   const label = document.getElementById('retarget-label');
   const labelW = label.offsetWidth || 130;
-  // Default: textbox centered on arrow midpoint
-  let labelCenter = (ph.x + pr.x) / 2;
-  // Clamp: textbox left edge must NOT cross the human boundary
-  const minCenter = ph.x + labelW/2 + 4;
+
+  let labelCenter = (hrRight + pr.x) / 2;
+  const minCenter = hrRight + labelW/2 + 4;
   if (labelCenter < minCenter) labelCenter = minCenter;
   label.style.left = labelCenter.toFixed(1) + 'px';
-  label.style.top  = ((ph.y + pr.y)/2 - 6).toFixed(1) + 'px';
+  label.style.top  = ((fallback.y + pr.y)/2 - 6).toFixed(1) + 'px';
+
+  // Step 2: draw the arrow with EXACTLY the same horizontal span as the textbox
+  const arrowY = (fallback.y + pr.y) / 2 + 8;   // a few px below the textbox
+  const ax1 = labelCenter - labelW/2 + 2;
+  const ax2 = labelCenter + labelW/2 - 2;
+  const arrow = document.getElementById('retarget-arrow');
+  arrow.setAttribute('x1', ax1.toFixed(1));
+  arrow.setAttribute('y1', arrowY.toFixed(1));
+  arrow.setAttribute('x2', ax2.toFixed(1));
+  arrow.setAttribute('y2', arrowY.toFixed(1));
 }
 // Compute the textbox's right edge in px (used by enc-rect / plate clamps)
 function getRetargetLabelRightPx() {
