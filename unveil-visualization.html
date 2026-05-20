@@ -1724,8 +1724,8 @@ function endWalkthrough() {
 function restartWalkthrough() {
   masterClock = 0; stageIdx = -1; walkthroughEnded = false;
   document.getElementById('replay-btn').classList.remove('visible');
-  hide('lbl-human'); hide('lbl-spatial');
-  hide('enc-label'); hide('graph-label');
+  hide('lbl-human');
+  hide('enc-label'); hide('graph-label'); hide('spatial-label');
   hide('embedding-strip');
   hide('aggregate-icon');
   hide('retarget-label');
@@ -1733,6 +1733,7 @@ function restartWalkthrough() {
   setGraphRectVisible(false);
   setHumanRectVisible(false);
   setEncRectVisible(false);
+  setSpatialRectVisible(false);
   setFocusOpacity(0);
   for (const k of Object.keys(LIMBS)) setLimbEllipseVisible(k, false);
   clearConns();
