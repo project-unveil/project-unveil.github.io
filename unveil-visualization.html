@@ -8,19 +8,20 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@500;700&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@500;700&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 
 :root {
   --primary:    #2c3e6b;
+  --primary-2:  #3a528f;
   --accent:     #e74c3c;
   --ink:        #1a1f2e;
   --muted:      #6e7689;
-  --paper:      #f8f9fa;
-  --panel:      rgba(255,255,255,0.94);
-  --panel-dark: rgba(20,25,40,0.78);
+  --soft:       #eef0f6;
+  --paper:      #ffffff;
+  --border:     #e0e5ee;
   --c-torso:    #8e8e93;
   --c-la:       #e74c3c;
   --c-ra:       #f39c12;
@@ -30,484 +31,633 @@
 
 html, body {
   width:100%; height:100%;
-  background: #1a1a1a;
+  background: #ffffff;
   font-family: 'Source Sans 3', 'Segoe UI', system-ui, sans-serif;
-  overflow: hidden;
   color: var(--ink);
+  overflow: hidden;
 }
 
-#canvas-wrap { position:absolute; inset:0; }
-canvas { display:block; width:100% !important; height:100% !important; }
-
-/* ── Loading overlay ───────────────────────────── */
-#loading {
-  position: absolute; inset: 0;
-  background: #1a1a1a;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 14px; z-index: 50;
-  color: #d0d4de;
-}
-.spinner {
-  width: 38px; height: 38px;
-  border: 3px solid rgba(255,255,255,0.18);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-#load-status { font-size: 12px; color: rgba(255,255,255,0.75); max-width: 320px; text-align: center; letter-spacing: 0.02em; }
-
-/* ── Top bar ───────────────────────────────────── */
-#topbar {
+#page-wrap {
   position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 56px;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 24px;
+  background:
+    radial-gradient(circle at 50% 0%, #f5f7fb 0%, #ffffff 60%);
+}
+
+#page-title {
+  font-family: 'Noto Serif', serif;
+  font-weight: 700;
+  font-size: 19px;
+  color: var(--primary);
+  margin-bottom: 10px;
+  letter-spacing: 0.01em;
+}
+#page-title .sub {
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--muted);
+  margin-left: 10px;
+}
+
+/* ── The big rectangular parent panel ─────────────────────────────────── */
+#panel {
+  position: relative;
+  width: min(96vw, 1640px);
+  height: min(82vh, 820px);
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow:
+    0 30px 80px rgba(33,52,100,0.08),
+    0 6px 18px rgba(33,52,100,0.06);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Panel header (within panel) ──────────────────────────────────────── */
+#panel-header {
+  flex-shrink: 0;
+  height: 50px;
   display: flex;
   align-items: center;
-  padding: 0 22px;
-  gap: 18px;
-  background: linear-gradient(180deg, rgba(20,25,40,0.55) 0%, rgba(20,25,40,0) 100%);
-  z-index: 6;
-  pointer-events: none;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, #fafbfd 0%, #ffffff 100%);
+  z-index: 4;
 }
-#topbar .brand {
+#panel-header .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 10px;
+  box-shadow: 0 0 0 3px rgba(231,76,60,0.18);
+}
+#panel-header .title {
   font-family: 'Noto Serif', serif;
-  color: #fff; font-weight: 700;
-  font-size: 17px;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--primary);
   letter-spacing: 0.02em;
 }
-#topbar .brand .sub {
-  font-family: 'Source Sans 3', sans-serif;
-  color: rgba(255,255,255,0.7);
-  font-weight: 400; font-size: 12px;
-  margin-left: 8px;
-}
-#topbar .spacer { flex: 1; }
-#activity-dropdown, #replay-btn {
-  pointer-events: auto;
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 12px; font-weight: 500;
-  background: rgba(255,255,255,0.10);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.18);
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
-  letter-spacing: 0.02em;
-}
-#activity-dropdown:hover, #replay-btn:hover {
-  background: rgba(231,76,60,0.55);
-  border-color: rgba(231,76,60,0.7);
-}
-#replay-btn { display: none; }
-#replay-btn.visible { display: inline-block; }
-
-/* ── Caption bar ──────────────────────────────── */
-#caption {
-  position: absolute;
-  left: 50%;
-  bottom: 38px;
-  transform: translateX(-50%) translateY(20px);
-  opacity: 0;
-  transition: opacity 0.55s ease, transform 0.55s ease;
-  background: var(--panel-dark);
-  color: #fff;
-  padding: 12px 22px;
-  border-radius: 999px;
-  font-size: 13.5px;
-  font-weight: 500;
-  letter-spacing: 0.015em;
-  max-width: min(80vw, 760px);
-  text-align: center;
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,0.10);
-  z-index: 5;
-}
-#caption .ref {
-  color: rgba(255,255,255,0.6);
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 11.5px;
-  margin-right: 8px;
-  letter-spacing: 0;
-}
-#caption.visible {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-/* ── Stage badge (top centre) ─────────────────── */
-#stage-badge {
-  position: absolute;
-  top: 18px; left: 50%; transform: translateX(-50%);
-  background: var(--panel-dark);
-  color: #fff;
-  padding: 5px 14px;
-  border-radius: 99px;
+#panel-header .ref {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  font-weight: 500;
+  color: var(--muted);
+  margin-left: 8px;
+}
+#panel-header .spacer { flex: 1; }
+#panel-header .stage-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  color: var(--muted);
+  background: var(--soft);
+  padding: 3px 9px;
+  border-radius: 99px;
+  margin-right: 10px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  z-index: 5;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  border: 1px solid rgba(255,255,255,0.10);
 }
-#stage-badge.visible { opacity: 1; }
-
-/* ── Operator card (left) ─────────────────────── */
-.attr-card {
-  position: absolute;
-  top: 92px;
-  background: var(--panel);
-  border-radius: 12px;
-  padding: 16px 18px 14px;
-  width: 240px;
+#panel-header select, #panel-header button {
   font-family: 'Source Sans 3', sans-serif;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.30);
-  border: 1px solid rgba(255,255,255,0.55);
-  z-index: 4;
-  opacity: 0;
-  transform: translateX(-20px);
-  transition: opacity 0.55s ease, transform 0.55s ease;
-}
-.attr-card.visible { opacity: 1; transform: translateX(0); }
-#operator-card { left: 24px; }
-#prediction-card { right: 24px; transform: translateX(20px); }
-#prediction-card.visible { transform: translateX(0); }
-
-.attr-card .head {
-  font-family: 'Noto Serif', serif;
   font-size: 12px;
+  font-weight: 500;
+  background: #ffffff;
+  color: var(--ink);
+  border: 1px solid var(--border);
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+}
+#panel-header select:hover, #panel-header button:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+#panel-header #replay-btn {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  margin-left: 8px;
+  display: none;
+}
+#panel-header #replay-btn.visible { display: inline-block; }
+#panel-header #replay-btn:hover { background: var(--accent); border-color: var(--accent); color:#fff; }
+
+/* ── Canvas wrap (the scene) ──────────────────────────────────────────── */
+#canvas-wrap {
+  flex: 1;
+  position: relative;
+  background: #ffffff;
+  overflow: hidden;
+}
+canvas { display: block; width: 100% !important; height: 100% !important; }
+
+/* ── Slot labels (positioned in canvas coords; updated by JS) ─────────── */
+.slot-label {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  font-family: 'Noto Serif', serif;
+  font-size: 13px;
   font-weight: 700;
   color: var(--primary);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  margin-bottom: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.55s ease;
+  white-space: nowrap;
 }
-.attr-card .head .dot {
-  display: inline-block;
-  width: 7px; height: 7px;
-  border-radius: 50%;
+.slot-label.visible { opacity: 1; }
+.slot-label .ref {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--muted);
+  display: block;
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+  text-transform: none;
+}
+.slot-label .underline {
+  display: block;
+  width: 30px;
+  height: 2px;
   background: var(--accent);
-  margin-right: 6px;
-  transform: translateY(-1px);
+  margin: 5px auto 0;
+  border-radius: 1px;
 }
-#prediction-card .head .dot { background: var(--primary); }
+
+/* ── Operator/Prediction cards ────────────────────────────────────────── */
+.attr-card {
+  position: absolute;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 13px 9px;
+  width: 168px;
+  box-shadow: 0 8px 22px rgba(33,52,100,0.10);
+  opacity: 0;
+  transition: opacity 0.55s ease, transform 0.55s ease;
+  pointer-events: none;
+}
+.attr-card .head {
+  font-family: 'Noto Serif', serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+  display: flex; align-items: center;
+}
+.attr-card .head .dot { width:6px; height:6px; border-radius:50%; background: var(--accent); margin-right:7px; }
 .attr-card .row {
-  display: flex; justify-content: space-between;
-  align-items: baseline;
-  padding: 5px 0;
-  font-size: 14px;
-  border-bottom: 1px dashed rgba(0,0,0,0.07);
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 3px 0;
+  font-size: 12px;
+  border-bottom: 1px dashed rgba(0,0,0,0.06);
 }
 .attr-card .row:last-child { border-bottom: 0; }
-.attr-card .row .k { color: var(--muted); font-size: 12px; }
-.attr-card .row .v { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-.attr-card .row .v.match {
-  color: #1f8a4e;
-}
+.attr-card .row .k { color: var(--muted); font-size: 10.5px; }
+.attr-card .row .v { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; font-size: 12px; }
+.attr-card .row .v.match { color: #1f8a4e; }
+.attr-card.visible { opacity: 1; }
 
-/* ── Limb legend (right, stage 4) ─────────────── */
-#legend {
-  position: absolute;
-  top: 92px; right: 24px;
-  background: var(--panel);
-  border-radius: 12px;
-  padding: 12px 16px;
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 12px;
-  z-index: 4;
-  opacity: 0; transform: translateX(20px);
-  transition: opacity 0.45s ease, transform 0.45s ease;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-  border: 1px solid rgba(255,255,255,0.5);
-}
-#legend.visible { opacity: 1; transform: translateX(0); }
-#legend .lg-head {
-  font-family: 'Noto Serif', serif;
-  font-size: 11px; font-weight: 700;
-  color: var(--primary);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 8px;
-}
-#legend .lg-row {
-  display: flex; align-items: center;
-  gap: 8px; padding: 3px 0;
-  color: var(--ink);
-}
-#legend .lg-row .sw {
-  width: 12px; height: 12px;
-  border-radius: 3px;
-  flex-shrink: 0;
-}
+#operator-card { transform: translateX(-10px); }
+#operator-card.visible { transform: translateX(0); }
+#prediction-card .head .dot { background: var(--primary); }
+#prediction-card { transform: translateX(10px); }
+#prediction-card.visible { transform: translateX(0); }
 
-/* ── Sparkline panel (stage 3) ────────────────── */
-#sparklines {
+/* ── Kinematic encoding block (over G1 station) ───────────────────────── */
+#kinematic-block {
   position: absolute;
-  right: 24px; bottom: 100px;
-  width: 270px;
-  background: var(--panel);
+  background: #ffffff;
+  border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 14px;
-  z-index: 4;
-  opacity: 0; transform: translateY(12px);
+  box-shadow: 0 10px 28px rgba(33,52,100,0.12);
+  width: 280px;
+  padding: 12px 14px 10px;
+  opacity: 0;
+  transform: translate(-50%, -10px);
   transition: opacity 0.5s ease, transform 0.5s ease;
-  box-shadow: 0 12px 28px rgba(0,0,0,0.32);
-  border: 1px solid rgba(255,255,255,0.5);
-  font-family: 'Source Sans 3', sans-serif;
+  pointer-events: none;
+  z-index: 3;
 }
-#sparklines.visible { opacity: 1; transform: translateY(0); }
-#sparklines .sp-head {
+#kinematic-block.visible { opacity: 1; transform: translate(-50%, 0); }
+#kinematic-block .ke-head {
   font-family: 'Noto Serif', serif;
-  font-size: 11px; font-weight: 700;
+  font-size: 11px;
+  font-weight: 700;
   color: var(--primary);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 6px;
+  letter-spacing: 0.12em;
+  margin-bottom: 4px;
+  display: flex; align-items: center; justify-content: space-between;
 }
-#sparklines .sp-head .joint {
+#kinematic-block .ke-head .ref {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; font-weight: 500;
+  font-size: 10px;
   color: var(--muted);
+  font-weight: 500;
   text-transform: none;
   letter-spacing: 0;
-  margin-left: 6px;
 }
-.sp-row {
+#kinematic-block .ke-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+#kinematic-block .ke-row {
   display: flex; align-items: center; gap: 8px;
-  margin: 6px 0;
+  margin: 4px 0;
 }
-.sp-label {
-  width: 64px;
-  font-size: 11px; color: var(--muted);
+#kinematic-block .ke-row .lab {
+  width: 56px; font-size: 10.5px; color: var(--muted);
   font-family: 'JetBrains Mono', monospace;
+  font-variant-numeric: tabular-nums;
 }
-.sp-canvas {
-  flex: 1;
-  height: 28px;
-  display: block;
+#kinematic-block .ke-row .lab .strong {
+  color: var(--primary); font-weight: 600;
+}
+#kinematic-block .ke-row canvas {
+  flex: 1; height: 24px; display: block;
 }
 
-/* ── Embedding overlay (stage 6) ──────────────── */
+/* Arrow pointing from kinematic block down to the G1 */
+#kinematic-block::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  width: 14px; height: 14px;
+  background: #ffffff;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+/* ── Hierarchy beat indicator (over hierarchy slot) ───────────────────── */
+#hierarchy-block {
+  position: absolute;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 10px 28px rgba(33,52,100,0.12);
+  width: 240px;
+  padding: 12px 14px;
+  opacity: 0;
+  transform: translate(-50%, -10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events: none;
+}
+#hierarchy-block.visible { opacity: 1; transform: translate(-50%, 0); }
+#hierarchy-block .hb-head {
+  font-family: 'Noto Serif', serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  display: flex; align-items: center; justify-content: space-between;
+}
+#hierarchy-block .hb-head .ref {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+}
+#hierarchy-block .hb-mode {
+  margin-top: 6px;
+  display: flex; gap: 6px;
+}
+.hb-tab {
+  flex: 1;
+  text-align: center;
+  font-size: 10.5px;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 5px 0;
+  border-radius: 6px;
+  background: var(--soft);
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+.hb-tab.active {
+  background: var(--primary);
+  color: #fff;
+}
+#hierarchy-block .hb-beat {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--ink);
+  font-family: 'JetBrains Mono', monospace;
+  min-height: 16px;
+}
+#hierarchy-block .hb-beat .pill {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 99px;
+  background: var(--soft);
+  color: var(--ink);
+  margin-right: 4px;
+  font-size: 10.5px;
+  border: 1px solid var(--border);
+}
+#hierarchy-block .hb-beat .pill.on {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+}
+
+#hierarchy-block .hb-legend {
+  margin-top: 8px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 2px 8px;
+  font-size: 10px;
+  color: var(--ink);
+  font-family: 'Source Sans 3', sans-serif;
+}
+#hierarchy-block .hb-legend .lg {
+  display: flex; align-items: center; gap: 5px;
+}
+#hierarchy-block .hb-legend .sw {
+  width: 9px; height: 9px; border-radius: 2px;
+}
+
+/* ── Embedding/prediction reveal panel ────────────────────────────────── */
 #embedding-panel {
   position: absolute;
-  left: 50%; transform: translateX(-50%) translateY(20px);
-  bottom: 100px;
-  width: min(86vw, 880px);
-  background: var(--panel);
-  border-radius: 14px;
-  padding: 18px 22px 22px;
-  z-index: 4;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  width: min(86%, 860px);
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 14px 32px rgba(33,52,100,0.14);
   opacity: 0;
-  transition: opacity 0.6s ease, transform 0.6s ease;
-  box-shadow: 0 16px 38px rgba(0,0,0,0.35);
-  border: 1px solid rgba(255,255,255,0.5);
-  font-family: 'Source Sans 3', sans-serif;
+  transition: opacity 0.55s ease, transform 0.55s ease;
+  pointer-events: none;
+  z-index: 4;
 }
 #embedding-panel.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
 #embedding-panel .ep-head {
   font-family: 'Noto Serif', serif;
-  font-size: 11px; font-weight: 700;
-  color: var(--primary);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 4px;
-}
-#embedding-panel .ep-sub {
-  font-size: 11px; color: var(--muted);
-  margin-bottom: 10px;
-}
-#z-canvas {
-  width: 100%;
-  height: 22px;
-  display: block;
-  border-radius: 4px;
-  background: #f1f3f7;
-  margin-bottom: 14px;
-}
-.attr-strips {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px 24px;
-}
-.attr-strip { display: flex; flex-direction: column; gap: 4px; }
-.attr-strip .top {
-  display: flex; justify-content: space-between; align-items: baseline;
-  font-size: 12px;
-}
-.attr-strip .top .label {
-  font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.attr-strip .top .pred {
   font-weight: 700;
   color: var(--primary);
-  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 4px;
+}
+#z-canvas {
+  width: 100%; height: 18px;
+  display: block;
+  border-radius: 3px;
+  background: #f4f6fb;
+  margin-bottom: 8px;
+}
+#embedding-panel .attr-strips {
+  display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 6px 18px;
+}
+.attr-strip { display: flex; flex-direction: column; gap: 3px; }
+.attr-strip .top {
+  display: flex; justify-content: space-between; align-items: baseline;
+}
+.attr-strip .lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.attr-strip .pred {
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 12.5px;
   font-variant-numeric: tabular-nums;
 }
 .attr-strip canvas {
-  width: 100%; height: 14px;
+  width: 100%; height: 10px;
   display: block;
-  border-radius: 3px;
-  background: #eef0f6;
+  border-radius: 2px;
+  background: #f4f6fb;
 }
 
-/* ── Σ glyph between intra/inter ──────────────── */
-#sigma-burst {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%) scale(0.4);
-  opacity: 0;
-  font-family: 'Noto Serif', serif;
-  font-size: 96px;
-  font-weight: 700;
-  color: #fff;
-  text-shadow: 0 4px 30px rgba(0,0,0,0.6), 0 0 60px rgba(231,76,60,0.6);
-  pointer-events: none;
-  z-index: 3;
-  transition: opacity 0.4s ease, transform 0.5s cubic-bezier(.34,1.56,.64,1);
-}
-#sigma-burst.visible { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-
-/* ── Floating shape chips (stage 2) ───────────── */
-.shape-chip {
-  position: absolute;
-  background: var(--panel);
-  border-radius: 18px;
-  padding: 5px 12px;
-  font-size: 12px;
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 500;
+/* ── Caption bar (bottom) ─────────────────────────────────────────────── */
+#caption-bar {
+  flex-shrink: 0;
+  height: 40px;
+  display: flex; align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  border-top: 1px solid var(--border);
+  background: linear-gradient(0deg, #fafbfd 0%, #ffffff 100%);
+  font-size: 13px;
   color: var(--ink);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.30);
-  border: 1px solid rgba(255,255,255,0.5);
-  pointer-events: none;
-  z-index: 3;
-  opacity: 0;
-  white-space: nowrap;
+  font-family: 'Source Sans 3', sans-serif;
+  text-align: center;
 }
-.shape-chip .sc-x {
+#caption-bar .ref {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
   color: var(--accent);
-  margin-right: 4px;
-  font-weight: 700;
+  margin-right: 10px;
+  font-weight: 600;
 }
+#caption-bar .text {
+  font-weight: 500;
+}
+
+/* ── Loading overlay ──────────────────────────────────────────────────── */
+#loading {
+  position: absolute; inset: 0;
+  background: #ffffff;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 14px; z-index: 50;
+  color: var(--ink);
+}
+.spinner {
+  width: 38px; height: 38px;
+  border: 3px solid rgba(44,62,107,0.18);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+#load-status { font-size: 12px; color: var(--muted); max-width: 360px; text-align: center; letter-spacing: 0.02em; }
 
 #error-box {
-  display: none;
-  position: absolute; inset: 0;
-  background: #1a1a1a;
+  display: none; position: absolute; inset: 0;
+  background: #fff8f8;
   align-items: center; justify-content: center;
-  color: #e74c3c; font-size: 13px;
+  color: var(--accent); font-size: 13px;
   padding: 30px; text-align: center;
   z-index: 60;
   font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Hierarchy joint pulses (subtle) ──────────────────────────────────── */
+@keyframes joint-pulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.5); }
+  100% { transform: scale(1); }
 }
 </style>
 </head>
 <body>
 
-<div id="canvas-wrap"></div>
+<div id="page-wrap">
+  <div id="page-title">
+    UNVEIL <span class="sub">Framework Walkthrough</span>
+  </div>
 
-<div id="topbar">
-  <div class="brand">UNVEIL <span class="sub">framework walkthrough</span></div>
-  <div class="spacer"></div>
-  <select id="activity-dropdown" title="Activity"></select>
-  <button id="replay-btn" title="Replay the walkthrough">↻ Replay</button>
-</div>
-
-<div id="stage-badge">Stage 1 / 6</div>
-<div id="caption"><span class="ref">§</span><span class="text"></span></div>
-
-<div id="operator-card" class="attr-card">
-  <div class="head"><span class="dot"></span> Operator</div>
-  <div class="row"><span class="k">Gender</span><span class="v" id="op-gender">—</span></div>
-  <div class="row"><span class="k">Age</span><span class="v" id="op-age">—</span></div>
-  <div class="row"><span class="k">Height</span><span class="v" id="op-height">—</span></div>
-  <div class="row"><span class="k">Weight</span><span class="v" id="op-weight">—</span></div>
-</div>
-
-<div id="prediction-card" class="attr-card">
-  <div class="head"><span class="dot"></span> UNVEIL Prediction</div>
-  <div class="row"><span class="k">Gender</span><span class="v" id="pr-gender">—</span></div>
-  <div class="row"><span class="k">Age</span><span class="v" id="pr-age">—</span></div>
-  <div class="row"><span class="k">Height</span><span class="v" id="pr-height">—</span></div>
-  <div class="row"><span class="k">Weight</span><span class="v" id="pr-weight">—</span></div>
-</div>
-
-<div id="legend">
-  <div class="lg-head">Kinematic groups</div>
-  <div class="lg-row"><span class="sw" style="background:var(--c-torso)"></span><span>Torso / Waist</span></div>
-  <div class="lg-row"><span class="sw" style="background:var(--c-la)"></span><span>Left arm</span></div>
-  <div class="lg-row"><span class="sw" style="background:var(--c-ra)"></span><span>Right arm</span></div>
-  <div class="lg-row"><span class="sw" style="background:var(--c-ll)"></span><span>Left leg</span></div>
-  <div class="lg-row"><span class="sw" style="background:var(--c-rl)"></span><span>Right leg</span></div>
-</div>
-
-<div id="sparklines">
-  <div class="sp-head">Right elbow signal <span class="joint">right_elbow_joint</span></div>
-  <div class="sp-row"><div class="sp-label">θ (pos)</div><canvas class="sp-canvas" id="sp-pos"></canvas></div>
-  <div class="sp-row"><div class="sp-label">θ̇ (vel)</div><canvas class="sp-canvas" id="sp-vel"></canvas></div>
-  <div class="sp-row"><div class="sp-label">θ̈ (acc)</div><canvas class="sp-canvas" id="sp-acc"></canvas></div>
-</div>
-
-<div id="embedding-panel">
-  <div class="ep-head">Trajectory Embedding Z ∈ ℝ²⁵⁶</div>
-  <div class="ep-sub">Per-attribute classification / regression heads recover operator demographics from the embedding.</div>
-  <canvas id="z-canvas"></canvas>
-  <div class="attr-strips">
-    <div class="attr-strip">
-      <div class="top"><span class="label">Gender · classifier</span><span class="pred" id="as-gender">—</span></div>
-      <canvas class="attr-cells" data-attr="gender"></canvas>
+  <div id="panel">
+    <div id="panel-header">
+      <span class="dot"></span>
+      <span class="title">Operator → G1 → UNVEIL → Predicted Attributes</span>
+      <span class="ref">NeurIPS 2026</span>
+      <span class="spacer"></span>
+      <span class="stage-badge" id="stage-badge">Stage 1 / 6</span>
+      <select id="activity-dropdown" title="Activity"></select>
+      <button id="replay-btn" title="Replay">↻ Replay</button>
     </div>
-    <div class="attr-strip">
-      <div class="top"><span class="label">Age · regressor</span><span class="pred" id="as-age">—</span></div>
-      <canvas class="attr-cells" data-attr="age"></canvas>
+
+    <div id="canvas-wrap">
+      <!-- Slot labels: positioned by JS each frame -->
+      <div class="slot-label" id="lbl-human">
+        Human Operator<span class="ref">SMPL ground truth</span><span class="underline"></span>
+      </div>
+      <div class="slot-label" id="lbl-robot">
+        Retargeted G1<span class="ref">humanoid trajectory</span><span class="underline"></span>
+      </div>
+      <div class="slot-label" id="lbl-hierarchy">
+        Spatial Graph Conv<span class="ref">§3.2 H₁ ∪ H₂</span><span class="underline"></span>
+      </div>
+
+      <!-- Operator card (top-left) -->
+      <div id="operator-card" class="attr-card">
+        <div class="head"><span class="dot"></span> Operator</div>
+        <div class="row"><span class="k">Gender</span><span class="v" id="op-gender">—</span></div>
+        <div class="row"><span class="k">Age</span><span class="v" id="op-age">—</span></div>
+        <div class="row"><span class="k">Height</span><span class="v" id="op-height">—</span></div>
+        <div class="row"><span class="k">Weight</span><span class="v" id="op-weight">—</span></div>
+      </div>
+
+      <!-- Prediction card (top-right) -->
+      <div id="prediction-card" class="attr-card">
+        <div class="head"><span class="dot"></span> UNVEIL Prediction</div>
+        <div class="row"><span class="k">Gender</span><span class="v" id="pr-gender">—</span></div>
+        <div class="row"><span class="k">Age</span><span class="v" id="pr-age">—</span></div>
+        <div class="row"><span class="k">Height</span><span class="v" id="pr-height">—</span></div>
+        <div class="row"><span class="k">Weight</span><span class="v" id="pr-weight">—</span></div>
+      </div>
+
+      <!-- Kinematic encoding block (positioned above G1 slot) -->
+      <div id="kinematic-block">
+        <div class="ke-head">
+          <span>Kinematic Encoding</span>
+          <span class="ref">§3.1</span>
+        </div>
+        <div class="ke-sub">Per-joint temporal conv → velocity & acceleration <em>(right elbow)</em></div>
+        <div class="ke-row"><span class="lab"><span class="strong">θ</span> pos</span><canvas id="sp-pos"></canvas></div>
+        <div class="ke-row"><span class="lab"><span class="strong">θ̇</span> vel</span><canvas id="sp-vel"></canvas></div>
+        <div class="ke-row"><span class="lab"><span class="strong">θ̈</span> acc</span><canvas id="sp-acc"></canvas></div>
+      </div>
+
+      <!-- Hierarchy block (positioned above hierarchy slot) -->
+      <div id="hierarchy-block">
+        <div class="hb-head">
+          <span>Kinematic Hierarchies</span>
+          <span class="ref">§3.2</span>
+        </div>
+        <div class="hb-mode">
+          <div class="hb-tab" id="hb-tab-intra">H₁ · intra-limb</div>
+          <div class="hb-tab" id="hb-tab-inter">H₂ · inter-limb</div>
+        </div>
+        <div class="hb-beat" id="hb-beat">—</div>
+        <div class="hb-legend">
+          <div class="lg"><span class="sw" style="background:var(--c-torso)"></span>Torso</div>
+          <div class="lg"><span class="sw" style="background:var(--c-la)"></span>Left arm</div>
+          <div class="lg"><span class="sw" style="background:var(--c-ra)"></span>Right arm</div>
+          <div class="lg"><span class="sw" style="background:var(--c-ll)"></span>Left leg</div>
+          <div class="lg"><span class="sw" style="background:var(--c-rl)"></span>Right leg</div>
+        </div>
+      </div>
+
+      <!-- Embedding reveal -->
+      <div id="embedding-panel">
+        <div class="ep-head">Trajectory Embedding Z ∈ ℝ²⁵⁶ → Per-attribute Heads</div>
+        <canvas id="z-canvas"></canvas>
+        <div class="attr-strips">
+          <div class="attr-strip">
+            <div class="top"><span class="lbl">Gender</span><span class="pred" id="as-gender">—</span></div>
+            <canvas class="attr-cells" data-attr="gender"></canvas>
+          </div>
+          <div class="attr-strip">
+            <div class="top"><span class="lbl">Age</span><span class="pred" id="as-age">—</span></div>
+            <canvas class="attr-cells" data-attr="age"></canvas>
+          </div>
+          <div class="attr-strip">
+            <div class="top"><span class="lbl">Height</span><span class="pred" id="as-height">—</span></div>
+            <canvas class="attr-cells" data-attr="height"></canvas>
+          </div>
+          <div class="attr-strip">
+            <div class="top"><span class="lbl">Weight</span><span class="pred" id="as-weight">—</span></div>
+            <canvas class="attr-cells" data-attr="weight"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div id="loading">
+        <div class="spinner"></div>
+        <div id="load-status">Booting…</div>
+      </div>
+      <div id="error-box"></div>
     </div>
-    <div class="attr-strip">
-      <div class="top"><span class="label">Height · regressor</span><span class="pred" id="as-height">—</span></div>
-      <canvas class="attr-cells" data-attr="height"></canvas>
-    </div>
-    <div class="attr-strip">
-      <div class="top"><span class="label">Weight · regressor</span><span class="pred" id="as-weight">—</span></div>
-      <canvas class="attr-cells" data-attr="weight"></canvas>
+
+    <div id="caption-bar">
+      <span class="ref" id="cap-ref">§</span>
+      <span class="text" id="cap-text">Loading…</span>
     </div>
   </div>
 </div>
 
-<div id="sigma-burst">Σ</div>
-
-<div id="loading">
-  <div class="spinner"></div>
-  <div id="load-status">Booting…</div>
-</div>
-
-<div id="error-box"></div>
-
-<!-- Three.js r128 + supporting loaders -->
+<!-- Three.js + loaders -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
 <script>
 'use strict';
 
-// ─── Constants ───────────────────────────────────────────────────────────────
+// ─── Config ─────────────────────────────────────────────────────────────────
 const DEG2RAD = Math.PI / 180;
 const DEFAULT_DEMO = 'hiphop';
 const BIN_VERSION  = '2026-05-19a';
 const withV = u => u + (u.includes('?') ? '&' : '?') + 'v=' + BIN_VERSION;
 
-// Limb groups by *body* (link) name — picked from g1_model.json
+// Station x-positions in world coords
+const SLOT_X = {
+  human:     -5.3,
+  robot:     -1.6,
+  hierarchy:  4.5,
+};
+const HUMAN_YAW = 0;        // SMPL faces +Z by default; rotate if needed
+const ROBOT_YAW = 0;
+
 const LIMBS = {
   torso: { color: 0x8e8e93, bodies: ['pelvis','waist_yaw_link','waist_roll_link','torso_link'] },
   la:    { color: 0xe74c3c, bodies: ['left_shoulder_pitch_link','left_shoulder_roll_link','left_shoulder_yaw_link','left_elbow_link','left_wrist_roll_link','left_wrist_pitch_link','left_wrist_yaw_link'] },
@@ -515,13 +665,17 @@ const LIMBS = {
   ll:    { color: 0x27ae60, bodies: ['left_hip_pitch_link','left_hip_roll_link','left_hip_yaw_link','left_knee_link','left_ankle_pitch_link','left_ankle_roll_link'] },
   rl:    { color: 0x2980b9, bodies: ['right_hip_pitch_link','right_hip_roll_link','right_hip_yaw_link','right_knee_link','right_ankle_pitch_link','right_ankle_roll_link'] },
 };
+const LIMB_OF = {};
+for (const [k, v] of Object.entries(LIMBS)) {
+  for (const b of v.bodies) LIMB_OF[b] = k;
+}
 
+// Picked joints for the kinematic-encoding halo overlay on the *main* G1
 const PICKED_JOINTS = [
-  // (body name, label, color)
-  { body: 'right_shoulder_yaw_link', label: 'right_shoulder', color: 0xf39c12 },
-  { body: 'right_elbow_link',         label: 'right_elbow',    color: 0xf39c12 },
-  { body: 'right_wrist_pitch_link',   label: 'right_wrist',    color: 0xf39c12 },
-  { body: 'torso_link',               label: 'torso',          color: 0x8e8e93 },
+  { body: 'right_shoulder_yaw_link', color: 0xf39c12 },
+  { body: 'right_elbow_link',         color: 0xf39c12 },
+  { body: 'right_wrist_pitch_link',   color: 0xf39c12 },
+  { body: 'torso_link',               color: 0x8e8e93 },
 ];
 
 const CSV_TO_JOINT = {
@@ -541,115 +695,90 @@ const CSV_TO_JOINT = {
 };
 
 // ─── State ───────────────────────────────────────────────────────────────────
-let renderer, scene, camera, controls;
-let modelData;                              // g1_model.json
-let g1Motion;                               // CSV → motion data (current demo)
-let smplData;                               // {numFrames, numVerts, fps, verts}
-let smplFaces;
-let g1Main;                                 // primary G1 robot
-let g1Ghosts = [];                          // stage-5 ghost instances
-let smplGroup;                              // SMPL mesh wrapper group
-let demosConfig;
-let currentDemo;                            // demo entry
-let stlGeomCache = {};                      // shared geometry cache across all G1 instances
-let stageController;
-let masterClock = 0;                        // seconds since stage 0 began
-let pickedHaloMeshes = [];                  // halos on picked joints
-let pickedTrails = [];                      // {body, line, positions[]}
-let pickedArrows = [];                      // ArrowHelpers
-let limbBalls = [];                         // tiny spheres at joints, colored per limb
-let limbEdges = {};                         // 'intra:la', 'intra:ra', 'inter:la-torso', ...
-let temporalWindow;                         // translucent box mesh for stage 5
-let sparkBuffers = { pos: [], vel: [], acc: [] };
-let activeStageIdx = -1;
-let pendingReboot = null;                   // demo switch
+let renderer, scene, camera;
 let canvasW = 0, canvasH = 0;
+let canvasWrapEl;
+let modelData;
+let g1Motion, smplData, smplFaces;
+let demosConfig, currentDemo;
+let g1Main, smplGroup;
+let g1Ghosts = [];
+let stlGeomCache = {};
+let pickedHalos = [];
+let pickedTrails = [];
+let pickedArrows = [];
+let hierSkel;             // hierarchy mini-skeleton
+let limbBeatActive = {};   // map limbKey → opacity 0..1 for intra-limb visual
+let sparkBuffers = { pos: [], vel: [], acc: [] };
+let masterClock = 0;
+let stageIdx = -1;
+let stageStart = 0;
+let stages = [];
 let walkthroughEnded = false;
+let lastTS = null;
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-async function fetchJSON(url) {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`${r.status} ${url}`);
-  return r.json();
-}
-function setStatus(msg) {
-  const el = document.getElementById('load-status');
-  if (el) el.textContent = msg;
-}
-function showLoading(msg) { document.getElementById('loading').style.display = 'flex'; setStatus(msg || 'Loading…'); }
-function hideLoading() { document.getElementById('loading').style.display = 'none'; }
-function showError(msg) {
-  const eb = document.getElementById('error-box');
-  eb.style.display = 'flex'; eb.textContent = 'Error: ' + msg;
-}
-function lerp(a, b, t) { return a + (b - a) * t; }
-function smoothstep(t) { return t * t * (3 - 2 * t); }
-function clamp(x, lo, hi) { return Math.max(lo, Math.min(hi, x)); }
+// ─── Helpers ────────────────────────────────────────────────────────────────
+const lerp = (a,b,t)=>a+(b-a)*t;
+const smoothstep = t=>t*t*(3-2*t);
+const clamp = (x,lo,hi)=>Math.max(lo,Math.min(hi,x));
+function fetchJSON(u){return fetch(u).then(r=>{if(!r.ok)throw new Error(r.status+' '+u);return r.json();});}
+function setStatus(m){const e=document.getElementById('load-status');if(e)e.textContent=m;}
+function showLoading(m){document.getElementById('loading').style.display='flex';setStatus(m||'Loading…');}
+function hideLoading(){document.getElementById('loading').style.display='none';}
+function showError(m){const e=document.getElementById('error-box');e.style.display='flex';e.textContent='Error: '+m;}
 
-// ─── G1 motion loader (CSV → arrays) ─────────────────────────────────────────
-async function loadG1Motion(url, maxFrames = 600) {
+// ─── G1 motion CSV loader ───────────────────────────────────────────────────
+async function loadG1Motion(url, maxFrames=600) {
   const text = await fetch(url).then(r => { if (!r.ok) throw new Error(`CSV not found: ${url}`); return r.text(); });
-  const parsed = Papa.parse(text, { header: true, skipEmptyLines: true, dynamicTyping: true });
+  const parsed = Papa.parse(text, { header:true, skipEmptyLines:true, dynamicTyping:true });
   const rows = parsed.data;
-
   let frames = rows;
   const ratio = rows.length / maxFrames;
-  if (rows.length > maxFrames) {
-    frames = Array.from({ length: maxFrames }, (_, i) => rows[Math.round(i * ratio)]);
-  }
-  const effectiveFPS = 120 / (rows.length > maxFrames ? ratio : 1);
-
+  if (rows.length > maxFrames) frames = Array.from({length: maxFrames}, (_,i) => rows[Math.round(i*ratio)]);
+  const fps = 120 / (rows.length > maxFrames ? ratio : 1);
   const md = {
-    numFrames: frames.length,
-    frameTime: 1 / effectiveFPS,
-    fps:       effectiveFPS,
-    duration:  frames.length / effectiveFPS,
-    rootPos:   new Float32Array(frames.length * 3),
-    rootQuat:  new Float32Array(frames.length * 4),  // [w,x,y,z]
-    joints:    {},
+    numFrames: frames.length, frameTime: 1/fps, fps, duration: frames.length/fps,
+    rootPos: new Float32Array(frames.length*3),
+    rootQuat: new Float32Array(frames.length*4),
+    joints: {},
   };
-  Object.values(CSV_TO_JOINT).forEach(name => { md.joints[name] = new Float32Array(frames.length); });
-
-  const e = new THREE.Euler(0, 0, 0, 'ZYX');
-  const q = new THREE.Quaternion();
+  Object.values(CSV_TO_JOINT).forEach(n => { md.joints[n] = new Float32Array(frames.length); });
+  const e = new THREE.Euler(0,0,0,'ZYX'); const q = new THREE.Quaternion();
   for (let i = 0; i < frames.length; i++) {
     const r = frames[i];
-    md.rootPos[i*3]   = (r['root_translateX'] || 0) * 0.01;
-    md.rootPos[i*3+1] = (r['root_translateY'] || 0) * 0.01;
-    md.rootPos[i*3+2] = (r['root_translateZ'] || 0) * 0.01;
+    md.rootPos[i*3]   = (r['root_translateX']||0)*0.01;
+    md.rootPos[i*3+1] = (r['root_translateY']||0)*0.01;
+    md.rootPos[i*3+2] = (r['root_translateZ']||0)*0.01;
     e.set((r['root_rotateX']||0)*DEG2RAD, (r['root_rotateY']||0)*DEG2RAD, (r['root_rotateZ']||0)*DEG2RAD, 'ZYX');
     q.setFromEuler(e);
-    md.rootQuat[i*4]   = q.w;
-    md.rootQuat[i*4+1] = q.x;
-    md.rootQuat[i*4+2] = q.y;
-    md.rootQuat[i*4+3] = q.z;
-    for (const [csvCol, jName] of Object.entries(CSV_TO_JOINT)) {
-      if (r[csvCol] !== undefined) md.joints[jName][i] = r[csvCol] * DEG2RAD;
+    md.rootQuat[i*4] = q.w; md.rootQuat[i*4+1] = q.x; md.rootQuat[i*4+2] = q.y; md.rootQuat[i*4+3] = q.z;
+    for (const [c, jn] of Object.entries(CSV_TO_JOINT)) {
+      if (r[c] !== undefined) md.joints[jn][i] = r[c] * DEG2RAD;
     }
   }
   return md;
 }
 
-// ─── SMPL binary loaders ─────────────────────────────────────────────────────
+// ─── SMPL binary loaders ────────────────────────────────────────────────────
 async function loadVertsBin(url) {
-  const buf  = await fetch(url).then(r => { if (!r.ok) throw new Error(r.status + ' ' + url); return r.arrayBuffer(); });
-  const view = new DataView(buf);
-  return { numFrames: view.getUint32(0, true), numVerts: view.getUint32(4, true), fps: view.getFloat32(8, true), verts: new Float32Array(buf, 12) };
+  const buf = await fetch(url).then(r => { if(!r.ok) throw new Error(r.status+' '+url); return r.arrayBuffer(); });
+  const dv = new DataView(buf);
+  return { numFrames: dv.getUint32(0,true), numVerts: dv.getUint32(4,true), fps: dv.getFloat32(8,true), verts: new Float32Array(buf,12) };
 }
 async function loadFacesBin(url) {
-  const buf  = await fetch(url).then(r => { if (!r.ok) throw new Error(r.status + ' ' + url); return r.arrayBuffer(); });
-  const view = new DataView(buf);
-  const n    = view.getUint32(0, true);
-  return new Uint32Array(buf, 4, n * 3);
+  const buf = await fetch(url).then(r => { if(!r.ok) throw new Error(r.status+' '+url); return r.arrayBuffer(); });
+  const dv = new DataView(buf);
+  const n = dv.getUint32(0,true);
+  return new Uint32Array(buf, 4, n*3);
 }
 
-// ─── Build G1 robot ──────────────────────────────────────────────────────────
+// ─── G1 robot builder ───────────────────────────────────────────────────────
 const stlLoader = new THREE.STLLoader();
-async function loadSTL(name) {
-  if (stlGeomCache[name] !== undefined) return stlGeomCache[name];
+function loadSTL(name) {
+  if (stlGeomCache[name] !== undefined) return Promise.resolve(stlGeomCache[name]);
   return new Promise(resolve => {
     stlLoader.load(`./g1_engine/meshes/${name}.STL`,
-      geo => { geo.computeVertexNormals(); stlGeomCache[name] = geo; resolve(geo); },
+      g => { g.computeVertexNormals(); stlGeomCache[name] = g; resolve(g); },
       undefined,
       () => { stlGeomCache[name] = null; resolve(null); }
     );
@@ -657,63 +786,49 @@ async function loadSTL(name) {
 }
 
 function makeG1Material(rgba, meshName, opacityRef) {
-  // PBR-ish, matches the ENHANCED branch from the original viewer
   let color, metalness, roughness;
-  if (meshName === 'head_link') {
-    color = new THREE.Color(0x0c0f14); metalness = 0.45; roughness = 0.30;
-  } else if (rgba[0] < 0.4) {
-    color = new THREE.Color(0x111316); metalness = 0.65; roughness = 0.35;
-  } else {
-    color = new THREE.Color(0xd8dce6); metalness = 0.15; roughness = 0.45;
-  }
-  const mat = new THREE.MeshStandardMaterial({
-    color, metalness, roughness, transparent: true, opacity: opacityRef.value,
-  });
+  if (meshName === 'head_link')          { color = new THREE.Color(0x0c0f14); metalness = 0.45; roughness = 0.30; }
+  else if (rgba[0] < 0.4)                { color = new THREE.Color(0x111316); metalness = 0.55; roughness = 0.35; }
+  else                                   { color = new THREE.Color(0xd8dce6); metalness = 0.15; roughness = 0.45; }
+  const mat = new THREE.MeshStandardMaterial({ color, metalness, roughness, transparent:true, opacity: opacityRef.value, depthWrite: opacityRef.value >= 0.95 });
   opacityRef.materials.push(mat);
   return mat;
 }
 
-async function buildG1Robot({ opacityRef = { value: 1.0, materials: [] } } = {}) {
-  const rootHolder = new THREE.Group();   // yaw + Z-up→Y-up nested inside
-  const yawGroup = new THREE.Group();
-  rootHolder.add(yawGroup);
+async function buildG1Robot({opacityRef={value:1.0, materials:[]}}={}) {
+  const root = new THREE.Group();
+  const yaw  = new THREE.Group();
+  root.add(yaw);
   const robotWorld = new THREE.Group();
-  robotWorld.rotation.x = -Math.PI / 2;
-  yawGroup.add(robotWorld);
+  robotWorld.rotation.x = -Math.PI/2;
+  yaw.add(robotWorld);
 
   const bodies = modelData.bodies;
-  const bodyGroups = {};     // body name → innerGroup
-  const groupMap = {};       // body name → {outer, inner}
+  const groupMap = {};
+  const bodyGroups = {};
 
-  // First pass: build outer/inner groups
   for (const b of bodies) {
     const outer = new THREE.Group();
     outer.position.set(...b.pos);
-    const bq = b.quat;        // [w,x,y,z]
+    const bq = b.quat;
     outer.quaternion.set(bq[1], bq[2], bq[3], bq[0]);
     const inner = new THREE.Group();
     outer.add(inner);
     groupMap[b.name] = { outer, inner };
     bodyGroups[b.name] = inner;
   }
-  // Second pass: parent
   let rootOuter = null;
   for (const b of bodies) {
-    if (b.parent && groupMap[b.parent]) {
-      groupMap[b.parent].inner.add(groupMap[b.name].outer);
-    } else {
-      robotWorld.add(groupMap[b.name].outer);
-      rootOuter = groupMap[b.name].outer;
-    }
+    if (b.parent && groupMap[b.parent]) groupMap[b.parent].inner.add(groupMap[b.name].outer);
+    else { robotWorld.add(groupMap[b.name].outer); rootOuter = groupMap[b.name].outer; }
   }
-  // Third pass: meshes
-  const loadJobs = [];
+  const jobs = [];
   for (const b of bodies) {
     for (const m of b.meshes) {
-      loadJobs.push(loadSTL(m.name).then(geo => {
+      jobs.push(loadSTL(m.name).then(geo => {
         if (!geo) return;
         const mat = makeG1Material(m.rgba, m.name, opacityRef);
-        const mq  = m.quat;
+        const mq = m.quat;
         const obj = new THREE.Mesh(geo, mat);
         obj.position.set(...m.pos);
         obj.quaternion.set(mq[1], mq[2], mq[3], mq[0]);
@@ -721,391 +836,340 @@ async function buildG1Robot({ opacityRef = { value: 1.0, materials: [] } } = {})
       }));
     }
   }
-  await Promise.all(loadJobs);
+  await Promise.all(jobs);
 
-  // ─── per-frame applyFrame; takes either fi or fractional frame for smoother motion ───
-  const _axis = new THREE.Vector3();
-  const _jq   = new THREE.Quaternion();
-
+  const _ax = new THREE.Vector3(); const _q = new THREE.Quaternion();
   function applyFrame(motion, fIdx) {
     if (!rootOuter) return;
-    const fi = ((fIdx % motion.numFrames) + motion.numFrames) % motion.numFrames | 0;
+    const N = motion.numFrames;
+    const fi = (((fIdx % N) + N) % N) | 0;
     rootOuter.position.set(motion.rootPos[fi*3], motion.rootPos[fi*3+1], motion.rootPos[fi*3+2]);
     rootOuter.quaternion.set(motion.rootQuat[fi*4+1], motion.rootQuat[fi*4+2], motion.rootQuat[fi*4+3], motion.rootQuat[fi*4]);
     for (const b of bodies) {
       if (!b.joint || b.joint.type !== 'hinge') continue;
-      const jArr = motion.joints[b.joint.name];
-      if (!jArr) continue;
-      _axis.set(...b.joint.axis);
-      _jq.setFromAxisAngle(_axis, jArr[fi]);
-      bodyGroups[b.name].quaternion.copy(_jq);
+      const arr = motion.joints[b.joint.name];
+      if (!arr) continue;
+      _ax.set(...b.joint.axis);
+      _q.setFromAxisAngle(_ax, arr[fi]);
+      bodyGroups[b.name].quaternion.copy(_q);
     }
   }
-
-  function getBodyWorldPosition(name, outV) {
-    const grp = bodyGroups[name];
-    if (!grp) return null;
-    grp.updateWorldMatrix(true, false);
-    outV.setFromMatrixPosition(grp.matrixWorld);
-    return outV;
+  function getBodyWorldPos(name, out) {
+    const g = bodyGroups[name]; if (!g) return null;
+    g.updateWorldMatrix(true,false);
+    out.setFromMatrixPosition(g.matrixWorld);
+    return out;
   }
-
   function setOpacity(a) {
     opacityRef.value = a;
     for (const m of opacityRef.materials) { m.opacity = a; m.transparent = a < 1; m.depthWrite = a >= 0.95; }
   }
-
-  return {
-    object3D: rootHolder,
-    yawGroup,
-    bodyGroups,
-    applyFrame,
-    getBodyWorldPosition,
-    setOpacity,
-    opacityRef,
-  };
+  return { object3D: root, yawGroup: yaw, bodyGroups, applyFrame, getBodyWorldPos, setOpacity, opacityRef };
 }
 
-// ─── SMPL mesh ───────────────────────────────────────────────────────────────
-function buildSMPL(vertData, facesData, numVerts, numFrames) {
+// ─── SMPL human ─────────────────────────────────────────────────────────────
+function buildSMPL(vd, faces) {
+  const numVerts = vd.numVerts, numFrames = vd.numFrames;
   const geo = new THREE.BufferGeometry();
-  const posAttr = new THREE.BufferAttribute(new Float32Array(numVerts * 3), 3);
+  const posAttr = new THREE.BufferAttribute(new Float32Array(numVerts*3), 3);
   geo.setAttribute('position', posAttr);
-  geo.setIndex(new THREE.BufferAttribute(facesData, 1));
-
+  geo.setIndex(new THREE.BufferAttribute(faces, 1));
   const mat = new THREE.MeshStandardMaterial({
-    color: new THREE.Color(0.94, 0.76, 0.58),
-    roughness: 0.65,
-    metalness: 0.0,
-    transparent: true,
-    opacity: 1.0,
-    side: THREE.DoubleSide,
+    color: new THREE.Color(0.96, 0.78, 0.62),
+    roughness: 0.62, metalness: 0.0,
+    transparent: true, opacity: 1.0, side: THREE.DoubleSide,
   });
   const mesh = new THREE.Mesh(geo, mat);
   mesh.castShadow = true;
 
-  // Apply frame 0 for initial floor-align
-  posAttr.array.set(vertData.subarray(0, numVerts * 3));
+  posAttr.array.set(vd.verts.subarray(0, numVerts*3));
   posAttr.needsUpdate = true;
   geo.computeVertexNormals();
 
-  // 10th-percentile floor align
+  // floor-align (10th percentile of frame-min Y)
   const frameMin = new Float32Array(numFrames);
   for (let fi = 0; fi < numFrames; fi++) {
-    const base = fi * numVerts * 3;
-    let mn = Infinity;
-    for (let j = 1; j < numVerts * 3; j += 3) {
-      const y = vertData[base + j];
-      if (y < mn) mn = y;
+    const base = fi*numVerts*3; let mn = Infinity;
+    for (let j = 1; j < numVerts*3; j += 3) {
+      const y = vd.verts[base+j]; if (y < mn) mn = y;
     }
     frameMin[fi] = mn;
   }
-  const sorted = Array.from(frameMin).sort((a, b) => a - b);
-  const p10    = sorted[Math.floor(numFrames * 0.10)];
+  const sorted = Array.from(frameMin).sort((a,b)=>a-b);
+  const p10 = sorted[Math.floor(numFrames*0.10)];
   mesh.position.y = -p10;
 
   const wrap = new THREE.Group();
   wrap.add(mesh);
 
   function applyFrame(fIdx) {
-    const fi = ((fIdx % numFrames) + numFrames) % numFrames | 0;
-    posAttr.array.set(vertData.subarray(fi * numVerts * 3, fi * numVerts * 3 + numVerts * 3));
+    const N = numFrames;
+    const fi = (((fIdx % N) + N) % N) | 0;
+    posAttr.array.set(vd.verts.subarray(fi*numVerts*3, fi*numVerts*3+numVerts*3));
     posAttr.needsUpdate = true;
     geo.computeVertexNormals();
   }
-  function setOpacity(a) {
-    mat.opacity = a; mat.transparent = a < 1.0; mat.depthWrite = a >= 0.95;
-  }
-  return { object3D: wrap, mesh, mat, applyFrame, setOpacity };
+  function setOpacity(a){ mat.opacity = a; mat.transparent = a < 1; mat.depthWrite = a >= 0.95; }
+  return { object3D: wrap, mesh, mat, applyFrame, setOpacity, numFrames, numVerts };
 }
 
-// ─── Three.js scene setup ────────────────────────────────────────────────────
-function setupScene() {
-  const wrap = document.getElementById('canvas-wrap');
-  renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  canvasW = wrap.clientWidth; canvasH = wrap.clientHeight;
-  renderer.setSize(canvasW, canvasH);
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  renderer.outputEncoding = THREE.sRGBEncoding;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
-  wrap.appendChild(renderer.domElement);
+// ─── Hierarchy mini-skeleton ────────────────────────────────────────────────
+// A standalone group that visualizes the G1 as spheres+lines, with per-limb
+// coloring and dynamic edge overlays for intra/inter-limb beats.
+function buildHierarchySkeleton() {
+  const group = new THREE.Group();
 
-  scene = new THREE.Scene();
-  scene.background = new THREE.Color('#15171c');
-  scene.fog = new THREE.Fog('#15171c', 10, 28);
+  // Collect actuated body list (29 hinge joints + root pelvis = 30)
+  const bodyNames = modelData.bodies.map(b => b.name);
 
-  camera = new THREE.PerspectiveCamera(40, canvasW/canvasH, 0.01, 60);
-  camera.position.set(0, 1.4, 5.5);
-
-  controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.target.set(0, 0.9, 0);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.08;
-  controls.enableZoom = false;
-  controls.enablePan = false;
-  controls.minDistance = 0.5;
-  controls.maxDistance = 14;
-  controls.update();
-
-  // Lights — cinematic
-  scene.add(new THREE.HemisphereLight(0x8090b0, 0x141822, 0.9));
-  const key = new THREE.DirectionalLight(0xfff5ec, 1.35);
-  key.position.set(4, 8, 5);
-  key.castShadow = true;
-  key.shadow.mapSize.set(2048, 2048);
-  key.shadow.camera.near = 0.1; key.shadow.camera.far = 22;
-  key.shadow.camera.left = key.shadow.camera.bottom = -6;
-  key.shadow.camera.right = key.shadow.camera.top   =  6;
-  scene.add(key);
-  const fill = new THREE.DirectionalLight(0xc0d0e8, 0.55);
-  fill.position.set(-4, 5, -4);
-  scene.add(fill);
-  const rim = new THREE.DirectionalLight(0x6688cc, 0.55);
-  rim.position.set(-2, 6, -5);
-  scene.add(rim);
-
-  // Floor with canvas-grid texture (matches engines)
-  const texPx = 1024, divisions = 20;
-  const fCanvas = document.createElement('canvas');
-  fCanvas.width = fCanvas.height = texPx;
-  const fCtx = fCanvas.getContext('2d');
-  fCtx.fillStyle = '#1d2027'; fCtx.fillRect(0, 0, texPx, texPx);
-  fCtx.strokeStyle = '#2a2e38'; fCtx.lineWidth = 4; fCtx.lineCap = 'square';
-  const step = texPx / divisions;
-  for (let i = 0; i <= divisions; i++) {
-    const p = Math.round(i * step);
-    fCtx.beginPath(); fCtx.moveTo(p, 0); fCtx.lineTo(p, texPx); fCtx.stroke();
-    fCtx.beginPath(); fCtx.moveTo(0, p); fCtx.lineTo(texPx, p); fCtx.stroke();
+  // Joint balls
+  const balls = {};
+  const ballGeo = new THREE.SphereGeometry(0.046, 14, 10);
+  for (const bn of bodyNames) {
+    const limbKey = LIMB_OF[bn] || 'torso';
+    const baseColor = LIMBS[limbKey].color;
+    const mat = new THREE.MeshStandardMaterial({
+      color: baseColor, roughness: 0.45, metalness: 0.05,
+      transparent: true, opacity: 0.85, emissive: new THREE.Color(baseColor), emissiveIntensity: 0.0,
+    });
+    const m = new THREE.Mesh(ballGeo, mat);
+    m.userData = { bodyName: bn, limbKey, baseColor };
+    group.add(m);
+    balls[bn] = m;
   }
-  const floorTex = new THREE.CanvasTexture(fCanvas);
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(20, 20),
-    new THREE.MeshStandardMaterial({ map: floorTex, roughness: 0.85, metalness: 0.0 }));
-  floor.rotation.x = -Math.PI / 2;
-  floor.position.y = 0;
-  floor.receiveShadow = true;
-  scene.add(floor);
 
-  window.addEventListener('resize', () => {
-    canvasW = wrap.clientWidth; canvasH = wrap.clientHeight;
-    camera.aspect = canvasW / canvasH;
-    camera.updateProjectionMatrix();
-    renderer.setSize(canvasW, canvasH);
-  });
-}
-
-// ─── Limb visualisation (joint balls + edges) ────────────────────────────────
-function buildLimbBalls() {
-  const ballGeo = new THREE.SphereGeometry(0.026, 16, 12);
-  for (const [limbKey, limb] of Object.entries(LIMBS)) {
-    for (const bodyName of limb.bodies) {
-      const mat = new THREE.MeshBasicMaterial({ color: limb.color, transparent: true, opacity: 0.0, depthWrite: false });
-      const m = new THREE.Mesh(ballGeo, mat);
-      m.userData = { bodyName, limbKey, baseColor: limb.color };
-      limbBalls.push(m);
-      scene.add(m);
-    }
+  // Skeleton edges (parent-child) — drawn faintly always
+  const treeMat = new THREE.LineBasicMaterial({ color: 0xbac1d0, transparent: true, opacity: 0.55 });
+  const treeLines = [];
+  for (const b of modelData.bodies) {
+    if (!b.parent) continue;
+    const a = b.parent, c = b.name;
+    if (!balls[a] || !balls[c]) continue;
+    const lg = new THREE.BufferGeometry();
+    lg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
+    const line = new THREE.Line(lg, treeMat.clone());
+    line.userData = { a, c, isTree:true };
+    group.add(line);
+    treeLines.push(line);
   }
-}
 
-function buildLimbEdges() {
-  function makeEdge(color) {
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
-    const mat = new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.0, linewidth: 2 });
-    const line = new THREE.Line(geo, mat);
-    line.userData = { strength: 0 };
-    scene.add(line);
-    return line;
-  }
-  // Intra-limb edges — complete graph within each limb
-  for (const [limbKey, limb] of Object.entries(LIMBS)) {
-    const bodies = limb.bodies;
-    const edges = [];
-    for (let i = 0; i < bodies.length; i++) {
-      for (let j = i + 1; j < bodies.length; j++) {
-        edges.push({ a: bodies[i], b: bodies[j], line: makeEdge(limb.color) });
+  // Intra-limb subgraph edges (complete graph within each limb) — initially hidden
+  const intraEdges = {};   // limbKey -> array of {a, b, line}
+  for (const [limbKey, L] of Object.entries(LIMBS)) {
+    intraEdges[limbKey] = [];
+    const bs = L.bodies;
+    for (let i = 0; i < bs.length; i++) {
+      for (let j = i+1; j < bs.length; j++) {
+        if (!balls[bs[i]] || !balls[bs[j]]) continue;
+        const lg = new THREE.BufferGeometry();
+        lg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
+        const mat = new THREE.LineBasicMaterial({ color: L.color, transparent: true, opacity: 0.0 });
+        const line = new THREE.Line(lg, mat);
+        line.userData = { a: bs[i], c: bs[j] };
+        group.add(line);
+        intraEdges[limbKey].push({ a: bs[i], c: bs[j], line });
       }
     }
-    limbEdges['intra:' + limbKey] = { edges, color: limb.color };
   }
-  // Limb-torso edges — each extremity limb's hub joint paired with torso joints
-  const extremityHubs = {
-    la: 'left_shoulder_pitch_link', ra: 'right_shoulder_pitch_link',
-    ll: 'left_hip_pitch_link',       rl: 'right_hip_pitch_link',
+
+  // Inter-limb edges — connect joints across limbs. Defined per-pair so we can highlight pairs.
+  const interEdges = {};
+  function addCrossPair(key, color, pairs) {
+    interEdges[key] = [];
+    for (const [a, c] of pairs) {
+      if (!balls[a] || !balls[c]) continue;
+      const lg = new THREE.BufferGeometry();
+      lg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
+      const mat = new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.0 });
+      const line = new THREE.Line(lg, mat);
+      line.userData = { a, c };
+      group.add(line);
+      interEdges[key].push({ a, c, line });
+    }
+  }
+  // Bilateral arm-to-arm pairs (shoulder ↔ shoulder, elbow ↔ elbow, wrist ↔ wrist)
+  addCrossPair('la-ra', 0xc94c8d, [
+    ['left_shoulder_pitch_link','right_shoulder_pitch_link'],
+    ['left_elbow_link','right_elbow_link'],
+    ['left_wrist_pitch_link','right_wrist_pitch_link'],
+  ]);
+  // Bilateral leg-to-leg
+  addCrossPair('ll-rl', 0x5cb39b, [
+    ['left_hip_pitch_link','right_hip_pitch_link'],
+    ['left_knee_link','right_knee_link'],
+    ['left_ankle_pitch_link','right_ankle_pitch_link'],
+  ]);
+  // Left-side arm-to-leg
+  addCrossPair('la-ll', 0x9b59b6, [
+    ['left_shoulder_pitch_link','left_hip_pitch_link'],
+    ['left_elbow_link','left_knee_link'],
+    ['left_wrist_pitch_link','left_ankle_pitch_link'],
+  ]);
+  // Right-side arm-to-leg
+  addCrossPair('ra-rl', 0xff9a8b, [
+    ['right_shoulder_pitch_link','right_hip_pitch_link'],
+    ['right_elbow_link','right_knee_link'],
+    ['right_wrist_pitch_link','right_ankle_pitch_link'],
+  ]);
+
+  // helpers
+  const _wp = new THREE.Vector3();
+  const skelOffset = new THREE.Vector3(0, 0, 0);   // set externally
+  function setOrigin(x, y, z) { group.position.set(x, y, z); }
+  function setScale(s) { group.scale.setScalar(s); }
+
+  function updateFromMain(mainGetWorldPos, originBaseline) {
+    // Re-position spheres at main-G1 joints, then offset them
+    for (const bn of bodyNames) {
+      const p = mainGetWorldPos(bn, _wp);
+      if (!p) continue;
+      // Subtract baseline so the skeleton is centered at our group's local origin
+      balls[bn].position.set(p.x - originBaseline.x, p.y - originBaseline.y, p.z - originBaseline.z);
+    }
+    // Update edge endpoints from sphere positions
+    function syncLine(line) {
+      const a = balls[line.userData.a], c = balls[line.userData.c];
+      if (!a || !c) return;
+      const arr = line.geometry.attributes.position.array;
+      arr[0] = a.position.x; arr[1] = a.position.y; arr[2] = a.position.z;
+      arr[3] = c.position.x; arr[4] = c.position.y; arr[5] = c.position.z;
+      line.geometry.attributes.position.needsUpdate = true;
+    }
+    for (const l of treeLines) syncLine(l);
+    for (const k of Object.keys(intraEdges)) for (const e of intraEdges[k]) syncLine(e.line);
+    for (const k of Object.keys(interEdges)) for (const e of interEdges[k]) syncLine(e.line);
+  }
+
+  function setIntraOpacity(limbKey, o) {
+    if (!intraEdges[limbKey]) return;
+    for (const e of intraEdges[limbKey]) e.line.material.opacity = o;
+  }
+  function setInterOpacity(pairKey, o) {
+    if (!interEdges[pairKey]) return;
+    for (const e of interEdges[pairKey]) e.line.material.opacity = o;
+  }
+  function setLimbEmissive(limbKey, intensity) {
+    for (const bn of LIMBS[limbKey].bodies) {
+      const m = balls[bn]; if (!m) continue;
+      m.material.emissiveIntensity = intensity;
+      m.scale.setScalar(1 + intensity * 0.4);
+    }
+  }
+  function resetLimbEmissive() {
+    for (const k of Object.keys(LIMBS)) setLimbEmissive(k, 0);
+  }
+  function clearAllEdges() {
+    for (const k of Object.keys(intraEdges)) setIntraOpacity(k, 0);
+    for (const k of Object.keys(interEdges)) setInterOpacity(k, 0);
+  }
+
+  return {
+    object3D: group, balls,
+    setOrigin, setScale, updateFromMain,
+    setIntraOpacity, setInterOpacity, setLimbEmissive, resetLimbEmissive, clearAllEdges,
   };
-  for (const [limbKey, hub] of Object.entries(extremityHubs)) {
-    const edges = [];
-    for (const t of LIMBS.torso.bodies) {
-      // mix the limb's colour with torso grey for a softer look
-      edges.push({ a: hub, b: t, line: makeEdge(LIMBS[limbKey].color) });
-    }
-    limbEdges['inter:' + limbKey] = { edges, color: LIMBS[limbKey].color };
-  }
 }
 
-const _wp = new THREE.Vector3();
-function updateLimbVisuals() {
-  for (const m of limbBalls) {
-    const p = g1Main.getBodyWorldPosition(m.userData.bodyName, _wp);
-    if (p) m.position.copy(p);
-  }
-  for (const k of Object.keys(limbEdges)) {
-    for (const e of limbEdges[k].edges) {
-      const pa = g1Main.getBodyWorldPosition(e.a, _wp);
-      if (!pa) continue;
-      const arr = e.line.geometry.attributes.position.array;
-      arr[0] = pa.x; arr[1] = pa.y; arr[2] = pa.z;
-      const pb = g1Main.getBodyWorldPosition(e.b, _wp);
-      if (!pb) continue;
-      arr[3] = pb.x; arr[4] = pb.y; arr[5] = pb.z;
-      e.line.geometry.attributes.position.needsUpdate = true;
-    }
-  }
-}
-
-function setLimbBallsOpacity(opacityByLimb /* map limbKey → opacity */) {
-  for (const m of limbBalls) {
-    const o = opacityByLimb[m.userData.limbKey] || 0;
-    m.material.opacity = o;
-  }
-}
-
-function setLimbEdgesOpacity(key, opacity) {
-  const grp = limbEdges[key];
-  if (!grp) return;
-  for (const e of grp.edges) e.line.material.opacity = opacity;
-}
-
-function clearAllEdges() {
-  for (const k of Object.keys(limbEdges)) setLimbEdgesOpacity(k, 0);
-}
-
-// ─── Halos + trails + arrows (stage 3) ──────────────────────────────────────
+// ─── Picked-joint halos / trails / arrows (live on main G1) ─────────────────
 function buildPickedAccessories() {
-  const haloGeo = new THREE.RingGeometry(0.06, 0.085, 32);
+  const haloGeo = new THREE.RingGeometry(0.07, 0.10, 32);
   for (const p of PICKED_JOINTS) {
-    const haloMat = new THREE.MeshBasicMaterial({ color: p.color, transparent: true, opacity: 0.0, side: THREE.DoubleSide, depthWrite: false });
-    const halo = new THREE.Mesh(haloGeo, haloMat);
+    const halo = new THREE.Mesh(haloGeo, new THREE.MeshBasicMaterial({
+      color: p.color, transparent:true, opacity:0.0, side: THREE.DoubleSide, depthWrite:false,
+    }));
     halo.userData = { bodyName: p.body };
-    pickedHaloMeshes.push(halo);
-    scene.add(halo);
+    pickedHalos.push(halo); scene.add(halo);
 
-    // trail — 30 segments
-    const TRAIL_LEN = 30;
-    const positions = new Float32Array(TRAIL_LEN * 3);
-    const colors    = new Float32Array(TRAIL_LEN * 3);
-    const trailGeo = new THREE.BufferGeometry();
-    trailGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    trailGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-    const trailMat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.0, depthWrite: false });
-    const line = new THREE.Line(trailGeo, trailMat);
-    pickedTrails.push({ body: p.body, line, buf: positions, colorBuf: colors, len: TRAIL_LEN, history: [], color: p.color });
+    const TLEN = 28;
+    const buf = new Float32Array(TLEN*3);
+    const cbuf = new Float32Array(TLEN*3);
+    const tg = new THREE.BufferGeometry();
+    tg.setAttribute('position', new THREE.BufferAttribute(buf, 3));
+    tg.setAttribute('color', new THREE.BufferAttribute(cbuf, 3));
+    const tm = new THREE.LineBasicMaterial({ vertexColors:true, transparent:true, opacity:0.0, depthWrite:false });
+    const line = new THREE.Line(tg, tm);
+    pickedTrails.push({ body:p.body, line, buf, cbuf, len:TLEN, history:[], color:p.color });
     scene.add(line);
 
-    // arrow
-    const arr = new THREE.ArrowHelper(new THREE.Vector3(0,1,0), new THREE.Vector3(0,0,0), 0.001, 0xff5b3a, 0.04, 0.025);
+    const arr = new THREE.ArrowHelper(new THREE.Vector3(0,1,0), new THREE.Vector3(0,0,0), 0.001, 0xe74c3c, 0.05, 0.03);
     arr.line.material.transparent = true; arr.line.material.opacity = 0;
     arr.cone.material.transparent = true; arr.cone.material.opacity = 0;
-    arr.line.material.linewidth = 3;
-    pickedArrows.push({ body: p.body, arrow: arr });
+    pickedArrows.push({ body:p.body, arrow: arr });
     scene.add(arr);
   }
 }
-
-function setPickedAccessoriesOpacity(o) {
-  for (const h of pickedHaloMeshes) h.material.opacity = o * 0.75;
+function setPickedOpacity(o) {
+  for (const h of pickedHalos) h.material.opacity = o * 0.85;
   for (const t of pickedTrails) t.line.material.opacity = o;
   for (const a of pickedArrows) { a.arrow.line.material.opacity = o; a.arrow.cone.material.opacity = o; }
 }
-
-function updatePickedAccessories(globalFrame, motionSpeed) {
-  for (const h of pickedHaloMeshes) {
-    const p = g1Main.getBodyWorldPosition(h.userData.bodyName, _wp);
-    if (p) {
-      h.position.copy(p);
-      // billboard toward camera
-      h.lookAt(camera.position);
-    }
+const _ppw = new THREE.Vector3();
+function updatePickedAccessories() {
+  for (const h of pickedHalos) {
+    const p = g1Main.getBodyWorldPos(h.userData.bodyName, _ppw);
+    if (p) { h.position.copy(p); h.lookAt(camera.position); }
   }
-
-  // velocity arrows = finite difference of world positions across 1 frame
-  const motion = g1Motion;
+  for (const t of pickedTrails) {
+    const p = g1Main.getBodyWorldPos(t.body, _ppw);
+    if (!p) continue;
+    t.history.push([p.x, p.y, p.z]);
+    if (t.history.length > t.len) t.history.shift();
+    const c = new THREE.Color(t.color);
+    for (let i = 0; i < t.len; i++) {
+      const src = t.history[Math.min(i, t.history.length - 1)] || [p.x, p.y, p.z];
+      t.buf[i*3]   = src[0]; t.buf[i*3+1] = src[1]; t.buf[i*3+2] = src[2];
+      const a = i / (t.len - 1);
+      t.cbuf[i*3]   = c.r * a; t.cbuf[i*3+1] = c.g * a; t.cbuf[i*3+2] = c.b * a;
+    }
+    t.line.geometry.attributes.position.needsUpdate = true;
+    t.line.geometry.attributes.color.needsUpdate = true;
+  }
   for (const a of pickedArrows) {
-    const p = g1Main.getBodyWorldPosition(a.body, _wp);
+    const p = g1Main.getBodyWorldPos(a.body, _ppw);
     if (!p) continue;
     a.arrow.position.copy(p);
-    // approximate velocity direction: from prev pos toward current
     const trail = pickedTrails.find(t => t.body === a.body);
     if (trail && trail.history.length >= 2) {
       const cur = trail.history[trail.history.length - 1];
       const prv = trail.history[trail.history.length - 2];
       const v = new THREE.Vector3(cur[0]-prv[0], cur[1]-prv[1], cur[2]-prv[2]);
       const len = v.length();
-      a.arrow.setDirection(v.lengthSq() > 1e-8 ? v.clone().normalize() : new THREE.Vector3(0,1,0));
-      const target = clamp(len * 60, 0.04, 0.42);
-      a.arrow.setLength(target, 0.05, 0.03);
+      if (v.lengthSq() > 1e-8) a.arrow.setDirection(v.clone().normalize());
+      a.arrow.setLength(clamp(len * 60, 0.05, 0.5), 0.07, 0.04);
     }
   }
-
-  // trails: push current position, fade by index
-  for (const t of pickedTrails) {
-    const p = g1Main.getBodyWorldPosition(t.body, _wp);
-    if (!p) continue;
-    t.history.push([p.x, p.y, p.z]);
-    if (t.history.length > t.len) t.history.shift();
-    // fill buffer (back-fill if not enough samples yet)
-    const c = new THREE.Color(t.color);
-    for (let i = 0; i < t.len; i++) {
-      const src = t.history[Math.min(i, t.history.length - 1)] || [p.x, p.y, p.z];
-      t.buf[i*3+0] = src[0];
-      t.buf[i*3+1] = src[1];
-      t.buf[i*3+2] = src[2];
-      const alpha = i / (t.len - 1);                  // 0=oldest → 1=newest
-      t.colorBuf[i*3+0] = c.r * alpha;
-      t.colorBuf[i*3+1] = c.g * alpha;
-      t.colorBuf[i*3+2] = c.b * alpha;
-    }
-    t.line.geometry.attributes.position.needsUpdate = true;
-    t.line.geometry.attributes.color.needsUpdate = true;
-  }
 }
+function clearTrails() { for (const t of pickedTrails) t.history.length = 0; }
 
-function clearTrails() {
-  for (const t of pickedTrails) t.history.length = 0;
-}
-
-// ─── Sparklines (stage 3) ────────────────────────────────────────────────────
+// ─── Sparklines for kinematic-encoding block ────────────────────────────────
 const SPARK_LEN = 90;
 function pushSparkSample(jointName, fIdx) {
-  const motion = g1Motion;
-  const N = motion.numFrames;
+  const m = g1Motion;
+  const N = m.numFrames;
   const wrap = i => ((i % N) + N) % N;
-  const arr = motion.joints[jointName];
+  const arr = m.joints[jointName];
   const fi = wrap(fIdx | 0);
   const fp = wrap(fi - 1);
   const fpp = wrap(fi - 2);
-  const pos = arr[fi];
-  const vel = arr[fi] - arr[fp];
-  const acc = arr[fi] - 2*arr[fp] + arr[fpp];
-  sparkBuffers.pos.push(pos); if (sparkBuffers.pos.length > SPARK_LEN) sparkBuffers.pos.shift();
-  sparkBuffers.vel.push(vel); if (sparkBuffers.vel.length > SPARK_LEN) sparkBuffers.vel.shift();
-  sparkBuffers.acc.push(acc); if (sparkBuffers.acc.length > SPARK_LEN) sparkBuffers.acc.shift();
+  sparkBuffers.pos.push(arr[fi]);                       if (sparkBuffers.pos.length > SPARK_LEN) sparkBuffers.pos.shift();
+  sparkBuffers.vel.push(arr[fi] - arr[fp]);              if (sparkBuffers.vel.length > SPARK_LEN) sparkBuffers.vel.shift();
+  sparkBuffers.acc.push(arr[fi] - 2*arr[fp] + arr[fpp]); if (sparkBuffers.acc.length > SPARK_LEN) sparkBuffers.acc.shift();
 }
-function resetSparks() { sparkBuffers.pos = []; sparkBuffers.vel = []; sparkBuffers.acc = []; }
+function resetSparks(){ sparkBuffers.pos=[]; sparkBuffers.vel=[]; sparkBuffers.acc=[]; }
 function drawSpark(canvas, buf, color) {
-  const ctx = canvas.getContext('2d');
   const w = canvas.width = canvas.clientWidth * (window.devicePixelRatio || 1);
   const h = canvas.height = canvas.clientHeight * (window.devicePixelRatio || 1);
-  ctx.clearRect(0, 0, w, h);
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,w,h);
   if (buf.length < 2) return;
   let mn = Infinity, mx = -Infinity;
-  for (const v of buf) { if (v < mn) mn = v; if (v > mx) mx = v; }
+  for (const v of buf) { if (v<mn)mn=v; if (v>mx)mx=v; }
   if (mx - mn < 1e-6) { mn -= 0.01; mx += 0.01; }
-  ctx.lineWidth = 1.5 * (window.devicePixelRatio || 1);
-  ctx.strokeStyle = color;
+  // baseline
+  ctx.strokeStyle = '#e9ecf3'; ctx.lineWidth = 1 * (window.devicePixelRatio || 1);
+  ctx.beginPath(); ctx.moveTo(0, h/2); ctx.lineTo(w, h/2); ctx.stroke();
+  // sparkline
+  ctx.strokeStyle = color; ctx.lineWidth = 1.6 * (window.devicePixelRatio || 1);
   ctx.beginPath();
   for (let i = 0; i < buf.length; i++) {
     const x = (i / (SPARK_LEN - 1)) * w;
@@ -1113,205 +1177,368 @@ function drawSpark(canvas, buf, color) {
     if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
   }
   ctx.stroke();
-  // dot at tail
   if (buf.length > 0) {
     const xT = ((buf.length - 1) / (SPARK_LEN - 1)) * w;
-    const yT = h - ((buf[buf.length - 1] - mn) / (mx - mn)) * (h - 4) - 2;
+    const yT = h - ((buf[buf.length-1] - mn)/(mx-mn))*(h-4) - 2;
     ctx.fillStyle = color;
-    ctx.beginPath(); ctx.arc(xT, yT, 2.4 * (window.devicePixelRatio || 1), 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(xT, yT, 2.6 * (window.devicePixelRatio || 1), 0, Math.PI*2); ctx.fill();
   }
 }
-
 function renderSparks() {
   drawSpark(document.getElementById('sp-pos'), sparkBuffers.pos, '#2c3e6b');
   drawSpark(document.getElementById('sp-vel'), sparkBuffers.vel, '#e74c3c');
   drawSpark(document.getElementById('sp-acc'), sparkBuffers.acc, '#f39c12');
 }
 
-// ─── Embedding panel canvases ───────────────────────────────────────────────
+// ─── Embedding panel ────────────────────────────────────────────────────────
 const Z_CELLS = 256;
 const ATTR_CELLS = 64;
-const attrStripCanvases = {};
 function drawZVector(seed) {
   const c = document.getElementById('z-canvas');
   const w = c.width = c.clientWidth * (window.devicePixelRatio || 1);
   const h = c.height = c.clientHeight * (window.devicePixelRatio || 1);
   const ctx = c.getContext('2d');
-  ctx.clearRect(0, 0, w, h);
-  const cellW = w / Z_CELLS;
+  ctx.clearRect(0,0,w,h);
+  const cw = w / Z_CELLS;
   for (let i = 0; i < Z_CELLS; i++) {
-    // deterministic hash → 0..1, modulated by seed
-    const v = Math.abs(Math.sin(i * 0.713 + seed * 0.012)) * 0.5
-            + Math.abs(Math.cos(i * 0.281 + seed * 0.0078)) * 0.5;
-    const grad = v;
-    const r = Math.round(44  + grad * 200);
-    const g = Math.round(62  + grad * 80);
-    const b = Math.round(107 + grad * 80);
+    const v = 0.5 * Math.abs(Math.sin(i*0.713 + seed*0.012))
+            + 0.5 * Math.abs(Math.cos(i*0.281 + seed*0.0078));
+    const r = Math.round(44 + v*200);
+    const g = Math.round(62 + v*80);
+    const b = Math.round(107 + v*80);
     ctx.fillStyle = `rgb(${r},${g},${b})`;
-    ctx.fillRect(i * cellW, 0, Math.ceil(cellW + 0.5), h);
+    ctx.fillRect(i*cw, 0, Math.ceil(cw+0.5), h);
   }
 }
-function drawAttrStrip(canvas, attrKey, seed) {
+function drawAttrStrip(canvas, attr, seed) {
   const w = canvas.width = canvas.clientWidth * (window.devicePixelRatio || 1);
   const h = canvas.height = canvas.clientHeight * (window.devicePixelRatio || 1);
   const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, w, h);
-  const cellW = w / ATTR_CELLS;
-  // per-attribute seed offset so the strips differ
-  const offs = { gender: 1.0, age: 11.3, height: 23.7, weight: 37.1 }[attrKey] || 0;
+  ctx.clearRect(0,0,w,h);
+  const cw = w / ATTR_CELLS;
+  const offs = { gender:1.0, age:11.3, height:23.7, weight:37.1 }[attr] || 0;
   for (let i = 0; i < ATTR_CELLS; i++) {
-    const v = Math.abs(Math.sin(i * 0.45 + offs + seed * 0.011));
-    const r = Math.round(44 + v * 200);
-    const g = Math.round(62 + v * 90);
-    const b = Math.round(107 + v * 90);
+    const v = Math.abs(Math.sin(i*0.45 + offs + seed*0.011));
+    const r = Math.round(44 + v*200);
+    const g = Math.round(62 + v*90);
+    const b = Math.round(107 + v*90);
     ctx.fillStyle = `rgb(${r},${g},${b})`;
-    ctx.fillRect(i * cellW, 0, Math.ceil(cellW + 0.5), h);
+    ctx.fillRect(i*cw, 0, Math.ceil(cw+0.5), h);
   }
 }
 
-// ─── Shape chips floating overlay (stage 2) ─────────────────────────────────
-let activeChips = [];
-function spawnShapeChip(text, startAt /* sec */) {
-  const el = document.createElement('div');
-  el.className = 'shape-chip';
-  el.innerHTML = `<span class="sc-x">×</span> ${text}`;
-  document.body.appendChild(el);
-  activeChips.push({ el, startAt, lifetime: 2.6, x0: 0, y0: 0, dx: 0, dy: 0, born: false });
-}
-function tickShapeChips(stageT) {
-  for (const c of activeChips) {
-    if (!c.born) {
-      if (stageT < c.startAt) continue;
-      c.born = true;
-      // anchor near human centre (SMPL group) projected to screen
-      const wp = new THREE.Vector3();
-      smplGroup.object3D.updateWorldMatrix(true, false);
-      wp.setFromMatrixPosition(smplGroup.object3D.matrixWorld);
-      wp.y += 0.9 + Math.random() * 0.4;
-      wp.x += (Math.random() - 0.5) * 0.3;
-      const projected = wp.clone().project(camera);
-      c.x0 = (projected.x * 0.5 + 0.5) * canvasW;
-      c.y0 = (1 - (projected.y * 0.5 + 0.5)) * canvasH;
-      c.dx = (Math.random() - 0.5) * 80;
-      c.dy = -80 - Math.random() * 90;
-      c.el.style.left = `${c.x0}px`;
-      c.el.style.top  = `${c.y0}px`;
-    }
-    const dt = stageT - c.startAt;
-    if (dt < 0) continue;
-    const u = clamp(dt / c.lifetime, 0, 1);
-    const x = c.x0 + c.dx * u;
-    const y = c.y0 + c.dy * u;
-    c.el.style.transform = `translate(${c.dx * u}px, ${c.dy * u}px)`;
-    c.el.style.opacity = (u < 0.2 ? u / 0.2 : (u > 0.7 ? (1 - (u - 0.7) / 0.3) : 1)).toFixed(3);
-  }
-  // garbage-collect dead chips
-  for (let i = activeChips.length - 1; i >= 0; i--) {
-    const c = activeChips[i];
-    if (c.born && stageT - c.startAt > c.lifetime) {
-      c.el.remove();
-      activeChips.splice(i, 1);
-    }
-  }
-}
-function clearShapeChips() {
-  for (const c of activeChips) c.el.remove();
-  activeChips = [];
+// ─── Scene setup (orthographic camera) ──────────────────────────────────────
+function setupScene() {
+  canvasWrapEl = document.getElementById('canvas-wrap');
+  renderer = new THREE.WebGLRenderer({ antialias:true, alpha:false });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  canvasW = canvasWrapEl.clientWidth; canvasH = canvasWrapEl.clientHeight;
+  renderer.setSize(canvasW, canvasH);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.18;
+  canvasWrapEl.appendChild(renderer.domElement);
+
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color('#ffffff');
+
+  // Orthographic camera with fixed horizontal frustum
+  const frustumW = 13.5;   // world units across the canvas
+  const aspect = canvasW / canvasH;
+  const frustumH = frustumW / aspect;
+  camera = new THREE.OrthographicCamera(
+    -frustumW/2, frustumW/2, frustumH/2 + 0.4, -frustumH/2 + 0.4,
+    -100, 100
+  );
+  camera.position.set(0, 1.0, 10);
+  camera.lookAt(0, 1.0, 0);
+
+  // Lights
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xeef0f6, 0.85));
+  const key = new THREE.DirectionalLight(0xffffff, 0.9);
+  key.position.set(3, 8, 5);
+  key.castShadow = true;
+  key.shadow.mapSize.set(2048, 2048);
+  key.shadow.camera.near = 0.1; key.shadow.camera.far = 30;
+  key.shadow.camera.left = -12; key.shadow.camera.right = 12;
+  key.shadow.camera.top  =  10; key.shadow.camera.bottom = -2;
+  scene.add(key);
+  const fill = new THREE.DirectionalLight(0xeaf0fa, 0.35);
+  fill.position.set(-3, 5, -3);
+  scene.add(fill);
+  const rim = new THREE.DirectionalLight(0xccd6e8, 0.3);
+  rim.position.set(0, 4, -6);
+  scene.add(rim);
+
+  // Floor — soft gradient strip (subtle)
+  const floorTex = makeFloorTexture();
+  const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(40, 8),
+    new THREE.MeshStandardMaterial({ map: floorTex, roughness: 0.95, metalness: 0.0, transparent: true })
+  );
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = 0;
+  floor.receiveShadow = true;
+  scene.add(floor);
+
+  window.addEventListener('resize', onResize);
 }
 
-// ─── Caption / badge / overlay helpers ──────────────────────────────────────
-function setCaption(text, ref) {
-  const el = document.getElementById('caption');
-  el.querySelector('.text').textContent = text;
-  el.querySelector('.ref').textContent  = ref || '';
-  el.classList.add('visible');
+function makeFloorTexture() {
+  const px = 1024;
+  const c = document.createElement('canvas'); c.width = c.height = px;
+  const ctx = c.getContext('2d');
+  // very subtle stripe gradient
+  ctx.fillStyle = '#fafbfd'; ctx.fillRect(0, 0, px, px);
+  ctx.strokeStyle = '#eef0f6'; ctx.lineWidth = 2; ctx.lineCap = 'square';
+  const div = 24, step = px/div;
+  for (let i = 0; i <= div; i++) {
+    const p = Math.round(i*step);
+    ctx.beginPath(); ctx.moveTo(p, 0); ctx.lineTo(p, px); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, p); ctx.lineTo(px, p); ctx.stroke();
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
+  return tex;
 }
-function hideCaption() {
-  document.getElementById('caption').classList.remove('visible');
-}
-function setBadge(idx, total) {
-  const el = document.getElementById('stage-badge');
-  el.textContent = `Stage ${idx} / ${total}`;
-  el.classList.add('visible');
-}
-function show(id) { document.getElementById(id).classList.add('visible'); }
-function hide(id) { document.getElementById(id).classList.remove('visible'); }
 
-// ─── Camera director ────────────────────────────────────────────────────────
-const CAM_KEYS = {
-  human:        { pos: [0.0, 1.35, 4.0], target: [0.0, 0.95, 0.0] },
-  robot_wide:   { pos: [0.0, 1.35, 4.5], target: [0.0, 0.85, 0.0] },
-  robot_upper:  { pos: [1.2, 1.55, 2.2], target: [0.3, 1.15, 0.0] },
-  robot_front:  { pos: [0.0, 1.30, 4.8], target: [0.0, 0.90, 0.0] },
-  ghost_row:    { pos: [-0.5, 1.65, 7.5], target: [-0.5, 0.90, 0.0] },
-  reveal:       { pos: [0.0, 1.30, 5.2], target: [0.0, 0.95, 0.0] },
-};
-let camAnim = null;   // { startT, dur, from, to }
-function startCameraMove(toKey, dur) {
-  const to = CAM_KEYS[toKey];
-  if (!to) return;
-  camAnim = {
-    startT: masterClock,
-    dur,
-    from: { pos: camera.position.toArray(), target: controls.target.toArray() },
-    to:   { pos: to.pos.slice(), target: to.target.slice() },
+function onResize() {
+  canvasW = canvasWrapEl.clientWidth; canvasH = canvasWrapEl.clientHeight;
+  const frustumW = 13.5;
+  const aspect = canvasW / canvasH;
+  const frustumH = frustumW / aspect;
+  camera.left = -frustumW/2; camera.right = frustumW/2;
+  camera.top  =  frustumH/2 + 0.4; camera.bottom = -frustumH/2 + 0.4;
+  camera.updateProjectionMatrix();
+  renderer.setSize(canvasW, canvasH);
+}
+
+// ─── World→screen for HTML overlays ────────────────────────────────────────
+function worldToCanvasPx(wx, wy, wz) {
+  const v = new THREE.Vector3(wx, wy, wz).project(camera);
+  return {
+    x: (v.x * 0.5 + 0.5) * canvasW,
+    y: (1 - (v.y * 0.5 + 0.5)) * canvasH,
   };
 }
-function updateCamera() {
-  if (!camAnim) return;
-  const t = clamp((masterClock - camAnim.startT) / camAnim.dur, 0, 1);
-  const s = smoothstep(t);
-  for (let i = 0; i < 3; i++) {
-    camera.position.setComponent(i, lerp(camAnim.from.pos[i], camAnim.to.pos[i], s));
-    controls.target.setComponent(i, lerp(camAnim.from.target[i], camAnim.to.target[i], s));
-  }
-  if (t >= 1) camAnim = null;
+
+function positionSlotLabel(id, wx, wy, wz, yOff = 0) {
+  const p = worldToCanvasPx(wx, wy, wz);
+  const el = document.getElementById(id);
+  el.style.left = (p.x) + 'px';
+  el.style.top  = (p.y + yOff) + 'px';
+}
+function positionAttrCard(id, side /* 'left'|'right' */) {
+  const el = document.getElementById(id);
+  if (side === 'left')  { el.style.left = '16px'; el.style.top = '16px'; el.style.right = 'auto'; }
+  else                  { el.style.right = '16px'; el.style.top = '16px'; el.style.left = 'auto'; }
+}
+function positionBlock(id, wx, wy, wz, yOff = 0) {
+  const p = worldToCanvasPx(wx, wy, wz);
+  const el = document.getElementById(id);
+  el.style.left = p.x + 'px';
+  el.style.top  = (p.y + yOff) + 'px';
 }
 
-// ─── Ghost robots (stage 5) ─────────────────────────────────────────────────
-async function buildGhostRobots(N = 5) {
-  for (const g of g1Ghosts) {
-    scene.remove(g.robot.object3D);
-  }
-  g1Ghosts.length = 0;
-
+// ─── Ghosts (spatiotemporal) ───────────────────────────────────────────────
+async function buildGhosts(N = 5) {
   for (let k = 0; k < N; k++) {
     const opacityRef = { value: 0.0, materials: [] };
-    const robot = await buildG1Robot({ opacityRef });
-    // arrange in a row to the LEFT of the main, fanned out behind
-    const slot = -(k + 1) * 0.95;
-    robot.object3D.position.x = slot;
-    robot.object3D.position.z = -0.1 * (k + 1);
-    robot.object3D.scale.setScalar(0.94);
-    robot.setOpacity(0.0);
-    scene.add(robot.object3D);
-    g1Ghosts.push({ robot, slot, frameOffsetFrac: k + 1 });
+    const r = await buildG1Robot({opacityRef});
+    r.object3D.position.set(SLOT_X.robot, 0, -0.5 - k*0.45);
+    r.object3D.scale.setScalar(1.0 - k*0.04);
+    r.setOpacity(0.0);
+    scene.add(r.object3D);
+    g1Ghosts.push({ robot:r, lagFrames: (k+1) * 6 });
   }
 }
 
-function buildTemporalWindow() {
-  const geo = new THREE.BoxGeometry(2.0, 2.2, 1.4);
-  const mat = new THREE.MeshBasicMaterial({ color: 0xfff0a0, transparent: true, opacity: 0.0, depthWrite: false });
-  temporalWindow = new THREE.Mesh(geo, mat);
-  temporalWindow.position.set(-2.5, 1.1, 0);
-  scene.add(temporalWindow);
-  // wire edges
-  const wireGeo = new THREE.EdgesGeometry(geo);
-  const wireMat = new THREE.LineBasicMaterial({ color: 0xffd24c, transparent: true, opacity: 0.0 });
-  const wires = new THREE.LineSegments(wireGeo, wireMat);
-  temporalWindow.add(wires);
-  temporalWindow.userData = { wireMat };
+// ─── Caption / badge ───────────────────────────────────────────────────────
+function setCaption(text, ref) {
+  document.getElementById('cap-text').textContent = text;
+  document.getElementById('cap-ref').textContent  = ref || '§';
 }
-function setTemporalWindowOpacity(o) {
-  temporalWindow.material.opacity = o * 0.18;
-  temporalWindow.userData.wireMat.opacity = o * 0.85;
+function setBadge(i, n) {
+  document.getElementById('stage-badge').textContent = `Stage ${i} / ${n}`;
+}
+function show(id){ document.getElementById(id).classList.add('visible'); }
+function hide(id){ document.getElementById(id).classList.remove('visible'); }
+
+// ─── Stages (each persists after appearing) ────────────────────────────────
+function defineStages() {
+  stages = [
+    // 1: Human appears
+    { name: 'human', duration: 5.0,
+      enter() {
+        setCaption('A human operator performs hip-hop.', '§1');
+        smplGroup.setOpacity(1.0);
+        show('lbl-human'); show('operator-card');
+      },
+      update(t){}
+    },
+    // 2: G1 appears to the right
+    { name: 'robot', duration: 5.5,
+      enter() {
+        setCaption('Motion retargeting projects the operator onto the G1 — body shape is discarded.', '§1 Retargeting');
+        show('lbl-robot');
+      },
+      update(t) {
+        const u = clamp(t / 2.5, 0, 1);
+        g1Main.setOpacity(u);
+      },
+    },
+    // 3: Kinematic encoding block appears above G1; halos + sparklines come on
+    { name: 'kinematic', duration: 7.0,
+      enter() {
+        setCaption('A per-joint temporal convolution captures velocity & acceleration — not just position.', '§3.1');
+        resetSparks(); clearTrails();
+        show('kinematic-block');
+      },
+      update(t) {
+        const u = clamp(t / 1.5, 0, 1);
+        setPickedOpacity(u);
+      },
+    },
+    // 4: Hierarchy mini-skeleton appears + intra-limb + inter-limb beats
+    { name: 'hierarchy', duration: 19.0,
+      enter() {
+        setCaption('Hierarchy H₁ — joints within each limb interact.', '§3.2 intra-limb');
+        show('lbl-hierarchy'); show('hierarchy-block');
+        // Show all balls
+        hierSkel.resetLimbEmissive();
+        hierSkel.clearAllEdges();
+      },
+      update(t) {
+        const limbOrder = ['torso','la','ra','ll','rl'];
+        const limbLabel = { torso:'Torso', la:'L arm', ra:'R arm', ll:'L leg', rl:'R leg' };
+
+        // Intra section: 0–9s, each limb gets 1.8s
+        if (t < 9) {
+          document.getElementById('hb-tab-intra').classList.add('active');
+          document.getElementById('hb-tab-inter').classList.remove('active');
+          const idx = clamp(Math.floor(t / 1.8), 0, 4);
+          const within = (t - idx*1.8) / 1.8;
+          const pulse = Math.sin(within * Math.PI) * 0.95;
+          // current limb: pulse edges + emissive on balls
+          hierSkel.clearAllEdges();
+          hierSkel.resetLimbEmissive();
+          hierSkel.setIntraOpacity(limbOrder[idx], pulse);
+          hierSkel.setLimbEmissive(limbOrder[idx], 0.7 * Math.max(0, Math.sin(within * Math.PI)));
+          // keep prior limb edges faintly visible
+          for (let p = 0; p < idx; p++) {
+            hierSkel.setIntraOpacity(limbOrder[p], 0.32);
+            hierSkel.setLimbEmissive(limbOrder[p], 0.18);
+          }
+          // beat indicator text
+          const beat = document.getElementById('hb-beat');
+          let html = '';
+          for (let p = 0; p < 5; p++) {
+            html += `<span class="pill ${p===idx?'on':''}">${limbLabel[limbOrder[p]]}</span>`;
+          }
+          beat.innerHTML = html;
+          if (idx >= 0 && idx <= 4 && within < 0.1) setCaption(`Limb ${limbLabel[limbOrder[idx]]} — joints within it talk to each other.`, '§3.2 H₁ intra-limb');
+        } else if (t < 9.6) {
+          // brief transition: all intra edges dim
+          hierSkel.resetLimbEmissive();
+          hierSkel.clearAllEdges();
+          for (const k of limbOrder) hierSkel.setIntraOpacity(k, 0.18);
+        } else {
+          // Inter-limb beats: 9.6–19s, 4 beats at 2.2s each
+          document.getElementById('hb-tab-intra').classList.remove('active');
+          document.getElementById('hb-tab-inter').classList.add('active');
+          const t2 = t - 9.6;
+          const beats = [
+            { key: 'la-ra', limbs: ['la','ra'], label: 'L arm ↔ R arm' },
+            { key: 'll-rl', limbs: ['ll','rl'], label: 'L leg ↔ R leg' },
+            { key: 'la-ll', limbs: ['la','ll'], label: 'L arm ↔ L leg' },
+            { key: 'ra-rl', limbs: ['ra','rl'], label: 'R arm ↔ R leg' },
+          ];
+          const idx = clamp(Math.floor(t2 / 2.2), 0, 3);
+          const within = (t2 - idx*2.2) / 2.2;
+          const pulse = Math.sin(within * Math.PI) * 0.95;
+
+          hierSkel.clearAllEdges();
+          hierSkel.resetLimbEmissive();
+          // Highlight both limbs of current beat
+          const emissive = 0.65 * Math.max(0, Math.sin(within * Math.PI));
+          for (const l of beats[idx].limbs) hierSkel.setLimbEmissive(l, emissive);
+          hierSkel.setInterOpacity(beats[idx].key, pulse);
+
+          // Keep prior beats faintly visible
+          for (let p = 0; p < idx; p++) {
+            hierSkel.setInterOpacity(beats[p].key, 0.32);
+            for (const l of beats[p].limbs) hierSkel.setLimbEmissive(l, 0.18);
+          }
+          // intra edges dim baseline
+          for (const k of limbOrder) hierSkel.setIntraOpacity(k, 0.10);
+
+          // beat indicator
+          const beat = document.getElementById('hb-beat');
+          let html = '';
+          for (let p = 0; p < beats.length; p++) {
+            html += `<span class="pill ${p===idx?'on':''}">${beats[p].label}</span>`;
+          }
+          beat.innerHTML = html;
+          if (within < 0.1) setCaption(`${beats[idx].label} — joints across limbs interact.`, '§3.2 H₂ inter-limb');
+        }
+      },
+    },
+    // 5: Spatiotemporal aggregation — ghosts fade in behind G1, then gradually vanish
+    { name: 'temporal', duration: 9.0,
+      enter() {
+        setCaption('Spatiotemporal aggregation — past frames stack behind the robot, then dissolve into the present.', '§3.3');
+      },
+      update(t) {
+        // 0..2.5s: ghosts fade in
+        // 2.5..7s: hold
+        // 7..9s: ghosts fade out (collapse → present)
+        let phase;
+        if (t < 2.5)        phase = clamp(t / 2.5, 0, 1);
+        else if (t < 7.0)   phase = 1.0;
+        else                phase = clamp(1.0 - (t - 7.0)/2.0, 0, 1);
+        for (let k = 0; k < g1Ghosts.length; k++) {
+          const decay = 0.85 - k*0.15;
+          g1Ghosts[k].robot.setOpacity(Math.max(0, phase * decay));
+        }
+      },
+      exit() {
+        for (const g of g1Ghosts) g.robot.setOpacity(0);
+      },
+    },
+    // 6: Embedding + predictions
+    { name: 'embedding', duration: 7.5,
+      enter() {
+        setCaption('Trajectory embedding Z ∈ ℝ²⁵⁶ — task heads recover operator attributes from the robot trajectory alone.', '§3.4');
+        const pred = currentDemo.predicted;
+        document.getElementById('pr-gender').textContent = capitalize(pred.gender);
+        document.getElementById('pr-age').textContent    = `${pred.age} yr`;
+        document.getElementById('pr-height').textContent = `${pred.height} cm`;
+        document.getElementById('pr-weight').textContent = `${pred.weight} kg`;
+        document.getElementById('as-gender').textContent = capitalize(pred.gender);
+        document.getElementById('as-age').textContent    = `${pred.age} yr`;
+        document.getElementById('as-height').textContent = `${pred.height} cm`;
+        document.getElementById('as-weight').textContent = `${pred.weight} kg`;
+        const gt = currentDemo.groundTruth;
+        markMatch('pr-gender', pred.gender === gt.gender);
+        markMatch('pr-age',    Math.abs(pred.age - gt.age) <= 5);
+        markMatch('pr-height', Math.abs(pred.height - gt.height) <= 6);
+        markMatch('pr-weight', Math.abs(pred.weight - gt.weight) <= 8);
+      },
+      update(t) {
+        const u = clamp((t-0.4)/1.0, 0, 1);
+        if (u >= 1) show('embedding-panel');
+        if (u >= 0.6) show('prediction-card');
+      },
+    },
+  ];
 }
 
-// ─── Stage definitions ──────────────────────────────────────────────────────
-let stages = [];
-let stageStart = 0;
-let stageIdx = -1;
+function markMatch(id, ok){ const el=document.getElementById(id); if (ok) el.classList.add('match'); else el.classList.remove('match'); }
+function capitalize(s){ return s ? s[0].toUpperCase()+s.slice(1) : s; }
 
+// ─── Stage director ─────────────────────────────────────────────────────────
 function transitionToStage(i) {
   if (i === stageIdx) return;
   if (stageIdx >= 0 && stages[stageIdx] && stages[stageIdx].exit) stages[stageIdx].exit();
@@ -1322,232 +1549,29 @@ function transitionToStage(i) {
     if (stages[i].enter) stages[i].enter();
   }
 }
-
 function endWalkthrough() {
-  // Final state: predictions visible, replay button shown
-  show('prediction-card');
-  show('operator-card');
-  document.getElementById('replay-btn').classList.add('visible');
   walkthroughEnded = true;
+  document.getElementById('replay-btn').classList.add('visible');
 }
-
-function defineStages() {
-  stages = [
-    // ─── Stage 1: Human operator ─────────────────────────────────────────
-    {
-      name: 'human', durationSec: 6.0,
-      enter() {
-        smplGroup.setOpacity(1.0);
-        g1Main.setOpacity(0.0);
-        setCaption('A human operator performs hip-hop.', '§1');
-        show('operator-card');
-        hide('prediction-card'); hide('legend'); hide('sparklines'); hide('embedding-panel');
-        startCameraMove('human', 1.8);
-      },
-      update(localT) { /* SMPL plays continuously */ },
-      exit() {},
-    },
-    // ─── Stage 2: Retargeting → G1 ───────────────────────────────────────
-    {
-      name: 'retarget', durationSec: 6.5,
-      enter() {
-        setCaption('Motion retargeting projects the operator onto the G1 — body shape is discarded.', '§1');
-        // schedule chip spawns
-        ['height 175 cm','weight 76 kg','limb lengths','body shape','muscle volume']
-          .forEach((t, k) => spawnShapeChip(t, 0.4 + k * 0.45));
-        startCameraMove('robot_wide', 2.2);
-      },
-      update(localT) {
-        // crossfade SMPL → G1 over the first 3.5s
-        const u = clamp(localT / 3.5, 0, 1);
-        smplGroup.setOpacity(1 - u);
-        g1Main.setOpacity(u);
-        tickShapeChips(localT);
-      },
-      exit() {
-        smplGroup.setOpacity(0.0);
-        g1Main.setOpacity(1.0);
-        clearShapeChips();
-      },
-    },
-    // ─── Stage 3: Kinematic encoding ─────────────────────────────────────
-    {
-      name: 'kinematic', durationSec: 10.0,
-      enter() {
-        setCaption('Per-joint temporal convolution captures velocity & acceleration — not just position.', '§3.1 Kinematic Encoding');
-        startCameraMove('robot_upper', 1.6);
-        resetSparks(); clearTrails();
-        show('sparklines');
-      },
-      update(localT) {
-        const u = clamp((localT - 0.6) / 1.2, 0, 1);
-        setPickedAccessoriesOpacity(u);
-        // sparklines update from joint-angle finite differences below in tickLive
-      },
-      exit() {
-        setPickedAccessoriesOpacity(0);
-        hide('sparklines');
-      },
-    },
-    // ─── Stage 4: Spatial graph conv ─────────────────────────────────────
-    {
-      name: 'graph', durationSec: 16.0,
-      enter() {
-        setCaption('Hierarchy H₁ — intra-limb interactions (5 subgraphs).', '§3.2 Spatial Graph Conv');
-        startCameraMove('robot_front', 1.8);
-        show('legend');
-        // ramp up limb balls
-      },
-      update(localT) {
-        const T = localT;
-        // 0–7 s: intra-limb beat
-        // 7–7.5 s: Σ glyph
-        // 7.5–14.5 s: limb-torso beat
-        // 14.5–16 s: cooldown
-        const limbOrder = ['torso','la','ra','ll','rl'];
-        const interOrder = ['la','ra','ll','rl'];
-
-        // smooth limb-ball opacity ramp 0..1 across 0..0.8s
-        const ballO = clamp(T / 0.8, 0, 1);
-        const ballMap = {};
-        for (const k of limbOrder) ballMap[k] = ballO;
-        setLimbBallsOpacity(ballMap);
-
-        clearAllEdges();
-        if (T < 7) {
-          // intra-limb beats
-          const idx = clamp(Math.floor(T / 1.2), 0, 4);   // 0..4
-          const within = (T - idx * 1.2) / 1.2;
-          // current limb edge pulsing
-          const pulse = Math.sin(within * Math.PI) * 0.95;
-          setLimbEdgesOpacity('intra:' + limbOrder[idx], pulse);
-          // keep prior limbs faintly lit
-          for (let p = 0; p < idx; p++) setLimbEdgesOpacity('intra:' + limbOrder[p], 0.35);
-          if (T > 6.0) {
-            // brief "all flash" near end of beat
-            const flash = clamp((T - 6.0) / 1.0, 0, 1);
-            for (const k of limbOrder) setLimbEdgesOpacity('intra:' + k, 0.6 * flash + 0.3);
-          }
-          if (T > 5.8 && T < 6.4) setCaption('Hierarchy H₁ — intra-limb interactions (5 subgraphs).', '§3.2 Spatial Graph Conv');
-        } else if (T < 7.5) {
-          // Σ burst
-          const x = (T - 7.0) / 0.5;
-          if (x < 0.5) document.getElementById('sigma-burst').classList.add('visible');
-          else document.getElementById('sigma-burst').classList.remove('visible');
-          // dim all
-          for (const k of limbOrder) setLimbEdgesOpacity('intra:' + k, 0.25);
-          setCaption('Two hierarchies are summed (Eq. 1).', '§3.2 Σ over H₁ ∪ H₂');
-        } else if (T < 14.5) {
-          // limb-torso beats
-          document.getElementById('sigma-burst').classList.remove('visible');
-          const t2 = T - 7.5;
-          const idx = clamp(Math.floor(t2 / 1.5), 0, 3);
-          const within = (t2 - idx * 1.5) / 1.5;
-          const pulse = Math.sin(within * Math.PI) * 0.95;
-          setLimbEdgesOpacity('inter:' + interOrder[idx], pulse);
-          for (let p = 0; p < idx; p++) setLimbEdgesOpacity('inter:' + interOrder[p], 0.35);
-          // keep intra dim
-          for (const k of limbOrder) setLimbEdgesOpacity('intra:' + k, 0.18);
-          if (t2 > 5.5) {
-            const flash = clamp((t2 - 5.5) / 0.8, 0, 1);
-            for (const k of interOrder) setLimbEdgesOpacity('inter:' + k, 0.6 * flash + 0.25);
-          }
-          if (T > 7.6 && T < 8.2) setCaption('Hierarchy H₂ — limb-torso interactions (4 subgraphs).', '§3.2 Spatial Graph Conv');
-        } else {
-          for (const k of limbOrder) setLimbEdgesOpacity('intra:' + k, 0.30);
-          for (const k of interOrder) setLimbEdgesOpacity('inter:' + k, 0.30);
-        }
-      },
-      exit() {
-        for (const m of limbBalls) m.material.opacity = 0;
-        clearAllEdges();
-        document.getElementById('sigma-burst').classList.remove('visible');
-        hide('legend');
-      },
-    },
-    // ─── Stage 5: Spatiotemporal time stack ──────────────────────────────
-    {
-      name: 'temporal', durationSec: 11.0,
-      enter() {
-        setCaption('A Γ-frame window slides along time, aggregating per joint.', '§3.3 Temporal Aggregation');
-        startCameraMove('ghost_row', 2.0);
-      },
-      update(localT) {
-        // ghosts fade in 0..1.5s
-        const fadeIn = clamp(localT / 1.5, 0, 1);
-        for (let k = 0; k < g1Ghosts.length; k++) {
-          const decay = 0.95 - k * 0.16;
-          g1Ghosts[k].robot.setOpacity(fadeIn * decay);
-        }
-        // sliding temporal window — 2 sweeps
-        const sweepStart = 2.0;
-        const sweepEnd   = 9.5;
-        const xMin = -5.0;
-        const xMax = 0.6;
-        if (localT > sweepStart && localT < sweepEnd) {
-          setTemporalWindowOpacity(1.0);
-          const u = ((localT - sweepStart) / (sweepEnd - sweepStart)) * 2 % 1;     // 2 full sweeps
-          temporalWindow.position.x = lerp(xMin, xMax, u);
-        } else if (localT >= sweepEnd) {
-          // collapse to a single denser representation
-          const fold = clamp((localT - sweepEnd) / 1.5, 0, 1);
-          for (let k = 0; k < g1Ghosts.length; k++) {
-            const targetSlot = -0.4;
-            g1Ghosts[k].robot.object3D.position.x = lerp(g1Ghosts[k].slot, targetSlot, fold);
-            g1Ghosts[k].robot.setOpacity((1 - fold) * (0.85 - k * 0.16));
-          }
-          setTemporalWindowOpacity(1 - fold);
-        } else {
-          setTemporalWindowOpacity(0);
-        }
-      },
-      exit() {
-        for (const g of g1Ghosts) {
-          g.robot.setOpacity(0);
-          g.robot.object3D.position.x = g.slot;
-        }
-        setTemporalWindowOpacity(0);
-      },
-    },
-    // ─── Stage 6: Embedding + predictions ────────────────────────────────
-    {
-      name: 'embedding', durationSec: 9.5,
-      enter() {
-        setCaption('Trajectory embedding Z ∈ ℝ²⁵⁶ — task heads recover operator attributes from the robot trajectory alone.', '§3.4 Embedding & Heads');
-        startCameraMove('reveal', 1.8);
-        // populate prediction values
-        const pred = currentDemo.predicted;
-        document.getElementById('pr-gender').textContent = capitalize(pred.gender);
-        document.getElementById('pr-age').textContent    = `${pred.age} yr`;
-        document.getElementById('pr-height').textContent = `${pred.height} cm`;
-        document.getElementById('pr-weight').textContent = `${pred.weight} kg`;
-        document.getElementById('as-gender').textContent = capitalize(pred.gender);
-        document.getElementById('as-age').textContent    = `${pred.age} yr`;
-        document.getElementById('as-height').textContent = `${pred.height} cm`;
-        document.getElementById('as-weight').textContent = `${pred.weight} kg`;
-        // green-tick predictions that match within tolerance
-        const gt = currentDemo.groundTruth;
-        markMatch('pr-gender',  pred.gender === gt.gender);
-        markMatch('pr-age',     Math.abs(pred.age - gt.age) <= 5);
-        markMatch('pr-height',  Math.abs(pred.height - gt.height) <= 6);
-        markMatch('pr-weight',  Math.abs(pred.weight - gt.weight) <= 8);
-        show('operator-card');
-      },
-      update(localT) {
-        const u = clamp((localT - 0.5) / 1.0, 0, 1);
-        if (u >= 1) show('embedding-panel'); else hide('embedding-panel');
-        if (u >= 0.6) show('prediction-card');
-      },
-      exit() {},
-    },
-  ];
+function restartWalkthrough() {
+  masterClock = 0;
+  stageIdx = -1;
+  walkthroughEnded = false;
+  document.getElementById('replay-btn').classList.remove('visible');
+  // hide everything
+  hide('lbl-human'); hide('lbl-robot'); hide('lbl-hierarchy');
+  hide('operator-card'); hide('prediction-card');
+  hide('kinematic-block'); hide('hierarchy-block'); hide('embedding-panel');
+  g1Main.setOpacity(0.0);
+  smplGroup.setOpacity(0.0);
+  for (const g of g1Ghosts) g.robot.setOpacity(0);
+  setPickedOpacity(0);
+  hierSkel.clearAllEdges();
+  hierSkel.resetLimbEmissive();
+  // fade SMPL in over first 0.6s
+  setTimeout(() => smplGroup.setOpacity(1.0), 40);
+  transitionToStage(0);
 }
-
-function markMatch(elId, ok) {
-  const el = document.getElementById(elId);
-  if (ok) el.classList.add('match'); else el.classList.remove('match');
-}
-function capitalize(s) { return s ? s[0].toUpperCase() + s.slice(1) : s; }
 
 // ─── Activity dropdown ──────────────────────────────────────────────────────
 function buildActivityDropdown() {
@@ -1573,10 +1597,11 @@ async function switchDemo(demo) {
       loadVertsBin(withV(`./assets/demos/smpl/${demo.id}_gt.bin`)),
     ]);
     g1Motion = m;
-    // replace SMPL geometry
-    scene.remove(smplGroup.object3D);
+    smplGroup.object3D.parent.remove(smplGroup.object3D);
     smplData = vd;
-    smplGroup = buildSMPL(vd.verts, smplFaces, vd.numVerts, vd.numFrames);
+    smplGroup = buildSMPL(vd, smplFaces);
+    smplGroup.object3D.position.set(SLOT_X.human, 0, 0);
+    smplGroup.object3D.rotation.y = HUMAN_YAW;
     scene.add(smplGroup.object3D);
     currentDemo = demo;
     populateOperatorCard();
@@ -1595,21 +1620,7 @@ function populateOperatorCard() {
   document.getElementById('op-weight').textContent = `${gt.weight} kg`;
 }
 
-function restartWalkthrough() {
-  masterClock = 0;
-  stageIdx = -1;
-  walkthroughEnded = false;
-  document.getElementById('replay-btn').classList.remove('visible');
-  hide('embedding-panel'); hide('prediction-card');
-  for (const el of document.querySelectorAll('.attr-cells')) {
-    // first time, draw a baseline
-    drawAttrStrip(el, el.dataset.attr, 0);
-  }
-  transitionToStage(0);
-}
-
-// ─── Main animation loop ────────────────────────────────────────────────────
-let lastTS = null;
+// ─── Main loop ──────────────────────────────────────────────────────────────
 function loop(ts) {
   requestAnimationFrame(loop);
   if (lastTS === null) lastTS = ts;
@@ -1617,38 +1628,34 @@ function loop(ts) {
   lastTS = ts;
   masterClock += dt;
 
-  // SMPL frame (only matters in stages 1+2; skip vertex/normal cost once invisible)
+  // SMPL frame
   if (smplData && smplGroup.mat.opacity > 0.01) {
-    const tSec = masterClock;
-    const f = (tSec * smplData.fps) % smplData.numFrames;
+    const f = (masterClock * smplData.fps) % smplData.numFrames;
     smplGroup.applyFrame(f);
   }
 
-  // G1 frame
+  // G1 frames
   if (g1Motion) {
     const fG1 = (masterClock * g1Motion.fps) % g1Motion.numFrames;
     g1Main.applyFrame(g1Motion, fG1);
     for (const g of g1Ghosts) {
-      // each ghost lags by k * (numFrames / N_ghosts / 1.5) frames
-      const offset = g.frameOffsetFrac * (g1Motion.numFrames / (g1Ghosts.length + 1)) * 0.4;
-      g.robot.applyFrame(g1Motion, (fG1 - offset + g1Motion.numFrames * 8) );
+      g.robot.applyFrame(g1Motion, fG1 - g.lagFrames);
     }
+    // Hierarchy skeleton copies main G1 joint positions
+    // Origin = main G1 root position (approx), so the skeleton sits at its slot center
+    const baseline = new THREE.Vector3(SLOT_X.robot, 0, 0);  // shift skeleton to its own slot
+    hierSkel.updateFromMain(g1Main.getBodyWorldPos, baseline);
 
-    // limb visuals always updated (cheap, only visible when material.opacity > 0)
-    updateLimbVisuals();
+    // picked accessories track main G1
+    updatePickedAccessories();
 
-    // picked accessories
-    updatePickedAccessories(fG1, 1);
-
-    // sparkline samples — only push when stage 3 is active
-    if (stageIdx === 2 /* kinematic */) {
+    // Sparklines (stage 3 onward)
+    if (stageIdx >= 2) {
       pushSparkSample('right_elbow_joint', fG1);
       renderSparks();
     }
-
-    // embedding pulse — once we reach stage 6, keep updating even after the
-    // walkthrough holds at the end (stageIdx flips to -2 then).
-    if (stageIdx === 5 || (stageIdx === -2 && walkthroughEnded)) {
+    // Embedding canvases
+    if (stageIdx >= 5 || walkthroughEnded) {
       drawZVector(fG1);
       for (const el of document.querySelectorAll('.attr-cells')) {
         drawAttrStrip(el, el.dataset.attr, fG1);
@@ -1656,28 +1663,29 @@ function loop(ts) {
     }
   }
 
-  // Camera tween
-  updateCamera();
-  controls.update();
-
-  // Stage director
+  // Stage advancement
   if (stageIdx >= 0 && stageIdx < stages.length) {
     const localT = masterClock - stageStart;
-    const stage  = stages[stageIdx];
-    if (stage.update) stage.update(localT);
-    if (localT >= stage.durationSec) {
+    const s = stages[stageIdx];
+    if (s.update) s.update(localT);
+    if (localT >= s.duration) {
       if (stageIdx === stages.length - 1) {
         endWalkthrough();
-        // keep last stage's update running but don't advance
-        stageIdx = -2;   // sentinel: hold final scene
-        stageStart = masterClock;
+        stageIdx = stages.length;   // hold
       } else {
         transitionToStage(stageIdx + 1);
       }
     }
-  } else if (stageIdx === -2) {
-    // Hold final stage live state — keep embedding canvases updating
   }
+
+  // Position HTML overlays each frame to track world coords
+  positionSlotLabel('lbl-human',     SLOT_X.human,     2.2, 0);
+  positionSlotLabel('lbl-robot',     SLOT_X.robot,     2.2, 0);
+  positionSlotLabel('lbl-hierarchy', SLOT_X.hierarchy, 2.5, 0);
+  positionAttrCard('operator-card', 'left');
+  positionAttrCard('prediction-card', 'right');
+  positionBlock('kinematic-block',   SLOT_X.robot,     2.7, 0, -12);
+  positionBlock('hierarchy-block',   SLOT_X.hierarchy, 3.0, 0, -10);
 
   renderer.render(scene, camera);
 }
@@ -1702,30 +1710,33 @@ async function boot() {
   setStatus('Building scene…');
   setupScene();
 
-  setStatus('Building SMPL human…');
-  smplGroup = buildSMPL(vd.verts, faces, vd.numVerts, vd.numFrames);
+  setStatus('Building SMPL…');
+  smplGroup = buildSMPL(vd, faces);
+  smplGroup.object3D.position.set(SLOT_X.human, 0, 0);
+  smplGroup.object3D.rotation.y = HUMAN_YAW;
   scene.add(smplGroup.object3D);
 
-  setStatus('Building G1 robot (meshes…)…');
+  setStatus('Building G1 robot (meshes)…');
   g1Main = await buildG1Robot();
+  g1Main.object3D.position.set(SLOT_X.robot, 0, 0);
+  g1Main.object3D.rotation.y = ROBOT_YAW;
   scene.add(g1Main.object3D);
-  g1Main.setOpacity(0.0);
 
-  setStatus('Building ghost stack…');
-  await buildGhostRobots(5);
+  setStatus('Building ghosts…');
+  await buildGhosts(5);
 
-  setStatus('Building visuals…');
-  buildLimbBalls();
-  buildLimbEdges();
+  setStatus('Building hierarchy skeleton…');
+  hierSkel = buildHierarchySkeleton();
+  hierSkel.setOrigin(SLOT_X.hierarchy, 0.0, 0);
+  hierSkel.setScale(1.1);
+  scene.add(hierSkel.object3D);
+
+  setStatus('Wiring overlays…');
   buildPickedAccessories();
-  buildTemporalWindow();
-
   populateOperatorCard();
   buildActivityDropdown();
 
-  document.getElementById('replay-btn').addEventListener('click', () => {
-    restartWalkthrough();
-  });
+  document.getElementById('replay-btn').addEventListener('click', restartWalkthrough);
 
   defineStages();
   hideLoading();
