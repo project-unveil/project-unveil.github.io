@@ -1282,9 +1282,13 @@ function updateEncRect() {
     if (y0<mnY)mnY=y0; if (y1>mxY)mxY=y1;
   }
   const padX = 22, padY = 28;
-  const x = mnX - padX, y = mnY - padY;
-  const w = (mxX - mnX) + padX*2;
+  let x = mnX - padX, y = mnY - padY;
+  let w = (mxX - mnX) + padX*2;
   const h = (mxY - mnY) + padY*2;
+  // Clamp: enc-rect's left edge must never cross the retargeting arrow's right end.
+  const arrowEnd = getRetargetArrowEndPx();
+  const minLeft  = arrowEnd.x + 6;
+  if (x < minLeft) { w -= (minLeft - x); x = minLeft; }
   r.setAttribute('x', x.toFixed(1));
   r.setAttribute('y', y.toFixed(1));
   r.setAttribute('width', Math.max(0, w).toFixed(1));
