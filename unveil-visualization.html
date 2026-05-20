@@ -1981,7 +1981,7 @@ function updateSpatialRect() {
     const def = worldToCanvasPx(SLOT_X.spatial, 1.0, 0);
     mnX = def.x - 60; mxX = def.x + 60;
   }
-  const padX = 55;   // generous padding so the ghost mesh never clips the rect
+  const padX = 15;   // tight padX — rect just covers extreme L/R joint extent
   let x = mnX - padX;
   let w = (mxX - mnX) + padX*2;
   // 1cm gap from 3.2 — YIELDS if clamping would clip the leftmost ghost.
