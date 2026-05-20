@@ -1498,11 +1498,12 @@ function endWalkthrough() {
 function restartWalkthrough() {
   masterClock = 0; stageIdx = -1; walkthroughEnded = false;
   document.getElementById('replay-btn').classList.remove('visible');
-  hide('lbl-human'); hide('lbl-robot'); hide('lbl-spatial');
+  hide('lbl-human'); hide('lbl-robot'); hide('lbl-graph'); hide('lbl-spatial');
   hide('enc-label');
   hide('embedding-strip');
   hide('aggregate-icon');
   if (g1Aggregate) g1Aggregate.setOpacity(0);
+  if (g1Graph)     g1Graph.setOpacity(0);
   setEncRectVisible(false);
   setFocusOpacity(0);
   clearConns();
