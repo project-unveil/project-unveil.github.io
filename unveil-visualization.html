@@ -2548,6 +2548,7 @@ function loop(ts) {
   positionEncOutput();        // AFTER enc rect so text glues to its right edge
   positionGraphOutput();      // AFTER graph rect so text glues to its right edge
   positionAttributesCard();
+  positionHumanMesh();        // AFTER attributes card so human gap stays 1cm
   positionSpatialEmbedArrow();// AFTER spatial rect + embedding strip
   positionEmbedAttrArrow();   // AFTER embedding strip + attributes card
   positionAttrHumanArrow();   // AFTER attributes card + human-rect
