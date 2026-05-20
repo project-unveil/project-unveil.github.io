@@ -615,11 +615,11 @@ const DEFAULT_DEMO = 'hiphop';
 const BIN_VERSION  = '2026-05-19a';
 const withV = u => u + (u.includes('?') ? '&' : '?') + 'v=' + BIN_VERSION;
 
-const SLOT_X = { human: -6.0, robot: -3.95, graph: -0.4, spatial: 3.5 };
+const SLOT_X = { human: -6.0, robot: -3.7, graph: -0.4, spatial: 3.5 };
 const GHOST_SPREAD = 0.42;   // world units between ghost figures (in x)
 // World units the arrow's right end stays away from G1 root — sized so the G1's
 // extreme left swing during motion just touches the arrow tip (never crosses).
-const ARROW_END_OFFSET = 0.65;
+const ARROW_END_OFFSET = 0.55;
 // Duration that the kinematic-encoding plates take to fade in (drives stage-3 length)
 const PLATE_FADE_DUR = 0.5;
 
