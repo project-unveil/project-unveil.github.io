@@ -926,7 +926,7 @@ async function buildG1Robot({opacityRef={value:1.0, materials:[]}}={}) {
     opacityRef.value = a;
     for (const m of opacityRef.materials) { m.opacity = a; m.transparent = a < 1; m.depthWrite = a >= 0.95; }
   }
-  return { object3D: root, bodyGroups, applyFrame, getBodyWorldPos, setOpacity, opacityRef };
+  return { object3D: root, bodyGroups, bodyMeshes, applyFrame, getBodyWorldPos, setOpacity, opacityRef };
 }
 
 // ─── SMPL builder ───────────────────────────────────────────────────────────
