@@ -768,6 +768,8 @@ let walkthroughEnded = false;
 let lastTS = null;
 // Continuous-animation start times. -1 = not started yet.
 let graphAnimStart = -1, temporalAnimStart = -1, kinematicAnimStart = -1;
+// Once 3.1's rect has appeared (end of first cycle), keep it visible forever.
+let encRectStuckVisible = false;
 
 // Sparkline buffers per picked joint
 const sparkBuffers = {};   // jointName → { vel: [], acc: [], pos: [] }
