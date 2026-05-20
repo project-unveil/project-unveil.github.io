@@ -1277,11 +1277,11 @@ const PLATE_HALF_H = 40;  // approx half-height (header + 2 graph rows)
 
 // ─── Per-frame: position tiny rings on ALL joints + plates/arrows for picked ───
 function updateFocusRings() {
-  // 1) Position the tiny dot on EVERY G1 joint
-  for (const b of modelData.bodies) {
-    const ring = document.querySelector(`.svg-focus-ring[data-body="${b.name}"]`);
+  // 1) Position the tiny dots on the curated set of joints
+  for (const bn of ENCODING_FOCUS_JOINTS) {
+    const ring = document.querySelector(`.svg-focus-ring[data-body="${bn}"]`);
     if (!ring) continue;
-    const js = jointScreen(b.name);
+    const js = jointScreen(bn);
     if (!js) continue;
     ring.setAttribute('cx', js.x.toFixed(1));
     ring.setAttribute('cy', js.y.toFixed(1));
