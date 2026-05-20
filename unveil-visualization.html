@@ -1613,7 +1613,7 @@ function defineStages() {
     { name:'temporal', duration: 1.0,
       enter() {
         setCaption('Spatiotemporal aggregation — past frames collapse into one trajectory.', '§3.3');
-        show('lbl-spatial');
+        setSpatialRectVisible(true);
         for (const g of g1Ghosts) g.robot.object3D.position.x = g.baseX;
         temporalAnimStart = masterClock;
       },
