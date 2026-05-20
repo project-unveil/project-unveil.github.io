@@ -1335,7 +1335,6 @@ function defineStages() {
     { name:'temporal', duration: 9.0,
       enter() {
         setCaption('Spatiotemporal aggregation — past frames stack behind the robot.', '§3.3');
-        document.getElementById('ghost-indicator').classList.add('visible');
       },
       update(t) {
         // 0..2.5s ghosts fade in; 2.5..6s hold; 6..9s slowly fade out (the "gradually vanishes")
@@ -1347,10 +1346,6 @@ function defineStages() {
           const decay = 0.85 - k*0.15;
           g1Ghosts[k].robot.setOpacity(Math.max(0, phase * decay));
         }
-        // Position ghost indicator badge
-        const pr = worldToCanvasPx(SLOT_X.robot - 2.5, 1.6, 0);
-        const gi = document.getElementById('ghost-indicator');
-        gi.style.left = pr.x + 'px'; gi.style.top = pr.y + 'px';
       },
       exit() {
         for (const g of g1Ghosts) g.robot.setOpacity(0);
