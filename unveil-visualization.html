@@ -1366,8 +1366,22 @@ function positionRetargetArrow() {
   arrow.setAttribute('x2', pr.x.toFixed(1));
   arrow.setAttribute('y2', pr.y.toFixed(1));
   const label = document.getElementById('retarget-label');
-  label.style.left = ((ph.x + pr.x)/2).toFixed(1) + 'px';
+  const labelW = label.offsetWidth || 130;
+  // Default: textbox centered on arrow midpoint
+  let labelCenter = (ph.x + pr.x) / 2;
+  // Clamp: textbox left edge must NOT cross the human boundary
+  const minCenter = ph.x + labelW/2 + 4;
+  if (labelCenter < minCenter) labelCenter = minCenter;
+  label.style.left = labelCenter.toFixed(1) + 'px';
   label.style.top  = ((ph.y + pr.y)/2 - 6).toFixed(1) + 'px';
+}
+// Compute the textbox's right edge in px (used by enc-rect / plate clamps)
+function getRetargetLabelRightPx() {
+  const label = document.getElementById('retarget-label');
+  const left = parseFloat(label.style.left);
+  if (!isFinite(left)) return -Infinity;
+  const w = label.offsetWidth || 130;
+  return left + w/2;
 }
 
 // ─── Graph rectangle (around graph G1, includes beat indicator) ────────────
