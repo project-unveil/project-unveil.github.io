@@ -1306,10 +1306,11 @@ function updateEncRect() {
   let x = mnX - padX, y = mnY - padY;
   let w = (mxX - mnX) + padX*2;
   const h = (mxY - mnY) + padY*2;
-  // Clamp: enc-rect's left edge must never cross the retargeting arrow at all.
-  // Use the arrow's RIGHT END + a 14-px gap as the minimum allowed left edge.
+  // Clamp: enc-rect's left edge must JUST TOUCH the retarget label's right edge
+  // (and never extend left of it, never cross the arrow).
   const arrowEnd = getRetargetArrowEndPx();
-  const minLeft  = arrowEnd.x + 14;
+  const labelRight = getRetargetLabelRightPx();
+  const minLeft  = Math.max(arrowEnd.x + 14, labelRight + 4);
   if (x < minLeft) { w -= (minLeft - x); x = minLeft; }
   r.setAttribute('x', x.toFixed(1));
   r.setAttribute('y', y.toFixed(1));
