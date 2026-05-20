@@ -1659,9 +1659,7 @@ function setCaption(text /* ref ignored — caption-ref removed */) {
   const el = document.getElementById('cap-text');
   if (el) el.textContent = text || '';
 }
-function setBadge(i, n) {
-  document.getElementById('stage-badge').textContent = `Stage ${i} / ${n}`;
-}
+function setBadge(){}   // no-op: stage badge removed
 function setBeat(mode, limbA, limbB) {
   // BOTTOM indicator: just the colored limb pair text
   const bi = document.getElementById('beat-indicator');
