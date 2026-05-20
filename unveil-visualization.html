@@ -1970,11 +1970,13 @@ function tickGraphBeats(localT) {
   const CYCLE_DUR      = INTRA_DUR + INTER_DUR;
 
   const t = ((localT % CYCLE_DUR) + CYCLE_DUR) % CYCLE_DUR;
+  // Sin-shaped intensity per beat: ramp up at start, peak in middle, fade at end
   if (t < INTRA_DUR) {
     const idx = clamp(Math.floor(t / INTRA_BEAT_DUR), 0, limbOrder.length - 1);
     const within = (t - idx * INTRA_BEAT_DUR) / INTRA_BEAT_DUR;
-    for (const k of limbOrder) setLimbEllipseVisible(k, false);
-    setLimbEllipseVisible(limbOrder[idx], true, LIMBS[limbOrder[idx]].color);
+    const intensity = Math.sin(within * Math.PI) * 0.85;
+    resetGraphTints();
+    tintGraphLimb(limbOrder[idx], intensity);
     if (within < 0.03 && (!activeConns.length || activeConns[0]._beatIdx !== idx || activeConns[0]._mode !== 'intra')) {
       setConns(INTRA_CONNS[limbOrder[idx]] || [], LIMBS[limbOrder[idx]].color);
       for (const c of activeConns) { c._beatIdx = idx; c._mode = 'intra'; }
@@ -1985,8 +1987,9 @@ function tickGraphBeats(localT) {
     const idx = clamp(Math.floor(t2 / INTER_BEAT_DUR), 0, INTER_BEATS.length - 1);
     const within = (t2 - idx * INTER_BEAT_DUR) / INTER_BEAT_DUR;
     const beat = INTER_BEATS[idx];
-    for (const k of Object.keys(LIMBS)) setLimbEllipseVisible(k, false);
-    for (const l of beat.limbs) setLimbEllipseVisible(l, true, beat.color);
+    const intensity = Math.sin(within * Math.PI) * 0.85;
+    resetGraphTints();
+    for (const l of beat.limbs) tintGraphLimb(l, intensity);
     if (within < 0.03 && (!activeConns.length || activeConns[0]._beatIdx !== idx || activeConns[0]._mode !== 'inter')) {
       setConns(beat.conns, beat.color);
       for (const c of activeConns) { c._beatIdx = idx; c._mode = 'inter'; }
