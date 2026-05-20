@@ -1338,10 +1338,9 @@ function updateEncRect() {
 
 // ─── Slot labels positioning (BELOW the figures, anchored at floor level) ──
 function positionSlotLabels() {
-  const ph = worldToCanvasPx(SLOT_X.human,   -0.05, 0);
-  const ps = worldToCanvasPx(SLOT_X.spatial, -0.05, 0);
-  document.getElementById('lbl-human').style.cssText   += `;left:${ph.x}px;top:${ph.y+10}px;`;
-  document.getElementById('lbl-spatial').style.cssText += `;left:${ps.x}px;top:${ps.y+10}px;`;
+  const ph = worldToCanvasPx(SLOT_X.human, -0.05, 0);
+  const lh = document.getElementById('lbl-human');
+  if (lh) lh.style.cssText += `;left:${ph.x}px;top:${ph.y+10}px;`;
 }
 
 // Human-rect bounds (world coords) — drives both the border and the retarget arrow start
