@@ -764,7 +764,7 @@ let stages = [];
 let walkthroughEnded = false;
 let lastTS = null;
 // Continuous-animation start times. -1 = not started yet.
-let graphAnimStart = -1, temporalAnimStart = -1;
+let graphAnimStart = -1, temporalAnimStart = -1, kinematicAnimStart = -1;
 
 // Sparkline buffers per picked joint
 const sparkBuffers = {};   // jointName → { vel: [], acc: [], pos: [] }
