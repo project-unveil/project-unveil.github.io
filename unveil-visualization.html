@@ -274,14 +274,64 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
 }
 #enc-output-arrow   { stroke: var(--enc-color); }
 #graph-output-arrow { stroke: var(--graph-color); }
-/* 3.3 → embedding arrow (dashed, spatial color) */
-#spatial-embed-arrow {
-  stroke: var(--spatial-color);
+/* 3.3 → embedding / embedding → attributes / attributes → human arrows */
+#spatial-embed-arrow, #embed-attr-arrow, #attr-human-arrow {
   stroke-width: 2;
   stroke-dasharray: 9 5;
   fill: none;
   opacity: 0;
   transition: opacity 0.5s ease;
+}
+#spatial-embed-arrow { stroke: var(--spatial-color); }
+#embed-attr-arrow    { stroke: var(--primary); }
+#attr-human-arrow    { stroke: var(--accent); }
+
+/* Operator attributes card (right side, before human) */
+#attributes-card {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px 14px;
+  width: 180px;
+  box-shadow: 0 14px 32px rgba(33,52,100,0.12);
+  opacity: 0;
+  transition: opacity 0.55s ease, transform 0.55s ease;
+  pointer-events: none;
+  z-index: 4;
+  font-family: 'Source Sans 3', sans-serif;
+}
+#attributes-card.visible { opacity: 1; }
+#attributes-card .ac-head {
+  font-family: 'Noto Serif', serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+  text-align: center;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+#attributes-card .ac-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 4px 0;
+  font-size: 14px;
+  border-bottom: 1px dashed rgba(0,0,0,0.05);
+}
+#attributes-card .ac-row:last-child { border-bottom: none; }
+#attributes-card .ac-k {
+  color: var(--muted);
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+}
+#attributes-card .ac-v {
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
 }
 #enc-label .ref, #graph-label .ref, #spatial-label .ref {
   font-family: 'JetBrains Mono', monospace;
