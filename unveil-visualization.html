@@ -367,11 +367,11 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Σ aggregate icon */
+/* Σ aggregate icon (compact so it always fits above the figures' heads) */
 #aggregate-icon {
   position: absolute;
   transform: translate(-50%, -50%);
-  width: 64px; height: 64px;
+  width: 44px; height: 44px;
   background: linear-gradient(145deg, #b67cd8 0%, #9b6dbf 100%);
   color: #ffffff;
   border-radius: 50%;
@@ -379,23 +379,23 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
   align-items: center; justify-content: center;
   font-family: 'Noto Serif', serif;
   font-weight: 700;
-  box-shadow: 0 8px 20px rgba(155,109,191,0.5);
+  box-shadow: 0 6px 14px rgba(155,109,191,0.45);
   opacity: 0;
   transition: opacity 0.5s ease;
   pointer-events: none;
   z-index: 3;
-  border: 2px solid #ffffff;
+  border: 1.5px solid #ffffff;
 }
 #aggregate-icon.visible { opacity: 1; }
 #aggregate-icon .ai-symbol {
-  font-size: 30px; line-height: 1;
+  font-size: 21px; line-height: 1;
 }
 #aggregate-icon .ai-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 7px;
+  font-size: 5.5px;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-top: 2px;
+  letter-spacing: 0.08em;
+  margin-top: 1px;
   font-weight: 500;
 }
 
