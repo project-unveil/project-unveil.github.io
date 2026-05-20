@@ -2105,10 +2105,10 @@ function loop(ts) {
   }
 
   positionSlotLabels();
-  positionBeatIndicator();
   updateHumanRect();          // dynamic SMPL bounds — must run BEFORE arrow
   positionRetargetArrow();    // reads human-rect's right edge
   updateGraphRect();
+  positionBeatIndicator();    // AFTER updateGraphRect so it can clamp inside it
   updateSpatialRect();
   positionAggregateIcon();    // AFTER spatial rect so it can clamp inside it
   positionBeatModeTag();
