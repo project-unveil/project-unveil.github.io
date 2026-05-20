@@ -1877,6 +1877,47 @@ function defineStages() {
   ];
 }
 
+// ─── Continuous kinematic-encoding tick (loops forever) ──────────────────
+// Same 6 steps as the staged appearance, then a brief hold and a smooth
+// fade-out so the cycle restarts without flicker.
+function tickKinematicAnim(rawT) {
+  const C = KINEMATIC_CYCLE_DUR;
+  const t = ((rawT % C) + C) % C;
+  const eb = 'left_elbow_link';
+  const kn = 'left_knee_link';
+  const FADE = 0.45;
+  // Global fade-out in the last 0.6s of the cycle (so opacity reaches 0 before wrap)
+  let fadeOut = 1;
+  if (t > C - 0.6) fadeOut = Math.max(0, 1 - (t - (C - 0.6)) / 0.6);
+  // Step 1: left-elbow ring (t=0)
+  const u1 = clamp((t - 0.0) / FADE, 0, 1) * fadeOut;
+  const eRing = document.querySelector(`.svg-focus-ring[data-body="${eb}"]`);
+  if (eRing) eRing.style.opacity = u1;
+  // Step 2: left-elbow box + leader (t=1)
+  const u2 = clamp((t - 1.0) / FADE, 0, 1) * fadeOut;
+  const eLeader = document.querySelector(`.svg-leader[data-body="${eb}"]`);
+  if (eLeader) eLeader.style.opacity = u2;
+  if (u2 > 0.05) plates[eb].classList.add('visible'); else plates[eb].classList.remove('visible');
+  // Step 3: all OTHER joint rings (t=2)
+  const u3 = clamp((t - 2.0) / FADE, 0, 1) * fadeOut;
+  for (const bn of ENCODING_FOCUS_JOINTS) {
+    if (bn === eb) continue;
+    const r = document.querySelector(`.svg-focus-ring[data-body="${bn}"]`);
+    if (r) r.style.opacity = u3;
+  }
+  // Step 4: vertical "etc." dots (t=3)
+  const u4 = clamp((t - 3.0) / FADE, 0, 1) * fadeOut;
+  document.getElementById('enc-vertical-dots').style.opacity = u4;
+  // Step 5: left-knee box + leader (t=4)
+  const u5 = clamp((t - 4.0) / FADE, 0, 1) * fadeOut;
+  const kLeader = document.querySelector(`.svg-leader[data-body="${kn}"]`);
+  if (kLeader) kLeader.style.opacity = u5;
+  if (u5 > 0.05) plates[kn].classList.add('visible'); else plates[kn].classList.remove('visible');
+  // Step 6: enc rect (t=5..C-0.6, then fade out)
+  if (t > 5.0 && fadeOut > 0.3) setEncRectVisible(true);
+  else if (t < 4.5 || fadeOut < 0.2)  setEncRectVisible(false);
+}
+
 // ─── Continuous limb-beat tick (runs after stage 4 starts; loops forever) ──
 function tickGraphBeats(localT) {
   // One-shot fade-in of graph G1
