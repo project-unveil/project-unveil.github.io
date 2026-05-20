@@ -186,29 +186,6 @@
       }
     },
     {
-      "id": "tennis",
-      "label": "Playing Tennis",
-      "count": 820,
-      "g1CsvFile": "./g1_csv/tennis.csv",
-      "smplPredFile": "./smpl/tennis_predicted.bin",
-      "smplGtFile": "./smpl/tennis_gt.bin",
-      "smplFacesFile": "./smpl/faces.bin",
-      "numFrames": 150,
-      "fps": 11.583011627197266,
-      "predicted": {
-        "height": 175,
-        "weight": 67,
-        "age": 30,
-        "gender": "male"
-      },
-      "groundTruth": {
-        "height": 171,
-        "weight": 71,
-        "age": 27,
-        "gender": "male"
-      }
-    },
-    {
       "id": "pulling",
       "label": "Pulling",
       "count": 702,
