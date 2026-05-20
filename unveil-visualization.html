@@ -1662,14 +1662,15 @@ function updateGraphRect() {
     const encHeight = parseFloat(encR.getAttribute('height'));
     if (isFinite(encTop))    y = encTop;
     if (isFinite(encHeight)) h = encHeight;     // SAME height as 3.1
-    // Gap between 3.1 and 3.2 = enc-output label width — but YIELD if the
-    // clamp would clip the graph robot (keep robot inside rect first).
+    // STRICT gap between 3.1 and 3.2 = enc-output label width. This gap is
+    // always preserved so the arrow + "Joint Features" textbox always have a
+    // clean strip to live in. (3.2's left arm may briefly extend past the rect
+    // during extreme arm swings — accepted trade-off.)
     const encLeft  = parseFloat(encR.getAttribute('x'));
     const encWidth = parseFloat(encR.getAttribute('width'));
     if (isFinite(encLeft) && isFinite(encWidth)) {
       const minLeft = encLeft + encWidth + getEncOutputW();
-      const safeMnX = mnX - 12;
-      if (x < minLeft && minLeft <= safeMnX) x = minLeft;
+      if (x < minLeft) x = minLeft;
     }
   }
   let w = (mxX - mnX) + padX*2;
