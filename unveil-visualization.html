@@ -1768,6 +1768,7 @@ function restartWalkthrough() {
   for (const k of Object.keys(LIMBS)) setLimbEllipseVisible(k, false);
   clearConns();
   document.getElementById('beat-indicator').classList.remove('visible');
+  document.getElementById('beat-mode-tag').classList.remove('visible');
   graphAnimStart = -1;
   temporalAnimStart = -1;
   if (g1Aggregate) g1Aggregate.setOpacity(0);
