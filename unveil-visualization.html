@@ -1061,57 +1061,9 @@ function drawSpark(canvas, buf, color) {
   }
 }
 
-// ROM fan rendering — semicircle scaled by min/max joint angle
-function computeROM() {
-  for (const p of PICKED) {
-    if (p.feature !== 'rom') continue;
-    const jName = BODY_TO_JOINT[p.body];
-    const arr = g1Motion.joints[jName];
-    let mn = Infinity, mx = -Infinity;
-    for (const a of arr) { if (a<mn)mn=a; if (a>mx)mx=a; }
-    romCache[p.body] = { min: mn, max: mx };
-  }
-}
-function renderROMFans(fIdx) {
-  for (const p of PICKED) {
-    if (p.feature !== 'rom') continue;
-    const jName = BODY_TO_JOINT[p.body];
-    const arr = g1Motion.joints[jName];
-    const N = g1Motion.numFrames;
-    const fi = (((fIdx % N) + N) % N) | 0;
-    const cur = arr[fi];
-    const rom = romCache[p.body];
-    // Semicircle background: span -π/2 to +π/2 (full 180°)
-    // Width within fan: from -80 to +80 around center (80,42), radius 36
-    const cx = 80, cy = 42, R = 32;
-    // Background: 180° arc
-    const bg = document.getElementById('rom-bg-' + p.body);
-    bg.setAttribute('d', `M ${cx - R} ${cy} A ${R} ${R} 0 0 1 ${cx + R} ${cy}`);
-    // ROM arc: from angle mn to mx, scaled into 180°
-    function angleToCoord(a) {
-      // a in [-π, π]; map full range to [-π/2..+π/2] of the fan
-      // Use observed limb's natural range: [mn, mx] is mapped to [-π/2, +π/2]? No, we want full motion range to be visible.
-      // We'll show ROM as a SECTOR from mn to mx, on a fan that represents [-π, π] mapped to [-π/2 of view, +π/2 of view] (i.e., scale by 0.5).
-      const u = a * 0.5;     // map [-π,π] to [-π/2, π/2]
-      const x = cx + R * Math.cos(Math.PI + u);
-      const y = cy + R * Math.sin(Math.PI + u);
-      return [x, y];
-    }
-    const [x1, y1] = angleToCoord(rom.min);
-    const [x2, y2] = angleToCoord(rom.max);
-    const sweep = (rom.max - rom.min) * 0.5;
-    const largeArc = Math.abs(sweep) > Math.PI ? 1 : 0;
-    const arc = document.getElementById('rom-arc-' + p.body);
-    arc.setAttribute('d', `M ${x1.toFixed(1)} ${y1.toFixed(1)} A ${R} ${R} 0 ${largeArc} 1 ${x2.toFixed(1)} ${y2.toFixed(1)}`);
-    // Needle
-    const u = cur * 0.5;
-    const nx = cx + (R-2) * Math.cos(Math.PI + u);
-    const ny = cy + (R-2) * Math.sin(Math.PI + u);
-    const needle = document.getElementById('rom-needle-' + p.body);
-    needle.setAttribute('x1', cx); needle.setAttribute('y1', cy);
-    needle.setAttribute('x2', nx.toFixed(1)); needle.setAttribute('y2', ny.toFixed(1));
-  }
-}
+// (ROM removed — kinematic encoding now shows only velocity + acceleration)
+function computeROM() { /* no-op */ }
+function renderROMFans() { /* no-op */ }
 
 // ─── Limb ellipses + animated edges (SVG) ───────────────────────────────────
 function setupLimbEllipses() {
