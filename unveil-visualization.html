@@ -1675,15 +1675,13 @@ function updateGraphRect() {
   }
   let w = (mxX - mnX) + padX*2;
   if (mxX + padX < x + w) w = (mxX + padX) - x;
-  // Gap between 3.2 and 3.3 = graph-output label width — yield if it would
-  // clip the graph robot's right arm.
+  // STRICT gap between 3.2 and 3.3 = graph-output label width.
   const spatR = document.getElementById('spatial-rect');
   if (spatR && spatR.style.opacity != 0) {
     const sx = parseFloat(spatR.getAttribute('x'));
     if (isFinite(sx)) {
       const maxRight = sx - getGraphOutputW();
-      const safeMxX  = mxX + 12;
-      if (x + w > maxRight && maxRight >= safeMxX) w = Math.max(0, maxRight - x);
+      if (x + w > maxRight) w = Math.max(0, maxRight - x);
     }
   }
   r.setAttribute('x', x.toFixed(1));
