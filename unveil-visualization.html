@@ -1688,7 +1688,14 @@ function _positionRectOutput(labelId, arrowId, leftRectId, rightRectId, fallback
   const arrow = document.getElementById(arrowId);
   const lr = document.getElementById(leftRectId);
   const rr = document.getElementById(rightRectId);
-  if (!lr || lr.style.opacity == 0) return;
+  // If the label isn't visible (or its source rect isn't), park it off-screen
+  // so it can't flash at the default (0,0) corner before its stage begins.
+  if (!label.classList.contains('visible') || !lr || lr.style.opacity == 0) {
+    arrow.style.opacity = '0';
+    label.style.left = '-9999px';
+    label.style.top  = '-9999px';
+    return;
+  }
   const lx = parseFloat(lr.getAttribute('x'));
   const ly = parseFloat(lr.getAttribute('y'));
   const lw = parseFloat(lr.getAttribute('width'));
