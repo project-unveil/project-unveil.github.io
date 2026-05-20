@@ -879,7 +879,7 @@ function onResize() {
   const aspect = canvasW / canvasH;
   const frustumH = frustumW / aspect;
   camera.left = -frustumW/2; camera.right = frustumW/2;
-  camera.top = frustumH/2 + 0.4; camera.bottom = -frustumH/2 + 0.4;
+  camera.top = frustumH/2 - 0.7; camera.bottom = -frustumH/2 - 0.7;
   camera.updateProjectionMatrix();
   renderer.setSize(canvasW, canvasH);
   svgEl.setAttribute('viewBox', `0 0 ${canvasW} ${canvasH}`);
