@@ -1520,25 +1520,23 @@ function updateGraphRect() {
     const encHeight = parseFloat(encR.getAttribute('height'));
     if (isFinite(encTop))    y = encTop;
     if (isFinite(encHeight)) h = encHeight;     // SAME height as 3.1
-    // 1cm gap from 3.1 — but YIELDS if the clamp would clip the graph robot.
+    // STRICT 1cm gap from 3.1 — graph rect can never intersect enc rect.
     const encLeft  = parseFloat(encR.getAttribute('x'));
     const encWidth = parseFloat(encR.getAttribute('width'));
     if (isFinite(encLeft) && isFinite(encWidth)) {
       const minLeft = encLeft + encWidth + GAP_31_32_PX;
-      const safeMnX = mnX - 12;
-      if (x < minLeft && minLeft <= safeMnX) x = minLeft;
+      if (x < minLeft) x = minLeft;
     }
   }
   let w = (mxX - mnX) + padX*2;
   if (mxX + padX < x + w) w = (mxX + padX) - x;
-  // 1cm gap from 3.3 — but YIELDS if it would clip the graph robot.
+  // STRICT 1cm gap from 3.3 — graph rect can never intersect spatial rect.
   const spatR = document.getElementById('spatial-rect');
   if (spatR && spatR.style.opacity != 0) {
     const sx = parseFloat(spatR.getAttribute('x'));
     if (isFinite(sx)) {
       const maxRight = sx - GAP_31_32_PX;
-      const safeMxX  = mxX + 12;
-      if (x + w > maxRight && maxRight >= safeMxX) w = Math.max(0, maxRight - x);
+      if (x + w > maxRight) w = Math.max(0, maxRight - x);
     }
   }
   r.setAttribute('x', x.toFixed(1));
