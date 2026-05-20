@@ -112,11 +112,9 @@ html, body {
   z-index: 3;
   font-variant-numeric: tabular-nums;
 }
-/* SMPL row role chips sit at top of body-area; G1 row chips sit just below
-   the plot strip (top of the G1 viewport). Percentages match the #plots
-   `top: 36%; bottom: 39%` split. */
-.role.smpl { top: 8px;            z-index: 3; }
-.role.g1   { top: calc(61% + 4px); z-index: 3; }
+/* Only the SMPL row carries value chips now; the G1 row stays unlabelled
+   (heavy/light identity already flows down visually from the human above). */
+.role.smpl { top: 8px; z-index: 3; }
 .role.heavy { left: 8px;  background: #e63a4a; }
 .role.light { right: 8px; background: #2f7fc6; }
 #root.has-smpl .role.smpl { display: block; }
