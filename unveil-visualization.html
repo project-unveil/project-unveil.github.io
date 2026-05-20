@@ -1473,9 +1473,20 @@ function setSpatialRectVisible(on) {
 function updateSpatialRect() {
   const r = document.getElementById('spatial-rect');
   if (r.style.opacity == 0) return;
-  // Span: leftmost ghost x → spatial G1 right edge, top of aggregate icon → floor
-  const leftmostX = SLOT_X.spatial - g1Ghosts.length * GHOST_SPREAD;
-  const tl = worldToCanvasPx(leftmostX - 0.45, 2.45, 0);
+  // LEFT EDGE: dynamically follow the leftmost VISIBLE ghost; when no ghosts
+  // are visible (collapsed state), fall back to the aggregate G1 only.
+  let leftMostX = SLOT_X.spatial;
+  for (const g of g1Ghosts) {
+    if (g.robot.opacityRef.value > 0.05) {
+      const x = g.robot.object3D.position.x;
+      if (x < leftMostX) leftMostX = x;
+    }
+  }
+  // Include the Σ aggregate icon vertically when visible
+  const aggIcon = document.getElementById('aggregate-icon');
+  const aggOpacity = parseFloat(aggIcon.style.opacity) || (aggIcon.classList.contains('visible') ? 1 : 0);
+  const topY = aggOpacity > 0.05 ? 2.45 : 2.0;
+  const tl = worldToCanvasPx(leftMostX - 0.42, topY, 0);
   const br = worldToCanvasPx(SLOT_X.spatial + 0.55, -0.05, 0);
   let x = tl.x, y = tl.y, w = br.x - tl.x, h = br.y - tl.y;
   // Align TOP edge with kinematic rect (if visible) so all three rects line up
