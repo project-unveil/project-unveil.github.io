@@ -2147,6 +2147,7 @@ function loop(ts) {
   updateSpatialRect();
   positionAggregateIcon();    // AFTER spatial rect so it can clamp inside it
   positionBeatModeTag();
+  positionEmbeddingStrip();   // AFTER enc rect so it mirrors its y/height
   if (graphAnimStart    >= 0) tickGraphBeats(masterClock - graphAnimStart);
   if (temporalAnimStart >= 0) tickTemporalAnim(masterClock - temporalAnimStart);
 
