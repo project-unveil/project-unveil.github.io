@@ -1231,11 +1231,13 @@ function updateEncRect() {
 
 // ─── Slot labels positioning (BELOW the figures, anchored at floor level) ──
 function positionSlotLabels() {
-  const ph = worldToCanvasPx(SLOT_X.human, -0.05, 0);
-  const pr = worldToCanvasPx(SLOT_X.robot, -0.05, 0);
+  const ph = worldToCanvasPx(SLOT_X.human,   -0.05, 0);
+  const pr = worldToCanvasPx(SLOT_X.robot,   -0.05, 0);
+  const pg = worldToCanvasPx(SLOT_X.graph,   -0.05, 0);
   const ps = worldToCanvasPx(SLOT_X.spatial, -0.05, 0);
   document.getElementById('lbl-human').style.cssText   += `;left:${ph.x}px;top:${ph.y+10}px;`;
   document.getElementById('lbl-robot').style.cssText   += `;left:${pr.x}px;top:${pr.y+10}px;`;
+  document.getElementById('lbl-graph').style.cssText   += `;left:${pg.x}px;top:${pg.y+10}px;`;
   document.getElementById('lbl-spatial').style.cssText += `;left:${ps.x}px;top:${ps.y+10}px;`;
 }
 
