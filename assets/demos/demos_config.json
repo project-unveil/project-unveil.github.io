@@ -232,6 +232,29 @@
       }
     },
     {
+      "id": "hiphop",
+      "label": "Hip-Hop Dance",
+      "count": 540,
+      "g1CsvFile": "./g1_csv/hiphop.csv",
+      "smplPredFile": "./smpl/hiphop_predicted.bin",
+      "smplGtFile": "./smpl/hiphop_gt.bin",
+      "smplFacesFile": "./smpl/faces.bin",
+      "numFrames": 150,
+      "fps": 26.62721824645996,
+      "predicted": {
+        "height": 172,
+        "weight": 72,
+        "age": 25,
+        "gender": "male"
+      },
+      "groundTruth": {
+        "height": 175,
+        "weight": 76,
+        "age": 22,
+        "gender": "male"
+      }
+    },
+    {
       "id": "throwing",
       "label": "Throwing",
       "count": 316,
