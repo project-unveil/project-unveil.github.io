@@ -2116,6 +2116,7 @@ function restartWalkthrough() {
 // ─── Activity dropdown / demo switch ────────────────────────────────────────
 function buildActivityDropdown() {
   const sel = document.getElementById('activity-dropdown');
+  if (!sel) return;     // dropdown removed from HTML — nothing to build
   sel.innerHTML = '';
   for (const d of demosConfig.demos) {
     const o = document.createElement('option');
