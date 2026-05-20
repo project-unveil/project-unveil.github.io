@@ -1839,16 +1839,44 @@ function positionSpatialEmbedArrow() {
 function positionAttributesCard() {
   const card = document.getElementById('attributes-card');
   const sr = document.getElementById('spatial-rect');
-  const p = worldToCanvasPx(SLOT_X_ATTRIBUTES, 1.0, 0);
-  // Vertically: align to spatial rect center (matches embedding strip vertically)
-  let cy = p.y;
+  const cardW = card.offsetWidth || 124;
+  // x: ALWAYS RIGHT_GAP_PX after embedding strip's right edge
+  const es = document.getElementById('embedding-strip');
+  let cx;
+  if (es && es.classList.contains('visible')) {
+    const esRight = es.offsetLeft + es.offsetWidth;
+    cx = esRight + RIGHT_GAP_PX + cardW / 2;
+  }
+  if (!isFinite(cx)) cx = worldToCanvasPx(SLOT_X_ATTRIBUTES, 1.0, 0).x;
+  // y: align to spatial rect center
+  let cy = worldToCanvasPx(SLOT_X_ATTRIBUTES, 1.0, 0).y;
   if (sr && sr.style.opacity != 0) {
     const sy = parseFloat(sr.getAttribute('y'));
     const sh = parseFloat(sr.getAttribute('height'));
     if (isFinite(sy) && isFinite(sh)) cy = sy + sh / 2;
   }
-  card.style.left = p.x.toFixed(1) + 'px';
+  card.style.left = cx.toFixed(1) + 'px';
   card.style.top  = cy.toFixed(1) + 'px';
+}
+// ─── Dynamic human position — RIGHT_GAP_PX after attributes card ────────
+function positionHumanMesh() {
+  if (!smplGroup) return;
+  const card = document.getElementById('attributes-card');
+  if (!card.classList.contains('visible')) {
+    smplGroup.object3D.position.x = SLOT_X.human;
+    return;
+  }
+  const cardW = card.offsetWidth || 124;
+  const cx    = parseFloat(card.style.left);
+  if (!isFinite(cx)) return;
+  const cardRight = cx + cardW / 2;
+  const targetMeshLeftScreen = cardRight + RIGHT_GAP_PX;
+  // Convert that screen X back to world X using current canvas + frustum
+  const cw = canvas.clientWidth || canvas.width;
+  const fw = 13.5;
+  const meshLeftWorld = (targetMeshLeftScreen / cw) * fw - fw/2;
+  // SMPL mesh half-width ≈ 0.30 world (shoulder-to-center). Pos = left + half.
+  smplGroup.object3D.position.x = meshLeftWorld + 0.30;
 }
 function populateAttributesCard() {
   if (!currentDemo) return;
