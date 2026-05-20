@@ -1820,10 +1820,78 @@ function positionSpatialEmbedArrow() {
   if (!isFinite(srX) || !isFinite(srW) || !isFinite(srY) || !isFinite(srH)) return;
   const startX = srX + srW + 8;
   const endX   = es.offsetLeft - 8;
-  const y      = srY + srH * 0.40;     // chest height of the rect
+  const y      = srY + srH * 0.40;
   arrow.setAttribute('x1', startX.toFixed(1));
   arrow.setAttribute('y1', y.toFixed(1));
   arrow.setAttribute('x2', endX.toFixed(1));
+  arrow.setAttribute('y2', y.toFixed(1));
+}
+
+// ─── Attributes card — position + populate ──────────────────────────────
+function positionAttributesCard() {
+  const card = document.getElementById('attributes-card');
+  const sr = document.getElementById('spatial-rect');
+  const p = worldToCanvasPx(SLOT_X_ATTRIBUTES, 1.0, 0);
+  // Vertically: align to spatial rect center (matches embedding strip vertically)
+  let cy = p.y;
+  if (sr && sr.style.opacity != 0) {
+    const sy = parseFloat(sr.getAttribute('y'));
+    const sh = parseFloat(sr.getAttribute('height'));
+    if (isFinite(sy) && isFinite(sh)) cy = sy + sh / 2;
+  }
+  card.style.left = p.x.toFixed(1) + 'px';
+  card.style.top  = cy.toFixed(1) + 'px';
+}
+function populateAttributesCard() {
+  if (!currentDemo) return;
+  const gt = currentDemo.groundTruth;
+  document.getElementById('ac-gender').textContent = capitalize(gt.gender);
+  document.getElementById('ac-age').textContent    = `${gt.age} yr`;
+  document.getElementById('ac-height').textContent = `${gt.height} cm`;
+  document.getElementById('ac-weight').textContent = `${gt.weight} kg`;
+}
+
+// ─── embedding → attributes arrow ────────────────────────────────────────
+function positionEmbedAttrArrow() {
+  const arrow = document.getElementById('embed-attr-arrow');
+  const es = document.getElementById('embedding-strip');
+  const card = document.getElementById('attributes-card');
+  const show = es && es.classList.contains('visible')
+            && card && card.classList.contains('visible');
+  arrow.style.opacity = show ? '0.95' : '0';
+  if (!show) return;
+  const esRight = es.offsetLeft + es.offsetWidth;
+  const cardW   = card.offsetWidth || 180;
+  const cardLeft = parseFloat(card.style.left) - cardW / 2;
+  const y       = parseFloat(card.style.top);
+  arrow.setAttribute('x1', (esRight + 8).toFixed(1));
+  arrow.setAttribute('y1', y.toFixed(1));
+  arrow.setAttribute('x2', (cardLeft - 8).toFixed(1));
+  arrow.setAttribute('y2', y.toFixed(1));
+}
+
+// ─── attributes → human arrow ────────────────────────────────────────────
+function positionAttrHumanArrow() {
+  const arrow = document.getElementById('attr-human-arrow');
+  const card = document.getElementById('attributes-card');
+  const show = card && card.classList.contains('visible')
+            && smplGroup && smplGroup.mat.opacity > 0.05;
+  arrow.style.opacity = show ? '0.95' : '0';
+  if (!show) return;
+  const cardW = card.offsetWidth || 180;
+  const cardLeft = parseFloat(card.style.left) - cardW / 2;
+  const cardRight = cardLeft + cardW;
+  const y = parseFloat(card.style.top);
+  // Human's left edge from the human-rect (mesh-aware bounds)
+  const hr = document.getElementById('human-rect');
+  let humanLeft;
+  if (hr && hr.style.opacity != 0) {
+    humanLeft = parseFloat(hr.getAttribute('x'));
+  }
+  if (!isFinite(humanLeft)) humanLeft = worldToCanvasPx(SLOT_X.human - HUMAN_RECT_W/2, 1.0, 0).x;
+  arrow.setAttribute('x1', (cardRight + 8).toFixed(1));
+  arrow.setAttribute('y1', y.toFixed(1));
+  arrow.setAttribute('x2', (humanLeft - 8).toFixed(1));
   arrow.setAttribute('y2', y.toFixed(1));
 }
 // Helpers to expose each output label's width (used by rect-gap clamps)
