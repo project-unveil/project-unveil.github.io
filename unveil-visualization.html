@@ -867,7 +867,7 @@ async function buildG1Robot({opacityRef={value:1.0, materials:[]}}={}) {
   robotWorld.rotation.x = -Math.PI/2;
   yaw.add(robotWorld);
   const bodies = modelData.bodies;
-  const groupMap = {}, bodyGroups = {};
+  const groupMap = {}, bodyGroups = {}, bodyMeshes = {};
   for (const b of bodies) {
     const outer = new THREE.Group();
     outer.position.set(...b.pos);
