@@ -2160,12 +2160,30 @@ function defineStages() {
       update(){},
     },
     // 6: Attribute embedding strip
-    { name:'embedding', duration: 1.0,
+    { name:'embedding', duration: 1.4,
       enter() {
         setCaption('Trajectory embedding Z ∈ ℝ²⁵⁶ — Attribute Embedding §3.4', '§3.4');
       },
       update(t) {
         if (t > 0.25) show('embedding-strip');
+      },
+    },
+    // 7: Recovered operator attributes card
+    { name:'attributes', duration: 1.2,
+      enter() {
+        populateAttributesCard();
+        show('attributes-card');
+      },
+      update(){},
+    },
+    // 8: Human mesh appears (the recovered operator)
+    { name:'human-reveal', duration: 1.0,
+      enter() {
+        show('lbl-human');
+        setHumanRectVisible(true);
+      },
+      update(t) {
+        smplGroup.setOpacity(clamp(t / 0.9, 0, 1));
       },
     },
   ];
