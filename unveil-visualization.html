@@ -1211,7 +1211,7 @@ function setEncRectVisible(on) {
 function updateEncRect() {
   const r = document.getElementById('enc-rect');
   if (r.style.opacity == 0) return;
-  // Bounding box wraps ONLY the G1 silhouette (not the plates, not the human)
+  // Bounding box covers G1 silhouette + the combined plates (not the human)
   let mnX=Infinity, mnY=Infinity, mxX=-Infinity, mxY=-Infinity;
   for (const b of modelData.bodies) {
     const p = jointScreen(b.name);
@@ -1219,7 +1219,18 @@ function updateEncRect() {
     if (p.x<mnX)mnX=p.x; if (p.x>mxX)mxX=p.x;
     if (p.y<mnY)mnY=p.y; if (p.y>mxY)mxY=p.y;
   }
-  const padX = 30, padY = 32;
+  for (const J of PICKED_JOINTS) {
+    const plate = plates[J.body];
+    if (!plate) continue;
+    const left = parseFloat(plate.style.left);
+    const top  = parseFloat(plate.style.top);
+    if (!isFinite(left) || !isFinite(top)) continue;
+    const x0 = left - PLATE_HALF_W, y0 = top - PLATE_HALF_H;
+    const x1 = left + PLATE_HALF_W, y1 = top + PLATE_HALF_H;
+    if (x0<mnX)mnX=x0; if (x1>mxX)mxX=x1;
+    if (y0<mnY)mnY=y0; if (y1>mxY)mxY=y1;
+  }
+  const padX = 22, padY = 28;
   const x = mnX - padX, y = mnY - padY;
   const w = (mxX - mnX) + padX*2;
   const h = (mxY - mnY) + padY*2;
