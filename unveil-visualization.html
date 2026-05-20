@@ -1987,9 +1987,9 @@ function tickGraphBeats(localT) {
     const idx = clamp(Math.floor(t2 / INTER_BEAT_DUR), 0, INTER_BEATS.length - 1);
     const within = (t2 - idx * INTER_BEAT_DUR) / INTER_BEAT_DUR;
     const beat = INTER_BEATS[idx];
-    const intensity = Math.sin(within * Math.PI) * 0.95;
+    // Sudden on/off — full color while the beat is active
     resetGraphTints();
-    for (const l of beat.limbs) tintGraphLimb(l, intensity);
+    for (const l of beat.limbs) tintGraphLimb(l, 1.0);
     if (within < 0.03 && (!activeConns.length || activeConns[0]._beatIdx !== idx || activeConns[0]._mode !== 'inter')) {
       setConns(beat.conns, beat.color);
       for (const c of activeConns) { c._beatIdx = idx; c._mode = 'inter'; }
