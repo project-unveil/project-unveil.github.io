@@ -2345,6 +2345,7 @@ function loop(ts) {
   positionEmbeddingStrip();   // AFTER enc rect so it mirrors its y/height
   positionEncOutput();        // AFTER enc rect so text glues to its right edge
   positionGraphOutput();      // AFTER graph rect so text glues to its right edge
+  positionSpatialEmbedArrow();// AFTER spatial rect + embedding strip
   if (kinematicAnimStart >= 0) tickKinematicAnim(masterClock - kinematicAnimStart);
   if (graphAnimStart     >= 0) {
     const gt = masterClock - graphAnimStart;
