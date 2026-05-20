@@ -1314,7 +1314,6 @@ function setGraphRectVisible(on) {
 function updateGraphRect() {
   const r = document.getElementById('graph-rect');
   if (r.style.opacity == 0) return;
-  // Bounding box wraps graph G1 silhouette + beat indicator area inside
   let mnX=Infinity, mnY=Infinity, mxX=-Infinity, mxY=-Infinity;
   for (const b of modelData.bodies) {
     const p = jointScreenGraph(b.name);
@@ -1322,7 +1321,6 @@ function updateGraphRect() {
     if (p.x<mnX)mnX=p.x; if (p.x>mxX)mxX=p.x;
     if (p.y<mnY)mnY=p.y; if (p.y>mxY)mxY=p.y;
   }
-  // Beat indicator floats below G1 — include its area in the rect
   const bi = document.getElementById('beat-indicator');
   if (bi && bi.classList.contains('visible')) {
     const biLeft = parseFloat(bi.style.left);
@@ -1335,13 +1333,21 @@ function updateGraphRect() {
     }
   }
   const padX = 28, padY = 28;
-  const x = mnX - padX, y = mnY - padY;
+  const x = mnX - padX;
+  const bottomY = mxY + padY;
+  // Align TOP edge with kinematic encoding rect (when visible)
+  let y = mnY - padY;
+  const encR = document.getElementById('enc-rect');
+  if (encR && encR.style.opacity != 0) {
+    const encTop = parseFloat(encR.getAttribute('y'));
+    if (isFinite(encTop)) y = encTop;
+  }
   const w = (mxX - mnX) + padX*2;
-  const h = (mxY - mnY) + padY*2;
+  const h = Math.max(0, bottomY - y);
   r.setAttribute('x', x.toFixed(1));
   r.setAttribute('y', y.toFixed(1));
   r.setAttribute('width', Math.max(0, w).toFixed(1));
-  r.setAttribute('height', Math.max(0, h).toFixed(1));
+  r.setAttribute('height', h.toFixed(1));
   const label = document.getElementById('graph-label');
   label.style.left = (x + w/2).toFixed(1) + 'px';
   label.style.top  = (y - 6).toFixed(1) + 'px';
