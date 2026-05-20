@@ -1702,6 +1702,8 @@ function loop(ts) {
   positionSlotLabels();
   positionAggregateIcon();
   positionBeatIndicator();
+  positionRetargetArrow();
+  updateGraphRect();
 
   if (stageIdx >= 0 && stageIdx < stages.length) {
     const t = masterClock - stageStart;
