@@ -1885,11 +1885,13 @@ function loop(ts) {
     }
   }
   } catch (err) {
-    // Don't let one frame's exception break the renderer; the canvas would
-    // otherwise be left at WebGL's default (black) clear color.
-    if (!window.__loopErrShown) {
-      console.error('[unveil] loop tick error:', err);
-      window.__loopErrShown = true;
+    // Don't let one frame's exception break the renderer.
+    // Log distinct error messages so we can see all of them, but throttle to
+    // avoid console spam (3 distinct messages max).
+    window.__loopErrs = window.__loopErrs || new Set();
+    if (window.__loopErrs.size < 3 && !window.__loopErrs.has(err.message)) {
+      window.__loopErrs.add(err.message);
+      console.error('[unveil] loop tick error (stage ' + stageIdx + '):', err);
     }
   }
 
