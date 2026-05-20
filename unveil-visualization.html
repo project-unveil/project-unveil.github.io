@@ -1524,13 +1524,12 @@ function updateEncRect() {
   // Clamp the top so the rect's own label (above it) stays inside the canvas
   const MIN_RECT_TOP_Y = 50;
   if (y < MIN_RECT_TOP_Y) { h -= (MIN_RECT_TOP_Y - y); y = MIN_RECT_TOP_Y; }
-  // STRICT clamp: 3.1's left edge must JUST touch the right side of the
-  // textbox/arrow (and never extend past them into the human's area).
-  const labelRight = getRetargetLabelRightPx();
-  const arrowEnd   = getRetargetArrowEndPx();
-  if (isFinite(labelRight)) {
-    const minLeft = Math.max(labelRight + 6, arrowEnd.x + 6);
-    if (x < minLeft) { w -= (minLeft - x); x = minLeft; }
+  // Reversed pipeline — no retarget arrow on the left anymore.
+  // If the rect is locked, replace dynamic bounds with the saved max-bounds.
+  if (encRectLocked && encRectMaxBounds) {
+    ({ x, y, w, h } = encRectMaxBounds);
+  } else {
+    encRectMaxBounds = _accumulateMax(encRectMaxBounds, x, y, w, h);
   }
   r.setAttribute('x', x.toFixed(1));
   r.setAttribute('y', y.toFixed(1));
