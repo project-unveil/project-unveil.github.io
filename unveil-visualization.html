@@ -1974,7 +1974,8 @@ function tickGraphBeats(localT) {
   if (t < INTRA_DUR) {
     const idx = clamp(Math.floor(t / INTRA_BEAT_DUR), 0, limbOrder.length - 1);
     const within = (t - idx * INTRA_BEAT_DUR) / INTRA_BEAT_DUR;
-    const intensity = Math.sin(within * Math.PI) * 0.85;
+    // Strong tint — lerps the diffuse color most of the way to the limb color
+    const intensity = Math.sin(within * Math.PI) * 0.95;
     resetGraphTints();
     tintGraphLimb(limbOrder[idx], intensity);
     if (within < 0.03 && (!activeConns.length || activeConns[0]._beatIdx !== idx || activeConns[0]._mode !== 'intra')) {
