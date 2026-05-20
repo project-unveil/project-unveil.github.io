@@ -646,6 +646,8 @@ const GHOST_SPREAD = 0.42;   // world units between ghost figures (in x)
 const ARROW_END_OFFSET = 0.55;
 // Duration that the kinematic-encoding plates take to fade in (drives stage-3 length)
 const PLATE_FADE_DUR = 0.5;
+// One full graph-conv beat cycle (5 intra beats × 2.8s + 4 inter beats × 3.0s)
+const GRAPH_CYCLE_DUR = 5 * 2.8 + 4 * 3.0;   // 26s
 
 const LIMBS = {
   torso: { color: '#8e8e93', bodies: ['pelvis','waist_yaw_link','waist_roll_link','torso_link'] },
