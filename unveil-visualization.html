@@ -1305,15 +1305,13 @@ function setCaption(text, ref) {
 function setBadge(i, n) {
   document.getElementById('stage-badge').textContent = `Stage ${i} / ${n}`;
 }
-function setBeat(mode, text) {
+function setBeat(mode, limbsText) {
   const bi = document.getElementById('beat-indicator');
   bi.classList.remove('intra','inter');
   if (mode) bi.classList.add(mode);
-  document.getElementById('bi-mode').textContent = mode === 'intra' ? 'H₁ intra-limb' :
-                                                    mode === 'inter' ? 'H₂ inter-limb' : '—';
-  // Show: limb (or limb-pair) name · live joint-pair connections
-  const conn = connsText();
-  document.getElementById('bi-text').textContent = (text || '') + (conn !== '—' ? '  ·  ' + conn : '');
+  document.getElementById('bi-mode').textContent = mode === 'intra' ? 'Intra Limb' :
+                                                    mode === 'inter' ? 'Inter Limb' : '—';
+  document.getElementById('bi-limbs').textContent = limbsText || '';
 }
 
 // Position the beat-indicator dynamically below the graph G1
