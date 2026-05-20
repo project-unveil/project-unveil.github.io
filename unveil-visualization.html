@@ -1397,9 +1397,18 @@ function updateEncRect() {
 
 // ─── Slot labels positioning (BELOW the figures, anchored at floor level) ──
 function positionSlotLabels() {
-  const ph = worldToCanvasPx(SLOT_X.human, -0.05, 0);
+  // Anchor HUMAN OPERATOR label to the human-rect's actual center, so the
+  // label tracks the SMPL mesh (rather than the fixed slot position).
+  const floorPx = worldToCanvasPx(SLOT_X.human, -0.05, 0);
+  let cx = floorPx.x;
+  const hr = document.getElementById('human-rect');
+  if (hr && hr.style.opacity != 0) {
+    const hrX = parseFloat(hr.getAttribute('x'));
+    const hrW = parseFloat(hr.getAttribute('width'));
+    if (isFinite(hrX) && isFinite(hrW)) cx = hrX + hrW / 2;
+  }
   const lh = document.getElementById('lbl-human');
-  if (lh) lh.style.cssText += `;left:${ph.x}px;top:${ph.y+10}px;`;
+  if (lh) lh.style.cssText += `;left:${cx}px;top:${floorPx.y+10}px;`;
 }
 
 // Human-rect bounds (world coords) — drives both the border and the retarget arrow start
