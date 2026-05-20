@@ -212,8 +212,8 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
   flex: 1; height: 18px; display: block;
 }
 
-/* Kinematic encoding label (over the transparent box) */
-#enc-label, #graph-label {
+/* Module rect labels (top of each rect) */
+#enc-label, #graph-label, #spatial-label {
   position: absolute;
   transform: translate(-50%, -100%);
   background: #ffffff;
@@ -231,11 +231,13 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
   text-align: center;
   line-height: 1.25;
 }
-#graph-label { white-space: normal; max-width: 220px; }
-#enc-label   { border: 1px solid var(--enc-color);   color: var(--enc-color);   box-shadow: 0 4px 12px rgba(155,109,191,0.18); }
-#graph-label { border: 1px solid var(--graph-color); color: var(--graph-color); box-shadow: 0 4px 12px rgba(44,138,168,0.18); }
-#enc-label.visible, #graph-label.visible { opacity: 1; }
-#enc-label .ref, #graph-label .ref {
+#graph-label,
+#spatial-label { white-space: normal; max-width: 220px; }
+#enc-label     { border: 1px solid var(--enc-color);     color: var(--enc-color);     box-shadow: 0 4px 12px rgba(155,109,191,0.18); }
+#graph-label   { border: 1px solid var(--graph-color);   color: var(--graph-color);   box-shadow: 0 4px 12px rgba(44,138,168,0.18);  }
+#spatial-label { border: 1px solid var(--spatial-color); color: var(--spatial-color); box-shadow: 0 4px 12px rgba(212,146,52,0.18);  }
+#enc-label.visible, #graph-label.visible, #spatial-label.visible { opacity: 1; }
+#enc-label .ref, #graph-label .ref, #spatial-label .ref {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
   color: var(--muted);
