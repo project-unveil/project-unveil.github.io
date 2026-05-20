@@ -1437,8 +1437,10 @@ function getRetargetArrowEndPx() {
   return worldToCanvasPx(SLOT_X.robot - ARROW_END_OFFSET, 1.0, 0);
 }
 function positionRetargetArrow() {
-  // Step 1: compute the textbox position (clamped to stay outside human-rect
-  //         and inside the available gap before 3.1)
+  // Compute textbox horizontal position (clamped so its left edge stays
+  // right of the human boundary), then draw the arrow with the SAME width as
+  // the textbox, placed at the TOP of the canvas above all rects/figures so
+  // it doesn't compete horizontally with any rect.
   const hr = document.getElementById('human-rect');
   const hrX = parseFloat(hr.getAttribute('x'));
   const hrW = parseFloat(hr.getAttribute('width'));
@@ -1451,18 +1453,21 @@ function positionRetargetArrow() {
   let labelCenter = (hrRight + pr.x) / 2;
   const minCenter = hrRight + labelW/2 + 4;
   if (labelCenter < minCenter) labelCenter = minCenter;
-  label.style.left = labelCenter.toFixed(1) + 'px';
-  label.style.top  = ((fallback.y + pr.y)/2 - 6).toFixed(1) + 'px';
 
-  // Step 2: draw the arrow with EXACTLY the same horizontal span as the textbox
-  const arrowY = (fallback.y + pr.y) / 2 + 8;   // a few px below the textbox
+  // Fixed Y near the very top so the textbox/arrow live ABOVE the rects.
+  const LABEL_TOP = 34;   // bottom of label (because transform: translate(-50%, -100%))
+  const ARROW_Y   = 40;   // arrow line just below the label
+
+  label.style.left = labelCenter.toFixed(1) + 'px';
+  label.style.top  = LABEL_TOP.toFixed(1) + 'px';
+
   const ax1 = labelCenter - labelW/2 + 2;
   const ax2 = labelCenter + labelW/2 - 2;
   const arrow = document.getElementById('retarget-arrow');
   arrow.setAttribute('x1', ax1.toFixed(1));
-  arrow.setAttribute('y1', arrowY.toFixed(1));
+  arrow.setAttribute('y1', ARROW_Y.toFixed(1));
   arrow.setAttribute('x2', ax2.toFixed(1));
-  arrow.setAttribute('y2', arrowY.toFixed(1));
+  arrow.setAttribute('y2', ARROW_Y.toFixed(1));
 }
 // Compute the textbox's right edge in px (used by enc-rect / plate clamps)
 function getRetargetLabelRightPx() {
