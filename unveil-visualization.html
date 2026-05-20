@@ -1034,15 +1034,12 @@ function tickSparkBuffers(fIdx) {
 
 function renderPlateSparklines() {
   for (const J of PICKED_JOINTS) {
-    for (const p of J.plates) {
-      const el = plates[plateKey(J.body, p.id)];
-      if (!el) continue;
-      const canvas = el.querySelector('canvas');
-      if (!canvas) continue;
-      const def = PLATE_DEFS[p.id];
-      const key = def.feature === 'velocity' ? 'vel' : 'acc';
-      drawSpark(canvas, sparkBuffers[J.body][key], def.color);
-    }
+    const el = plates[J.body];
+    if (!el) continue;
+    const velCanvas = el.querySelector('canvas[data-feature="velocity"]');
+    const accCanvas = el.querySelector('canvas[data-feature="accel"]');
+    if (velCanvas) drawSpark(velCanvas, sparkBuffers[J.body].vel, PLATE_DEFS.vel.color);
+    if (accCanvas) drawSpark(accCanvas, sparkBuffers[J.body].acc, PLATE_DEFS.acc.color);
   }
 }
 function drawSpark(canvas, buf, color) {
