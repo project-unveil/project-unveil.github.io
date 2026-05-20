@@ -2097,26 +2097,17 @@ function defineStages() {
     // Animations that take longer (limb beats, ghost collapse) keep running
     // in continuous ticks (see tickGraphBeats / tickTemporalAnim).
 
-    // 1: Human (SMPL appears + boundary rect)
-    { name:'human', duration: 1.0,
-      enter() {
-        setCaption('A human operator performs hip-hop.', '§1');
-        show('lbl-human');
-        setHumanRectVisible(true);
-        smplGroup.setOpacity(1.0);
-      },
-      update(){}
-    },
-    // 2: G1 retargeting (G1 fades in + retargeting arrow appears)
+    // 1: 3.1 robot fades in (kinematic-encoding G1 at leftmost slot)
     { name:'robot', duration: 1.0,
       enter() {
-        setCaption('Motion retargeting projects the operator onto the G1 — body shape is discarded.', '§1 retargeting');
+        setCaption('Kinematic encoding G1.', '§3.1');
       },
       update(t) {
         g1Main.setOpacity(clamp(t / 0.9, 0, 1));
-        if (t > 0.3) setRetargetVisible(true);
       },
     },
+    // 2: (no-op buffer — kept so existing stage indices line up)
+    { name:'buffer', duration: 0.4, enter(){}, update(){} },
     // 3: Kinematic encoding — staged appearance kicked off; the actual
     //    animation runs in a continuous loop via tickKinematicAnim so it
     //    keeps replaying even after 3.2/3.3/3.4 have appeared.
