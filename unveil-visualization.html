@@ -786,12 +786,12 @@ const BIN_VERSION  = '2026-05-19a';
 const withV = u => u + (u.includes('?') ? '&' : '?') + 'v=' + BIN_VERSION;
 
 // Reversed pipeline layout: 3.1 → 3.2 → 3.3 → Embedding → Attributes → Human
-// 3.1 hugs the panel's left edge; everything else shifts left to free horizontal
-// space on the right side for the attributes card and human mesh.
-const SLOT_X = { robot: -6.0, graph: -2.8, spatial: 0.3, human: 4.4 };
+// 3.1 hugs the panel's left edge; 3.3 shifted right so 3.2 always has enough
+// width to contain the graph robot with the strict inter-rect gaps maintained.
+const SLOT_X = { robot: -6.0, graph: -2.8, spatial: 1.5, human: 5.0 };
 // HTML overlays positioned at fixed world x:
-const SLOT_X_EMBEDDING  = 1.70;
-const SLOT_X_ATTRIBUTES = 2.90;
+const SLOT_X_EMBEDDING  = 2.75;
+const SLOT_X_ATTRIBUTES = 3.85;
 const GHOST_SPREAD = 0.30;   // tighter so the ghost stack always fits in the spatial rect
 // World units the arrow's right end stays away from G1 root — sized so the G1's
 // extreme left swing during motion just touches the arrow tip (never crosses).
