@@ -902,6 +902,19 @@ let lastTS = null;
 let graphAnimStart = -1, temporalAnimStart = -1, kinematicAnimStart = -1;
 // Once 3.1's rect has appeared (end of first cycle), keep it visible forever.
 let encRectStuckVisible = false;
+// Rect-lock state: each rect resizes during its first cycle ("moving") then
+// locks to its accumulated max-bounds for the rest of the walkthrough.
+let encRectLocked = false,  encRectMaxBounds = null;
+let graphRectLocked = false, graphRectMaxBounds = null;
+let spatialRectLocked = false, spatialRectMaxBounds = null;
+function _accumulateMax(maxB, x, y, w, h) {
+  if (!maxB) return { x, y, w, h };
+  const r1 = maxB.x + maxB.w, r2 = x + w;
+  const b1 = maxB.y + maxB.h, b2 = y + h;
+  const nx = Math.min(maxB.x, x);
+  const ny = Math.min(maxB.y, y);
+  return { x: nx, y: ny, w: Math.max(r1, r2) - nx, h: Math.max(b1, b2) - ny };
+}
 
 // Sparkline buffers per picked joint
 const sparkBuffers = {};   // jointName → { vel: [], acc: [], pos: [] }
