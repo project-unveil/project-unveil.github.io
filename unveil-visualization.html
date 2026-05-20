@@ -894,6 +894,8 @@ async function buildG1Robot({opacityRef={value:1.0, materials:[]}}={}) {
         obj.position.set(...m.pos);
         obj.quaternion.set(mq[1], mq[2], mq[3], mq[0]);
         groupMap[b.name].inner.add(obj);
+        if (!bodyMeshes[b.name]) bodyMeshes[b.name] = [];
+        bodyMeshes[b.name].push(obj);
       }));
     }
   }
