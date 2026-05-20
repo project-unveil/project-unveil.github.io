@@ -1082,10 +1082,10 @@ function setupFocusRingsAndPlates() {
   defs.appendChild(marker);
   gFocus.appendChild(defs);
 
-  // Tiny dot on EVERY joint — visual signal that the encoding is applied per-joint
-  for (const b of modelData.bodies) {
+  // Tiny dot on a curated set of joints — one per limb segment + waist
+  for (const bn of ENCODING_FOCUS_JOINTS) {
     const ring = svg('circle', { class: 'svg-focus-ring', r: 3.5, cx: 0, cy: 0 });
-    ring.setAttribute('data-body', b.name);
+    ring.setAttribute('data-body', bn);
     gFocus.appendChild(ring);
   }
 
