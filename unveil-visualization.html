@@ -1839,12 +1839,9 @@ function positionSpatialEmbedArrow() {
   const srW = parseFloat(sr.getAttribute('width'));
   const srH = parseFloat(sr.getAttribute('height'));
   if (!isFinite(srX) || !isFinite(srW) || !isFinite(srY) || !isFinite(srH)) return;
-  // Stay strictly inside the 1cm strip — never touch either neighbor.
-  // Leave 8 px from the spatial rect's right border and 8 px from the
-  // embedding strip's left border so the arrow line never visually
-  // intersects either of them.
-  const startX = srX + srW + 8;
-  const endX   = es.offsetLeft - 8;
+  // 0.5cm strip — arrow with 3px insets on each side so it fits cleanly.
+  const startX = srX + srW + 3;
+  const endX   = es.offsetLeft - 3;
   const y      = srY + srH * 0.40;
   arrow.setAttribute('x1', startX.toFixed(1));
   arrow.setAttribute('y1', y.toFixed(1));
