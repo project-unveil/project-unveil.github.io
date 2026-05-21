@@ -1989,16 +1989,15 @@ function updateSpatialRect() {
   const padX = 15;   // tight padX — rect just covers extreme L/R joint extent
   let x = mnX - padX;
   let w = (mxX - mnX) + padX*2;
-  // 1cm gap from 3.2 — YIELDS if clamping would clip the leftmost ghost.
-  // (Ghosts inside the rect take priority over the gap with 3.2.)
+  // STRICT gap to 3.2 = graph-output label width. Robots in 3.3 are
+  // positioned so their natural extent fits to the right of this clamp.
   const graphR = document.getElementById('graph-rect');
   if (graphR && graphR.style.opacity != 0) {
     const gx = parseFloat(graphR.getAttribute('x'));
     const gw = parseFloat(graphR.getAttribute('width'));
     if (isFinite(gx) && isFinite(gw)) {
       const minLeft = gx + gw + getGraphOutputW();
-      const safeMnX = mnX - 12;        // 12 px mesh-extension buffer
-      if (x < minLeft && minLeft <= safeMnX) {
+      if (x < minLeft) {
         w -= (minLeft - x);
         x = minLeft;
       }
