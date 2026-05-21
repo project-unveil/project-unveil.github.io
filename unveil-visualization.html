@@ -1687,6 +1687,15 @@ function updateGraphRect() {
     // strict gap clamps) — keeps the rect narrow with no whitespace.
   }
   let w = (mxX - mnX) + padX*2;
+  // CAP rect width to the graph-label textbox width. The label hovers on top
+  // of the rect, so the rect can't be wider than its own header.
+  const lbl = document.getElementById('graph-label');
+  const lblW = lbl ? lbl.offsetWidth : 0;
+  if (lblW > 0 && w > lblW) {
+    const cx = x + w / 2;
+    w = lblW;
+    x = cx - w / 2;
+  }
   // Lock-after-cycle: freeze to accumulated max-bounds.
   if (graphRectLocked && graphRectMaxBounds) {
     ({ x, y, w, h } = graphRectMaxBounds);
