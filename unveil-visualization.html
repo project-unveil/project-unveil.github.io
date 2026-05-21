@@ -2207,7 +2207,7 @@ function defineStages() {
     { name:'temporal', duration: TEMPORAL_CYCLE_DUR,
       enter() {
         setCaption('Spatiotemporal aggregation — past frames collapse into one trajectory.', '§3.3');
-        setSpatialRectVisible(true);
+        // spatial-rect is hidden during the cycle; shown only AFTER cycle 1.
         for (const g of g1Ghosts) g.robot.object3D.position.x = g.baseX;
         temporalAnimStart = masterClock;
       },
