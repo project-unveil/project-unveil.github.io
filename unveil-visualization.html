@@ -1453,17 +1453,17 @@ function updateFocusRings() {
   }
 
   // 2) Position plates + leader arrows for PICKED joints
+  //    Plate X is anchored to the ROBOT's body center (fixed slot position),
+  //    not the picked joint. So when the elbow/knee swings sideways, the
+  //    plates stay close to the body instead of drifting outward.
+  const robotCenterX = worldToCanvasPx(SLOT_X.robot, 1.0, 0).x;
   for (const J of PICKED_JOINTS) {
     const js = jointScreen(J.body);
     if (!js) continue;
     const plate = plates[J.body];
     if (!plate) continue;
-    let px = js.x + J.dx;
-    const py = js.y + J.dy;
-    // Hard clamp: plate's left edge must clear the retarget label's right edge
-    const arrowEndX = getRetargetArrowEndPx().x;
-    const minPlateLeft = Math.max(arrowEndX + 14, getRetargetLabelRightPx() + 4);
-    if (px - PLATE_HALF_W < minPlateLeft) px = minPlateLeft + PLATE_HALF_W;
+    const px = robotCenterX + J.dx;     // fixed X relative to robot body
+    const py = js.y + J.dy;             // Y still tracks elbow / knee height
     plate.style.left = px.toFixed(1) + 'px';
     plate.style.top  = py.toFixed(1) + 'px';
 
