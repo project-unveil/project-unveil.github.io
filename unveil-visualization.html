@@ -1928,7 +1928,7 @@ function positionAttrHumanArrow() {
   // Human-rect removed — anchor arrow end to the SMPL mesh's left edge
   // (approx SLOT_X.human − 0.40 world, accounting for shoulder spread).
   const humanLeft = worldToCanvasPx(SLOT_X.human - 0.40, 1.0, 0).x;
-  arrow.setAttribute('x1', (cardRight + 8).toFixed(1));
+  arrow.setAttribute('x1', (cardRight + 3).toFixed(1));
   arrow.setAttribute('y1', y.toFixed(1));
   arrow.setAttribute('x2', (humanLeft - 8).toFixed(1));
   arrow.setAttribute('y2', y.toFixed(1));
