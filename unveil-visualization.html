@@ -1512,8 +1512,8 @@ function updateFocusRings() {
 
 // ─── Kinematic encoding rectangle ───────────────────────────────────────────
 function setEncRectVisible(on) {
-  const r = document.getElementById('enc-rect');
-  r.style.opacity = on ? 0.85 : 0;
+  // Dashed rect removed — keep the label-only behavior.
+  document.getElementById('enc-rect').style.opacity = 0;
   if (on) show('enc-label'); else hide('enc-label');
 }
 function updateEncRect() {
