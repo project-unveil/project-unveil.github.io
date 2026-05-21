@@ -2191,7 +2191,7 @@ function defineStages() {
     { name:'graph', duration: GRAPH_CYCLE_DUR,
       enter() {
         setCaption('Hierarchical spatial graph convolution — joints interact within and across limbs.', '§3.2');
-        setGraphRectVisible(true);
+        // graph-rect is hidden during the cycle; shown only AFTER cycle 1 completes.
         document.getElementById('beat-indicator').classList.add('visible');
         document.getElementById('beat-mode-tag').classList.add('visible');
         // graph-output is shown later, after one full beat cycle completes
