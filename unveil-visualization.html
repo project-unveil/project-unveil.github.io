@@ -2626,6 +2626,9 @@ async function boot() {
   smplGroup = buildSMPL(vd, faces);
   smplGroup.object3D.position.set(SLOT_X.human, 0, 0);
   scene.add(smplGroup.object3D);
+  // Apply one representative frame ONCE — the human is shown as a static
+  // snapshot for the rest of the walkthrough.
+  smplGroup.applyFrame(Math.floor(vd.numFrames * 0.40));
 
   setStatus('Building G1 robot (meshes)…');
   g1Main = await buildG1Robot();
