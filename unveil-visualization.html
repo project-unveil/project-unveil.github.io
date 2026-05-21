@@ -2263,15 +2263,24 @@ function tickKinematicAnim(rawT) {
   // Global fade-out in the last 0.6s of the cycle (so opacity reaches 0 before wrap)
   let fadeOut = 1;
   if (t > C - 0.6) fadeOut = Math.max(0, 1 - (t - (C - 0.6)) / 0.6);
+  // Robot's root has moved LEFT from frame-0 baseline? (Plates show only then.)
+  let movingLeft = false;
+  if (g1Motion && g1Motion.rootPos) {
+    const fi = Math.floor((masterClock * g1Motion.fps) % g1Motion.numFrames);
+    const rootX0  = g1Motion.rootPos[0];
+    const rootXNow = g1Motion.rootPos[fi*3];
+    movingLeft = rootXNow < rootX0 - 0.01;     // small dead-band against jitter
+  }
   // Step 1: left-elbow ring (t=0)
   const u1 = clamp((t - 0.0) / FADE, 0, 1) * fadeOut;
   const eRing = document.querySelector(`.svg-focus-ring[data-body="${eb}"]`);
   if (eRing) eRing.style.opacity = u1;
-  // Step 2: left-elbow box + leader (t=1)
+  // Step 2: left-elbow box + leader — show only when robot has moved LEFT
   const u2 = clamp((t - 1.0) / FADE, 0, 1) * fadeOut;
   const eLeader = document.querySelector(`.svg-leader[data-body="${eb}"]`);
-  if (eLeader) eLeader.style.opacity = u2;
-  if (u2 > 0.05) plates[eb].classList.add('visible'); else plates[eb].classList.remove('visible');
+  const showElbow = u2 > 0.05 && movingLeft;
+  if (eLeader) eLeader.style.opacity = showElbow ? u2 : 0;
+  if (showElbow) plates[eb].classList.add('visible'); else plates[eb].classList.remove('visible');
   // Step 3: all OTHER joint rings (t=2)
   const u3 = clamp((t - 2.0) / FADE, 0, 1) * fadeOut;
   for (const bn of ENCODING_FOCUS_JOINTS) {
@@ -2282,11 +2291,12 @@ function tickKinematicAnim(rawT) {
   // Step 4: vertical "etc." dots (t=3)
   const u4 = clamp((t - 3.0) / FADE, 0, 1) * fadeOut;
   document.getElementById('enc-vertical-dots').style.opacity = u4;
-  // Step 5: left-knee box + leader (t=4)
+  // Step 5: left-knee box + leader — same condition
   const u5 = clamp((t - 4.0) / FADE, 0, 1) * fadeOut;
   const kLeader = document.querySelector(`.svg-leader[data-body="${kn}"]`);
-  if (kLeader) kLeader.style.opacity = u5;
-  if (u5 > 0.05) plates[kn].classList.add('visible'); else plates[kn].classList.remove('visible');
+  const showKnee = u5 > 0.05 && movingLeft;
+  if (kLeader) kLeader.style.opacity = showKnee ? u5 : 0;
+  if (showKnee) plates[kn].classList.add('visible'); else plates[kn].classList.remove('visible');
   // Step 6: enc rect — once it has appeared at the end of the first cycle,
   // keep it visible forever (don't vanish each loop).
   if (t > 5.0 && fadeOut > 0.3) {
