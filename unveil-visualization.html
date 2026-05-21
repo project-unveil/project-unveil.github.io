@@ -421,11 +421,11 @@ canvas#three-canvas { width: 100% !important; height: 100% !important; }
    sits between 3.3 and the attributes card in the reversed pipeline. */
 #embedding-strip {
   position: absolute;
-  width: 96px;
+  width: 64px;            /* tightened — was 96 — so visible gap matches the 0.5cm structural gap */
   background: #ffffff;
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 10px 12px;
+  border-radius: 10px;
+  padding: 10px 6px 10px;
   box-shadow: 0 12px 32px rgba(33,52,100,0.14);
   opacity: 0;
   transition: opacity 0.6s ease, transform 0.6s ease;
