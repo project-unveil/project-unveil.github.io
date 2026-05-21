@@ -1860,19 +1860,25 @@ function positionSpatialEmbedArrow() {
   arrow.setAttribute('stroke-dashoffset', off.toFixed(2));
 }
 
-// ─── Attributes card — FIXED at SLOT_X_ATTRIBUTES world coord ───────────
+// ─── Attributes card — x chained 0.5 cm after embedding strip's right edge
 function positionAttributesCard() {
   const card = document.getElementById('attributes-card');
-  const p = worldToCanvasPx(SLOT_X_ATTRIBUTES, 1.0, 0);
-  // y: align to spatial rect center (matches embedding strip's vertical pos)
+  const cardW = card.offsetWidth || 124;
+  const es = document.getElementById('embedding-strip');
+  let cx;
+  if (es && es.classList.contains('visible')) {
+    cx = es.offsetLeft + es.offsetWidth + RIGHT_GAP_PX + cardW / 2;
+  }
+  if (!isFinite(cx)) cx = worldToCanvasPx(SLOT_X_ATTRIBUTES, 1.0, 0).x;
+  // y: align to spatial rect center
   const sr = document.getElementById('spatial-rect');
-  let cy = p.y;
+  let cy = worldToCanvasPx(SLOT_X_ATTRIBUTES, 1.0, 0).y;
   if (sr && sr.style.opacity != 0) {
     const sy = parseFloat(sr.getAttribute('y'));
     const sh = parseFloat(sr.getAttribute('height'));
     if (isFinite(sy) && isFinite(sh)) cy = sy + sh / 2;
   }
-  card.style.left = p.x.toFixed(1) + 'px';
+  card.style.left = cx.toFixed(1) + 'px';
   card.style.top  = cy.toFixed(1) + 'px';
 }
 // Human stays at fixed SLOT_X.human throughout the walkthrough — no dynamic
