@@ -801,7 +801,7 @@ const withV = u => u + (u.includes('?') ? '&' : '?') + 'v=' + BIN_VERSION;
 // 3.1, 3.2, 3.3 chosen so each robot fits inside its rect AFTER the strict
 // inter-rect gaps (= output-textbox widths). The right side (embedding,
 // attributes, human) is compressed to give 3.1↔3.3 enough room.
-const SLOT_X = { robot: -6.05, graph: -2.5, spatial: 1.55, human: 4.85 };
+const SLOT_X = { robot: -6.05, graph: -2.5, spatial: 1.55, human: 6.35 };
 const SLOT_X_EMBEDDING  = 2.75;     // fallback only; actual pos chained to 3.3 right
 const SLOT_X_ATTRIBUTES = 3.85;     // fallback only; actual pos chained to embedding
 const RIGHT_GAP_PX = 19;     // 0.5 cm at 96 dpi
