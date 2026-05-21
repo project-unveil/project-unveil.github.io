@@ -2281,40 +2281,20 @@ function resetGraphTints() {
 // Same 6 steps as the staged appearance, then a brief hold and a smooth
 // fade-out so the cycle restarts without flicker.
 function tickKinematicAnim(rawT) {
-  const C = KINEMATIC_CYCLE_DUR;
-  const t = ((rawT % C) + C) % C;
-  const eb = 'left_elbow_link';
-  const kn = 'left_knee_link';
-  const FADE = 0.45;
-  // Global fade-out in the last 0.6s of the cycle (so opacity reaches 0 before wrap)
-  let fadeOut = 1;
-  if (t > C - 0.6) fadeOut = Math.max(0, 1 - (t - (C - 0.6)) / 0.6);
-  // Step 1: left-elbow ring (t=0)
-  const u1 = clamp((t - 0.0) / FADE, 0, 1) * fadeOut;
-  const eRing = document.querySelector(`.svg-focus-ring[data-body="${eb}"]`);
-  if (eRing) eRing.style.opacity = u1;
-  // Step 2: left-elbow box + leader
-  const u2 = clamp((t - 1.0) / FADE, 0, 1) * fadeOut;
-  const eLeader = document.querySelector(`.svg-leader[data-body="${eb}"]`);
-  if (eLeader) eLeader.style.opacity = u2;
-  if (u2 > 0.05) plates[eb].classList.add('visible'); else plates[eb].classList.remove('visible');
-  // Step 3: all OTHER joint rings (t=2)
-  const u3 = clamp((t - 2.0) / FADE, 0, 1) * fadeOut;
+  // 3.1 simplified: only the robot animates. Hide every overlay (rings,
+  // leaders, plates, vertical dots, plate visibility). The kinematic-cycle
+  // duration still serves as the lock trigger for the (invisible) rect.
   for (const bn of ENCODING_FOCUS_JOINTS) {
-    if (bn === eb) continue;
     const r = document.querySelector(`.svg-focus-ring[data-body="${bn}"]`);
-    if (r) r.style.opacity = u3;
+    if (r) r.style.opacity = 0;
   }
-  // Step 4: vertical "etc." dots (t=3)
-  const u4 = clamp((t - 3.0) / FADE, 0, 1) * fadeOut;
-  document.getElementById('enc-vertical-dots').style.opacity = u4;
-  // Step 5: left-knee box + leader
-  const u5 = clamp((t - 4.0) / FADE, 0, 1) * fadeOut;
-  const kLeader = document.querySelector(`.svg-leader[data-body="${kn}"]`);
-  if (kLeader) kLeader.style.opacity = u5;
-  if (u5 > 0.05) plates[kn].classList.add('visible'); else plates[kn].classList.remove('visible');
-  // Enc-rect visibility is driven by the main loop's lock-after-cycle trigger.
-  // Step 6 here intentionally does nothing.
+  for (const J of PICKED_JOINTS) {
+    const l = document.querySelector(`.svg-leader[data-body="${J.body}"]`);
+    if (l) l.style.opacity = 0;
+    if (plates[J.body]) plates[J.body].classList.remove('visible');
+  }
+  const dots = document.getElementById('enc-vertical-dots');
+  if (dots) dots.style.opacity = 0;
 }
 
 // ─── Continuous limb-beat tick (runs after stage 4 starts; loops forever) ──
