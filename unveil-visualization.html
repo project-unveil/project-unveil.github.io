@@ -1453,17 +1453,23 @@ function updateFocusRings() {
   }
 
   // 2) Position plates + leader arrows for PICKED joints
-  //    Plate X is anchored to the ROBOT's body center (fixed slot position),
-  //    not the picked joint. So when the elbow/knee swings sideways, the
-  //    plates stay close to the body instead of drifting outward.
-  const robotCenterX = worldToCanvasPx(SLOT_X.robot, 1.0, 0).x;
+  //    Plates sit just OUTSIDE the robot's current silhouette on the right
+  //    side, recomputed each frame so they stay close to the body without
+  //    ever overlapping it.
+  let bodyRightX = -Infinity;
+  for (const b of modelData.bodies) {
+    const p = jointScreen(b.name);
+    if (p && p.x > bodyRightX) bodyRightX = p.x;
+  }
+  // 12 px breathing gap between rightmost joint and the plate's near edge.
+  const plateX = (isFinite(bodyRightX) ? bodyRightX : worldToCanvasPx(SLOT_X.robot, 1.0, 0).x) + PLATE_HALF_W + 12;
   for (const J of PICKED_JOINTS) {
     const js = jointScreen(J.body);
     if (!js) continue;
     const plate = plates[J.body];
     if (!plate) continue;
-    const px = robotCenterX + J.dx;     // fixed X relative to robot body
-    const py = js.y + J.dy;             // Y still tracks elbow / knee height
+    const px = plateX;             // tracks the body's right edge — never overlaps
+    const py = js.y + J.dy;        // Y still tracks elbow / knee height
     plate.style.left = px.toFixed(1) + 'px';
     plate.style.top  = py.toFixed(1) + 'px';
 
