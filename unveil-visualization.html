@@ -1658,8 +1658,8 @@ function getRetargetLabelRightPx() {
 
 // ─── Graph rectangle (around graph G1, includes beat indicator) ────────────
 function setGraphRectVisible(on) {
-  document.getElementById('graph-rect').style.opacity = 0;       // rect removed
-  if (on) show('graph-label'); else hide('graph-label');
+  document.getElementById('graph-rect').style.opacity = 0;
+  hide('graph-label');
 }
 function updateGraphRect() {
   const r = document.getElementById('graph-rect');
