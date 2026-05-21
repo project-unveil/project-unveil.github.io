@@ -1518,7 +1518,8 @@ function setEncRectVisible(on) {
 }
 function updateEncRect() {
   const r = document.getElementById('enc-rect');
-  if (r.style.opacity == 0) return;
+  // No early-return: always compute bounds so the max-bounds accumulator
+  // works even before the rect is shown (after cycle 1 completes).
   // Bounding box covers G1 silhouette + the combined plates (not the human)
   let mnX=Infinity, mnY=Infinity, mxX=-Infinity, mxY=-Infinity;
   for (const b of modelData.bodies) {
