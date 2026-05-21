@@ -2297,12 +2297,11 @@ function tickKinematicAnim(rawT) {
   // Step 4: vertical "etc." dots (t=3)
   const u4 = clamp((t - 3.0) / FADE, 0, 1) * fadeOut;
   document.getElementById('enc-vertical-dots').style.opacity = u4;
-  // Step 5: left-knee box + leader — same condition
+  // Step 5: left-knee box + leader
   const u5 = clamp((t - 4.0) / FADE, 0, 1) * fadeOut;
   const kLeader = document.querySelector(`.svg-leader[data-body="${kn}"]`);
-  const showKnee = u5 > 0.05 && movingLeft;
-  if (kLeader) kLeader.style.opacity = showKnee ? u5 : 0;
-  if (showKnee) plates[kn].classList.add('visible'); else plates[kn].classList.remove('visible');
+  if (kLeader) kLeader.style.opacity = u5;
+  if (u5 > 0.05) plates[kn].classList.add('visible'); else plates[kn].classList.remove('visible');
   // Step 6: enc rect — once it has appeared at the end of the first cycle,
   // keep it visible forever (don't vanish each loop).
   if (t > 5.0 && fadeOut > 0.3) {
