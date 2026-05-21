@@ -795,10 +795,13 @@ const withV = u => u + (u.includes('?') ? '&' : '?') + 'v=' + BIN_VERSION;
 // the strict 3.1↔3.2 gap. SLOT_X.spatial + embedding + attributes shifted right
 // in lock-step so all 1cm gaps still hold against the FIXED human-rect on the
 // right side of the panel.
-const SLOT_X = { robot: -6.0, graph: -2.5, spatial: 1.7, human: 5.55 };
-const SLOT_X_EMBEDDING  = 3.40;
-const SLOT_X_ATTRIBUTES = 4.65;
-const RIGHT_GAP_PX = 38;     // 1 cm at 96 dpi
+// Human is a STATIC snapshot at SLOT_X.human. Embedding + attrs hug the human
+// with only 0.5 cm gaps between each (now that the human doesn't need to
+// reserve space for arm swings).
+const SLOT_X = { robot: -6.0, graph: -2.5, spatial: 1.7, human: 5.95 };
+const SLOT_X_EMBEDDING  = 3.80;
+const SLOT_X_ATTRIBUTES = 4.88;
+const RIGHT_GAP_PX = 19;     // 0.5 cm at 96 dpi
 const GHOST_SPREAD = 0.30;   // tighter so the ghost stack always fits in the spatial rect
 // World units the arrow's right end stays away from G1 root — sized so the G1's
 // extreme left swing during motion just touches the arrow tip (never crosses).
