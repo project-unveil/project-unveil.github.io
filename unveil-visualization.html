@@ -1692,12 +1692,17 @@ function updateGraphRect() {
     const encHeight = parseFloat(encR.getAttribute('height'));
     if (isFinite(encTop))    y = encTop;
     if (isFinite(encHeight)) h = encHeight;     // SAME height as 3.1
-    // 3.2 rect's left/right hugged to the graph robot's joint extent (no
-    // strict gap clamps) — keeps the rect narrow with no whitespace.
+    // STRICT gap to 3.1 = enc-output label width. (Robot is positioned so its
+    // natural extent fits inside the clamped rect.)
+    const encLeft  = parseFloat(encR.getAttribute('x'));
+    const encWidth = parseFloat(encR.getAttribute('width'));
+    if (isFinite(encLeft) && isFinite(encWidth)) {
+      const minLeft = encLeft + encWidth + getEncOutputW();
+      if (x < minLeft) x = minLeft;
+    }
   }
   let w = (mxX - mnX) + padX*2;
-  // Rect width follows the robot's natural joint extent so the 1.3-scaled
-  // graph robot always fits inside (matches 3.1's robot size).
+  if (mxX + padX < x + w) w = (mxX + padX) - x;
   // Lock-after-cycle: freeze to accumulated max-bounds.
   if (graphRectLocked && graphRectMaxBounds) {
     ({ x, y, w, h } = graphRectMaxBounds);
