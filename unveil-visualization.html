@@ -1970,7 +1970,7 @@ function setSpatialRectVisible(on) {
 }
 function updateSpatialRect() {
   const r = document.getElementById('spatial-rect');
-  if (r.style.opacity == 0) return;
+  // No early-return: bounds computed regardless of visibility.
   // Sample joint screen positions of every VISIBLE robot in slot 3.3
   // (aggregate G1 + visible ghosts) so the rect tracks arm swings, not just
   // root positions.
