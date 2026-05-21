@@ -1907,9 +1907,9 @@ function positionEmbedAttrArrow() {
   const cardW   = card.offsetWidth || 180;
   const cardLeft = parseFloat(card.style.left) - cardW / 2;
   const y       = parseFloat(card.style.top);
-  arrow.setAttribute('x1', (esRight + 8).toFixed(1));
+  arrow.setAttribute('x1', (esRight + 3).toFixed(1));
   arrow.setAttribute('y1', y.toFixed(1));
-  arrow.setAttribute('x2', (cardLeft - 8).toFixed(1));
+  arrow.setAttribute('x2', (cardLeft - 3).toFixed(1));
   arrow.setAttribute('y2', y.toFixed(1));
 }
 
