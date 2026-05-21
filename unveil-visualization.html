@@ -1663,7 +1663,7 @@ function setGraphRectVisible(on) {
 }
 function updateGraphRect() {
   const r = document.getElementById('graph-rect');
-  if (r.style.opacity == 0) return;
+  // No early-return: bounds computed regardless of visibility.
   let mnX=Infinity, mnY=Infinity, mxX=-Infinity, mxY=-Infinity;
   for (const b of modelData.bodies) {
     const p = jointScreenGraph(b.name);
