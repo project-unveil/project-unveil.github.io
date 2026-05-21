@@ -2511,10 +2511,8 @@ function loop(ts) {
   masterClock += dt;
 
   try {
-  if (smplData && smplGroup.mat.opacity > 0.01) {
-    const f = (masterClock * smplData.fps) % smplData.numFrames;
-    smplGroup.applyFrame(f);
-  }
+  // SMPL human is shown as a STATIC snapshot — applied once at boot, no
+  // per-frame update here.
   if (g1Motion) {
     const fG1 = (masterClock * g1Motion.fps) % g1Motion.numFrames;
     g1Main.applyFrame(g1Motion, fG1);
