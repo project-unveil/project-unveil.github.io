@@ -1965,7 +1965,7 @@ function positionEmbeddingStrip() {
 
 // ─── Spatiotemporal rectangle — wraps spatial G1 + ghost stack + Σ icon ───
 function setSpatialRectVisible(on) {
-  document.getElementById('spatial-rect').style.opacity = on ? 0.85 : 0;
+  document.getElementById('spatial-rect').style.opacity = 0;     // rect removed
   if (on) show('spatial-label'); else hide('spatial-label');
 }
 function updateSpatialRect() {
